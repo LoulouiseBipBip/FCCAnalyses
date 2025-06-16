@@ -439,27 +439,14 @@ def run(rdf_module, args) -> None:
             for hist_name, hist_definition in histo_list.items():
                 # default 1D histogram, looks for the name of the column.
                 if "name" in hist_definition:
-                    if isinstance(hist_definition["name"], list) and len(hist_definition["name"]) == 2:
-                        # 2D histogram
-                        model = ROOT.RDF.TH2DModel(
-                            hist_name,
-                            f';{hist_definition["title"]};',
-                            hist_definition["bin"][0], hist_definition["xmin"][0], hist_definition["xmax"][0],
-                            hist_definition["bin"][1], hist_definition["xmin"][1], hist_definition["xmax"][1]
-                        )
-                        histos.append(dframe_cut.Histo2D(model,
-                                                        hist_definition["name"][0],
-                                                        hist_definition["name"][1]))
-                    else:
-                        # 1D histogram
-                        model = ROOT.RDF.TH1DModel(
-                            hist_name,
-                            f';{hist_definition["title"]};',
-                            hist_definition["bin"],
-                            hist_definition["xmin"],
-                            hist_definition["xmax"])
-                        histos.append(dframe_cut.Histo1D(model,
-                                                        hist_definition["name"]))
+                    model = ROOT.RDF.TH1DModel(
+                        hist_name,
+                        f';{hist_definition["title"]};',
+                        hist_definition["bin"],
+                        hist_definition["xmin"],
+                        hist_definition["xmax"])
+                    histos.append(dframe_cut.Histo1D(model,
+                                                     hist_definition["name"]))
                 # multi dim histogram (1, 2 or 3D)
                 elif "cols" in hist_definition:
                     cols = hist_definition['cols']

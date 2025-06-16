@@ -26,9 +26,9 @@ class Analysis:
 
         # Mandatory: List of processes to run over
         self.process_list = {
-            'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction, "chunks": 100},
-            'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, "chunks": 100},
-            'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, "chunks": 100},
+            'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction},
+            'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction},
+            'mgp8_pp_tth_5f_84TeV': {"fraction": fraction},
                 }
 
         # Mandatory: Input directory where to find the samples, or a production tag when running over the centrally produced
@@ -40,7 +40,7 @@ class Analysis:
         #self.output_dir = "/eos/user/s/selvaggi/analysis/ttbar_differential_v2/"
 
         # Optional: analysisName, default is ''
-        self.analysis_name = "FCC-hh top-quark pair analysis"
+        self.analysis_name = "FCC-hh ttZ analysis"
 
         # Optional: number of threads to run on, default is 'all available'
         self.ncpus = 16
@@ -106,6 +106,17 @@ class Analysis:
 
             .Define("n_leptons", "FCCAnalyses::ReconstructedParticle::get_n(sel_leptons)")
 
+            ########################################### JETS ########################################### 
+
+            # selected jets above a pT threshold of 30 GeV, eta < 4
+            .Define("selpt_jets", "FCCAnalyses::ReconstructedParticle::sel_pt(30.)(Jet)")
+            .Define("sel_jets_unsort", "FCCAnalyses::ReconstructedParticle::sel_eta(4)(selpt_jets)")
+            .Define("sel_jets", "AnalysisFCChh::SortParticleCollection(sel_jets_unsort)") 
+            .Define("n_jets",  "FCCAnalyses::ReconstructedParticle::get_n(sel_jets)")
+            .Define("E_jets",  "FCCAnalyses::ReconstructedParticle::get_e(sel_jets)")
+            .Define("pT_jets",  "FCCAnalyses::ReconstructedParticle::get_pt(sel_jets)")
+            .Define("eta_jets",  "FCCAnalyses::ReconstructedParticle::get_eta(sel_jets)")
+            .Define("phi_jets",  "FCCAnalyses::ReconstructedParticle::get_phi(sel_jets)")
             # select jets
             .Define(
                 "b_tagged_jets_medium", "AnalysisFCChh::get_tagged_jets(Jet, Jet_HF_tags, _Jet_HF_tags_particle, _Jet_HF_tags_parameters, 1)"
@@ -116,8 +127,8 @@ class Analysis:
             .Define("sel_bjets", "AnalysisFCChh::SortParticleCollection(sel_bjets_unsort)")  # sort by pT
             .Define("sel_bjets_pt", "FCCAnalyses::ReconstructedParticle::get_pt(sel_bjets)")
             .Define("n_bjets", "FCCAnalyses::ReconstructedParticle::get_n(sel_bjets)")
-            
 
+            
             # missing ET
             .Define("MET", "FCCAnalyses::ReconstructedParticle::get_pt(MissingET)")
 
@@ -131,10 +142,12 @@ class Analysis:
         
 
             # calculate HT
-            .Define("HT", "pT_leptons_sel[0] + pT_leptons_sel[1] + sel_bjets_pt[0] + sel_bjets_pt[1] + sel_bjets_pt[2]")
+            .Define("HT", "ScalarHT")
             .Define("ht_tev", "HT/1000.")
-            .Define("recoHT", "ScalarHT")
-    
+            
+
+            
+   
         )
         return dframe2
 
@@ -146,7 +159,7 @@ class Analysis:
         """
         branch_list = [
             "weight",
-            "n_bjets",
+            "n_jets",
             "n_leptons",
             "HT",
             "ht_tev",
@@ -156,7 +169,7 @@ class Analysis:
             "Z_ll_pt",
             "Z_ll_eta",
             "dR_ll",
-            "recoHT",
-            
+            #"recoHT",
+                       
         ]
         return branch_list

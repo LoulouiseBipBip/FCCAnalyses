@@ -33,7 +33,7 @@ nCPUS = 48
 
 # produces ROOT TTrees, default is False
 doTree = True
-
+saveJSON = True
 saveTabular = True
 
 # Optional: Use weighted events
@@ -62,19 +62,23 @@ do_weighted = False
 
 cutList = {
             "sel1": "n_leptons >= 0", # placeholder
-            "sel2_lep":"n_leptons >= 3", # 2 leptons
-            "sel3_jets":"(n_leptons >= 3) && (n_bjets == 2) ", # at least 3 b-jets
+            "sel2_lep":"n_leptons == 4", # 4 leptons
+            "sel3_jets":"(n_leptons == 4) && (n_jets >= 1) && (n_jets <= 2) ",
+            "sel4_mll": " (Z_ll_mass[0]) > 70. && (Z_ll_mass[0]  < 125.) && (n_leptons == 4) && (n_jets >= 1) && (n_jets <= 2) ",
             # add more cuts here: note you need to && them, they are not sequential!
             }
 histoList = {
-    # "n_jets": {"name": "n_jets", "title": "n_jets", "bin": 10, "xmin": 0, "xmax": 10},
-    "n_bjets": {"name": "n_bjets", "title": "n_bjets_pre", "bin": 10, "xmin": 0, "xmax": 10},
-    "n_leptons": {"name": "n_leptons", "title": "n_leptons", "bin": 10, "xmin": 0, "xmax": 10},
+    "n_jets": {"name": "n_jets", "title": "Number of Jets", "bin": 15, "xmin": 0, "xmax": 15},
+    "n_leptons": {"name": "n_leptons", "title": "Number of Leptons", "bin": 10, "xmin": 0, "xmax": 10},
     "Z_ll_mass": {"name": "Z_ll_mass", "title": "Z_{ll} mass [GeV]", "bin": 50, "xmin": 0, "xmax": 250},
     "dR_ll": {"name": "dR_ll", "title": "dR_{ll}", "bin": 50, "xmin": 0, "xmax": 10},
-    "HT": {"name": "HT", "title": "H_{T} [TeV]", "bin": 50, "xmin": 0, "xmax": 2000},
-    "MET": {"name": "MET", "title": "MET", "bin": 20, "xmin": 0, "xmax": 2000},
-    "recoHT": {"name": "recoHT", "title": "recoHT", "bin": 50, "xmin": 0, "xmax": 2000},
-    #"HT_sel": {"name": "HT_sel", "title": "H_{T} [TeV]", "bin": 50, "xmin": 0, "xmax": 2000},
-    #"MET_sel": {"name": "MET_sel", "title": "MET", "bin": 20, "xmin": 0, "xmax": 2000},
+    "HT": {"name": "HT", "title": "H_{T} [GeV]", "bin": 50, "xmin": 0, "xmax": 2000},
+    "MET": {"name": "MET", "title": "MET [GeV]", "bin": 20, "xmin": 0, "xmax": 2000},
+    "dRll_vs_HT": {
+        "name": ["dR_ll", "HT"],
+        "title": "dR_{ll} vs H_{T};dR_{ll};H_{T} [GeV]",
+        "bin": [50, 50],
+        "xmin": [0, 0],
+        "xmax": [10, 2000]
+    },
 }
