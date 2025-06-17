@@ -1384,7 +1384,7 @@ ROOT::VecOps::RVec<RecoParticlePair> AnalysisFCChh::getBestOSPair(
 
   // first one should be the closest one
   best_pair.push_back(all_pairs.at(0));
-
+  
   return best_pair;
 }
 
@@ -4224,3 +4224,145 @@ AnalysisFCChh::findOppositeFlavorSameSign(
   // If neither combination is found, return an empty vector.
   return result;
 }
+
+// pick the two leptons that form the Z and the other two leptons that form the OS pair
+ROOT::VecOps::RVec<RecoParticlePair> AnalysisFCChh::getZllAndSecondOSPair(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_electrons) {
+
+  ROOT::VecOps::RVec<RecoParticlePair> result_pairs;
+
+  // Step 1: Find the best OS pair closest to Z boson mass using getOSPairs
+  ROOT::VecOps::RVec<RecoParticlePair> ee_pairs = getOSPairs(reco_electrons);
+  ROOT::VecOps::RVec<RecoParticlePair> mm_pairs = getOSPairs(reco_muons);
+  ROOT::VecOps::RVec<RecoParticlePair> best_Z_pair = getBestOSPair(ee_pairs, mm_pairs);
+  if (best_Z_pair.size() > 0) {
+    //std::cout << "Best Z pair found" << std::endl;
+    //std::cout << "Number of mm_pairs " << mm_pairs.size() << std::endl;
+    //std::cout << "Number of ee_pairs " << ee_pairs.size() << std::endl;
+    //std::cout << "Number of best Z_pairs " << best_Z_pair.size() << std::endl;
+  }
+  
+ 
+  // Add the best Z pair to the result if found
+  if (best_Z_pair.size() > 0) {
+    result_pairs.push_back(best_Z_pair.at(0));
+  } else {
+    // If no Z pair is found, return empty vector
+    //std::cout << "No Z pair found" << std::endl;
+    return result_pairs;
+  }
+
+  // Step 2: Collect all remaining leptons (excluding the ones used in the Z pair)
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> remaining_electrons;
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> remaining_muons;
+  const auto& z_pair = best_Z_pair.at(0);
+  TLorentzVector z_lep1_tlv = getTLV_reco(z_pair.particle_1);
+  TLorentzVector z_lep2_tlv = getTLV_reco(z_pair.particle_2);
+
+  // Add muons not in the Z pair
+  for (const auto& muon : reco_muons) {
+    TLorentzVector muon_tlv = getTLV_reco(muon);
+    if (muon_tlv.Pt() != z_lep1_tlv.Pt() || muon_tlv.Eta() != z_lep1_tlv.Eta()) {
+      if (muon_tlv.Pt() != z_lep2_tlv.Pt() || muon_tlv.Eta() != z_lep2_tlv.Eta()) {
+        remaining_muons.push_back(muon);
+        //std::cout << "Adding muon to remaining muons" << std::endl;
+      }
+    }
+  }
+
+  // Add electrons not in the Z pair
+  for (const auto& electron : reco_electrons) {
+   
+    TLorentzVector elec_tlv = getTLV_reco(electron);
+    if (elec_tlv.Pt() != z_lep1_tlv.Pt() || elec_tlv.Eta() != z_lep1_tlv.Eta()) {
+      if (elec_tlv.Pt() != z_lep2_tlv.Pt() || elec_tlv.Eta() != z_lep2_tlv.Eta()) {
+        remaining_electrons.push_back(electron);
+        //std::cout << "Adding electron to remaining electrons" << std::endl;
+      }
+    }
+    
+  }
+ 
+ //std::cout << "Number of remaining electrons " << remaining_electrons.size() << std::endl;
+ //std::cout << "Number of remaining muons " << remaining_muons.size() << std::endl;
+
+  // Step 3: Sort remaining leptons by pT (descending)
+  // std::sort(remaining_leptons.begin(), remaining_leptons.end(),
+  //           [](const auto& a, const auto& b) {
+  //             return getTLV_reco(a).Pt() > getTLV_reco(b).Pt();
+  //           });
+
+ // Step 4: Select the next two leading-pT leptons to form an OS pair
+  ROOT::VecOps::RVec<RecoParticlePair> second_os_pairs;
+  
+  for (size_t i = 0; i < remaining_electrons.size(); ++i) {
+    for (size_t j = 0; j < remaining_muons.size(); ++j) {
+      auto lep1 = remaining_electrons[i];
+      auto lep2 = remaining_muons[j];
+      
+      // Check for opposite sign
+      if (lep1.charge * lep2.charge < 0) {
+        RecoParticlePair pair;
+        pair.particle_1 = lep1;
+        pair.particle_2 = lep2;
+        pair.flavour_flag = 3;
+        //std::cout << "Adding second e-mu OS pair" << std::endl;
+        second_os_pairs.push_back(pair);
+        
+      
+      }
+    }
+  }
+ for (size_t i = 0; i < remaining_electrons.size(); ++i) {
+    for (size_t j = i+1; j < remaining_electrons.size(); ++j) {
+      auto lep1 = remaining_electrons[i];
+      auto lep2 = remaining_electrons[j];
+     
+      // Check for opposite sign
+      if (lep1.charge * lep2.charge < 0) {
+        RecoParticlePair pair;
+        pair.particle_1 = lep1;
+        pair.particle_2 = lep2;
+        pair.flavour_flag = 2;
+        //std::cout << "Adding second ee OS pair" << std::endl;
+        second_os_pairs.push_back(pair);
+        
+      
+      }
+    }
+  }
+ for (size_t i = 0; i < remaining_muons.size(); ++i) {
+    for (size_t j = i+1; j < remaining_muons.size(); ++j) {
+      auto lep1 = remaining_muons[i];
+      auto lep2 = remaining_muons[j];
+      
+      // Check for opposite sign
+      if (lep1.charge * lep2.charge < 0) {
+        RecoParticlePair pair;
+        pair.particle_1 = lep1;
+        pair.particle_2 = lep2;
+        pair.flavour_flag = 1;
+        //std::cout << "Adding second mm OS pair" << std::endl;
+        second_os_pairs.push_back(pair);
+        
+      
+      }
+    }
+  }
+
+  // Step 5: Select the first OS pair from the remaining leptons (highest pT pair)
+  if (second_os_pairs.size() > 0) {
+    // Sort by sum of pT to get the highest pT pair
+    std::sort(second_os_pairs.begin(), second_os_pairs.end(),
+              [](const auto& a, const auto& b) {
+                float pt_sum_a = getTLV_reco(a.particle_1).Pt() + getTLV_reco(a.particle_2).Pt();
+                float pt_sum_b = getTLV_reco(b.particle_1).Pt() + getTLV_reco(b.particle_2).Pt();
+                return pt_sum_a > pt_sum_b;
+              });
+    result_pairs.push_back(second_os_pairs.at(0));
+  }
+
+   return result_pairs;
+    }
+

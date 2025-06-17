@@ -4,7 +4,6 @@ Ntuple production for FCC-hh analysis of top-quark pair production
 
 from argparse import ArgumentParser
 
-
 fraction = 1
 
 # Mandatory: Analysis class where the user defines the operations on the
@@ -29,6 +28,7 @@ class Analysis:
             'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction},
             'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction},
             'mgp8_pp_tth_5f_84TeV': {"fraction": fraction},
+            'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction},
                 }
 
         # Mandatory: Input directory where to find the samples, or a production tag when running over the centrally produced
@@ -73,14 +73,21 @@ class Analysis:
             ########################################### DEFINITION OF VARIABLES ###########################################
             # select muons 
             .Define("muons",  "FCCAnalyses::ReconstructedParticle::get(Muon_objIdx.index, ReconstructedParticles)") 
+
+            .Define("muon_noiso_var", "MuonNoIso_IsolationVar")
+            .Define("muon_iso_var", "Muon_IsolationVar")
             .Define("selpt_muons", "FCCAnalyses::ReconstructedParticle::sel_pt(30.)(muons)")
             .Define("sel_muons_unsort", "FCCAnalyses::ReconstructedParticle::sel_eta(4)(selpt_muons)")
             .Define("sel_muons", "AnalysisFCChh::SortParticleCollection(sel_muons_unsort)") #sort by pT
             .Define("n_muons_sel",  "FCCAnalyses::ReconstructedParticle::get_n(sel_muons)") 
             .Define("pT_muons_sel",  "FCCAnalyses::ReconstructedParticle::get_pt(sel_muons)")
+            .Define("type_muons_sel",  "FCCAnalyses::ReconstructedParticle::get_type(sel_muons)")
 
             # select electrons
             .Define("electrons",  "FCCAnalyses::ReconstructedParticle::get(Electron_objIdx.index, ReconstructedParticles)")
+
+            .Define("electron_noiso_var", "ElectronNoIso_IsolationVar")
+            .Define("electron_iso_var", "Electron_IsolationVar")
             .Define("selpt_electrons", "FCCAnalyses::ReconstructedParticle::sel_pt(30.)(electrons)")
             .Define("sel_electrons_unsort", "FCCAnalyses::ReconstructedParticle::sel_eta(4)(selpt_electrons)")
             .Define("sel_electrons", "AnalysisFCChh::SortParticleCollection(sel_electrons_unsort)") #sort by pT
@@ -88,23 +95,36 @@ class Analysis:
             .Define("pT_electrons_sel",  "FCCAnalyses::ReconstructedParticle::get_pt(sel_electrons)")
 
             # combine leptons
-            .Define("OS_ee_pairs", "AnalysisFCChh::getOSPairs(sel_muons)") 
-            .Define("OS_mm_pairs", "AnalysisFCChh::getOSPairs(sel_electrons)") 
-            .Define("Z_ll_candidate_unmerged", "AnalysisFCChh::getBestOSPair(OS_ee_pairs, OS_mm_pairs)") 
-            .Define("Z_ll_flavor", "Z_ll_candidate_unmerged[0].flavour_flag")
+            #.Define("OS_ee_pairs", "AnalysisFCChh::getOSPairs(sel_muons)") 
+            #.Define("OS_mm_pairs", "AnalysisFCChh::getOSPairs(sel_electrons)") 
+            #.Define("Z_ll_candidate_unmerged", "AnalysisFCChh::getBestOSPair(OS_ee_pairs, OS_mm_pairs)") 
+            #.Define("Z_ll_flavor", "Z_ll_candidate_unmerged[0].flavour_flag")
 
-            .Define('Z_ll_candidate', 'AnalysisFCChh::merge_pairs(Z_ll_candidate_unmerged)')
-            .Define('Z_ll_mass', 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_candidate)')
-            .Define('Z_ll_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_candidate)')
-            .Define('Z_ll_eta', 'FCCAnalyses::ReconstructedParticle::get_eta(Z_ll_candidate)')
-
-            .Define('dR_ll', 'AnalysisFCChh::get_angularDist_pair(Z_ll_candidate_unmerged, TString(\"dR\"))')
+            
+            
             # merge leptons
             .Define("sel_leptons_unsort", "FCCAnalyses::ReconstructedParticle::merge(sel_muons, sel_electrons)")
             .Define("sel_leptons", "AnalysisFCChh::SortParticleCollection(sel_leptons_unsort)") #sort by pT
             .Define("pT_leptons_sel", "FCCAnalyses::ReconstructedParticle::get_pt(sel_leptons)")
+           
+            .Define("Z_ll_and_second_pairs", "AnalysisFCChh::getZllAndSecondOSPair(sel_muons, sel_electrons)")
+            .Define("Z_ll_and_second_pairs_size", "Z_ll_and_second_pairs.size()")
+            
+            #.Filter("AnalysisFCChh::isSecondPairOSOF(sel_leptons, Z_ll_candidate_unmerged[0])")
+            .Define('Z_ll_and_second_pairs_merged', 'AnalysisFCChh::merge_pairs(Z_ll_and_second_pairs)')
+            .Define('Z_ll_mass', 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[0]')
+            .Define('Z_ll_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[0]')
+            .Define('Z_ll_eta', 'FCCAnalyses::ReconstructedParticle::get_eta(Z_ll_and_second_pairs_merged)[0]')
+            .Define('Z_ll_flavor', 'Z_ll_and_second_pairs[0].flavour_flag')
+
+            .Define('Second_Pair_mass', 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[1]')
+            .Define('Second_Pair_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[1]')
+            .Define('Second_Pair_eta', 'FCCAnalyses::ReconstructedParticle::get_eta(Z_ll_and_second_pairs_merged)[1]')
+            .Define('Second_Pair_flavor', 'Z_ll_and_second_pairs[1].flavour_flag')
 
             .Define("n_leptons", "FCCAnalyses::ReconstructedParticle::get_n(sel_leptons)")
+            .Define('dR_ll', 'AnalysisFCChh::get_angularDist_pair(Z_ll_and_second_pairs, TString(\"dR\"))[0]')
+            .Define('dR_second_pair', 'AnalysisFCChh::get_angularDist_pair(Z_ll_and_second_pairs, TString(\"dR\"))[1]')
 
             ########################################### JETS ########################################### 
 
@@ -160,6 +180,7 @@ class Analysis:
         branch_list = [
             "weight",
             "n_jets",
+            "n_bjets",
             "n_leptons",
             "HT",
             "ht_tev",
@@ -168,7 +189,17 @@ class Analysis:
             "Z_ll_mass",
             "Z_ll_pt",
             "Z_ll_eta",
+            "Second_Pair_flavor",
+            "Second_Pair_mass",
+            "Second_Pair_pt",
+            "Second_Pair_eta",
             "dR_ll",
+            "type_muons_sel",
+            "Z_ll_and_second_pairs_size",
+            "muon_noiso_var",
+            "muon_iso_var",
+            "electron_noiso_var",
+            "electron_iso_var",
             #"recoHT",
                        
         ]

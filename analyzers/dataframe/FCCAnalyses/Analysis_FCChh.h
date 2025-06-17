@@ -183,7 +183,9 @@ ROOT::VecOps::RVec<RecoParticlePair>
 getLeadingPair(ROOT::VecOps::RVec<RecoParticlePair> electron_pairs,
                ROOT::VecOps::RVec<RecoParticlePair>
                    muon_pairs); // pair with leading pT(pair)
-
+ROOT::VecOps::RVec<RecoParticlePair> getZllAndSecondOSPair(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_electrons);
 ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> get_pos_particles(
   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> particles_in);
 
@@ -539,6 +541,7 @@ bool find_of_ss_sf(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_e
 ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> findOppositeFlavorSameSign(
   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_elecs,
   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons);
+
 
 } // namespace AnalysisFCChh
 

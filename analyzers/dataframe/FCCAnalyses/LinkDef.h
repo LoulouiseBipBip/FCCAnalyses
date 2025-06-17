@@ -44,7 +44,8 @@
 #pragma link C++ class ROOT::VecOps::RVec < ROOT::VecOps::RVec <               \
     FCCAnalyses::VertexingUtils::FCCAnalysesVertex>> +                         \
     ;
-
+#pragma link C++ struct AnalysisFCChh::RecoParticlePair+;
+#pragma link C++ class ROOT::VecOps::RVec<AnalysisFCChh::RecoParticlePair>+;
 //to load all other functions
 #pragma link C++ function dummyLoader;
 

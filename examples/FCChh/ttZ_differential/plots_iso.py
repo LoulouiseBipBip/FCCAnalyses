@@ -8,26 +8,23 @@ energy         = 84
 collider       = 'FCC-hh'
 inputDir       = '/eos/user/l/lberiet/ttZ_diff_results/finals2/'
 formats        = ['png'] #['png','pdf']
-yaxis          = ['lin','log']
+yaxis          = ['log']
 stacksig       = ['stack','nostack']
 # stacksig       = ['stack','nostack']
-outdir         = '/eos/user/l/lberiet/ttZ_diff_results/plot/'
+outdir         = '/eos/user/l/lberiet/ttZ_diff_results/plotsiso/'
 plotStatUnc    = True
 
-variables = ['Z_ll_mass', 'dR_ll', 'n_bjets', 'n_leptons', 'HT', 'MET', 'Second_Pair_flavor', 'Z_ll_and_second_pairs_size']
+variables = ['electron_noiso_var', 'electron_iso_var', 'muon_noiso_var', 'muon_iso_var']
 
 # rebin = [1, 1, 1, 1, 2] # uniform rebin per variable (optional)
 
 ### Dictionary with the analysis name as a key, and the list of selections to be plotted for this analysis. The name of the selections should be the same than in the final selection
 selections = {}
-selections['ttZ_analysis']   = ["all_events","sel1_lep","sel2_bjets","sel3_mll","sel4_second_pair"]
+selections['ttZ_analysis']   = ["all_events"]
 
 extralabel = {}
 extralabel['all_events'] = "All events" 
-extralabel['sel1_lep'] = "Sel 4 leptons"
-extralabel['sel2_bjets'] = "Sel 1 or 2 b-Jets"
-extralabel['sel3_mll'] = "Sel Z mass between 80 and 100 GeV"
-extralabel['sel4_second_pair'] = "Sel second OS pair"
+
 
 
 colors = {}
