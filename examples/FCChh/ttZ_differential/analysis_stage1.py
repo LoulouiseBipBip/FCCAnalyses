@@ -25,10 +25,25 @@ class Analysis:
 
         # Mandatory: List of processes to run over
         self.process_list = {
-            'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction},
-            'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction},
-            'mgp8_pp_tth_5f_84TeV': {"fraction": fraction},
-            'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction},
+            'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_zzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            
+            'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            
+            'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+           
                 }
 
         # Mandatory: Input directory where to find the samples, or a production tag when running over the centrally produced
@@ -43,7 +58,7 @@ class Analysis:
         self.analysis_name = "FCC-hh ttZ analysis"
 
         # Optional: number of threads to run on, default is 'all available'
-        self.ncpus = 16
+        self.ncpus = 4
 
         # Optional: running on HTCondor, default is False
         # self.run_batch = False
@@ -181,6 +196,7 @@ class Analysis:
             "weight",
             "n_jets",
             "n_bjets",
+            "pT_jets",
             "n_leptons",
             "HT",
             "ht_tev",
@@ -200,6 +216,7 @@ class Analysis:
             "muon_iso_var",
             "electron_noiso_var",
             "electron_iso_var",
+            
             #"recoHT",
                        
         ]

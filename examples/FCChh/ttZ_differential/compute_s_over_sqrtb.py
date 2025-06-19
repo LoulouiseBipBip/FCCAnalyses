@@ -1,7 +1,7 @@
 import os
 import json
 # Set paths
-output_dir = "/eos/user/l/lberiet/ttZ_diff_results/final"
+output_dir = "/eos/user/l/lberiet/ttZ_diff_results/finals2/"
 json_file = os.path.join(output_dir, "results.json")
 
 # Define signal and background process names
