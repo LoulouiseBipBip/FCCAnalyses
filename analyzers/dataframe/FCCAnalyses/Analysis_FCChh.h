@@ -542,7 +542,9 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> findOppositeFlavorSameSig
   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_elecs,
   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons);
 
-
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> findSameFlavorSameSignWithOppositeFlavor(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_elecs,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons);
 } // namespace AnalysisFCChh
 
 #endif

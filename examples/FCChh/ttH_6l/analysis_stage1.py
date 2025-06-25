@@ -1,5 +1,5 @@
 """
-Ntuple production for FCC-hh analysis of ZZjj production
+Ntuple production for FCC-hh analysis of ttH production
 """
 
 from argparse import ArgumentParser
@@ -10,7 +10,7 @@ fraction = 1
 # dataframe.
 class Analysis:
     """
-    differential ZZjj analysis
+    ttH analysis
     """
 
     def __init__(self, cmdline_args):
@@ -25,24 +25,24 @@ class Analysis:
 
         # Mandatory: List of processes to run over
         self.process_list = {
-             'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
+             #'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
             
-            'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth01j_5f_hllll': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_zzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
             
-            'mgp8_pp_zzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
             
-            'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            
-            'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
            
                 }
 
@@ -51,16 +51,17 @@ class Analysis:
         self.input_dir = "/eos/experiment/fcc/hh/generation/DelphesEvents/fcc_v07/II/"
 
         # Optional: output directory, default is local running directory
-        self.output_dir = "/eos/user/l/lberiet/ZZjj_results/results/"
+        self.output_dir = "/eos/user/l/lberiet/ttH/results/"
         #self.output_dir = "/eos/user/s/selvaggi/analysis/ttbar_differential_v2/"
 
         # Optional: analysisName, default is ''
-        self.analysis_name = "FCC-hh ZZjj analysis"
+        self.analysis_name = "FCC-hh ttH analysis"
 
         # Optional: number of threads to run on, default is 'all available'
-        self.ncpus = 4
+        self.ncpus = 2
 
-        # Optional: running on HTCondor, default is False
+        # Optional: running on
+        #  HTCondor, default is False
         # self.run_batch = False
         self.run_batch = True
 
@@ -134,7 +135,8 @@ class Analysis:
             .Define('Z_ll_2_mass', 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[1]')
             .Define('Z_ll_1_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[0]')
             .Define('Z_ll_2_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[1]')
-            .Define('Z_ll_2_flavor', 'Z_ll_and_second_pairs[1].flavour_flag') #1 or 2 foe SF
+            .Define('Z_ll_2_flavor', 'Z_ll_and_second_pairs[1].flavour_flag') #1 or 2 for SF
+            .Define("Pair1_Pair2_mass", 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[0] + FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[1]')
             #.Define('Z_ll_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[0]')
             #.Define('Z_ll_eta', 'FCCAnalyses::ReconstructedParticle::get_eta(Z_ll_and_second_pairs_merged)[0]')
             #.Define('Z_ll_flavor', 'Z_ll_and_second_pairs[0].flavour_flag')
@@ -216,6 +218,7 @@ class Analysis:
             "Z_ll_1_pt",
             "Z_ll_2_pt",
             "Z_ll_2_flavor",
+            "Pair1_Pair2_mass",
             #"Z_ll_pt",
             #"Z_ll_eta",
             #"Second_Pair_flavor",

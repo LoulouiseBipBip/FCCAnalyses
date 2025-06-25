@@ -40,7 +40,7 @@ procDict = "/eos/experiment/fcc/hh/utils/FCCDicts/FCChh_procDict_fcc_v07_II.json
 # inputDir    = "./localSamples/"
 
 # Optional: output directory, default is local running directory
-outputDir = "/eos/user/m/mdefranc/FCC-hh/4t_dilept/"
+outputDir = "/eos/user/l/lberiet/ttttResult"
 
 # optional: ncpus, default is 4, -1 uses all cores available
 nCPUS = -1

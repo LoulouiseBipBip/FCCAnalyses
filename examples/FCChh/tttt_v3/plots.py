@@ -1,5 +1,5 @@
 import ROOT
-
+from FCCAnalyses.examples.FCChh.tttt_v3.analysis_stage1_4l import Analysis
 L = 30
 energy = 84
 # global parameters
@@ -11,8 +11,8 @@ collider = "FCC-hh"
 formats = ["pdf","png"]
 
 # outdir         = './outputs/plots/recoil/'
-outdir = "/eos/user/m/mdefranc/www/FCC-hh/4t/"
-inputDir = "/eos/user/m/mdefranc/FCC-hh/4t/"
+outdir = "/eos/user/l/lberiet/ttttfinal/plot/"
+inputDir = "/eos/user/l/lberiet/ttttfinal/"
 
 plotStatUnc = True
 
@@ -65,7 +65,7 @@ procs = {}
 # 'mgp8_pp_tttt_5f_84TeV': {"fraction": fraction},
 
 procs["signal"] = {
-    "tttt": ["mgp8_pp_tttt_5f_84TeV_4tlep"],
+    "tttt": ['mgp8_pp_tttt_wmlep_Q_0_1000_5f_84TeV'],
     }
 procs["backgrounds"] = {
     "VVV": ["mgp8_pp_wwz_5f_84TeV", "mgp8_pp_wzz_5f_84TeV", "mgp8_pp_zzz_5f_84TeV"],

@@ -1,16 +1,17 @@
 # Input directory where the files produced at the pre-selection level are
-inputDir = "/eos/user/l/lberiet/ZZjj_results/results/"
+inputDir = "/eos/user/l/lberiet/ttH/results/"
 #inputDir = "/eos/user/s/selvaggi/analysis/ttbar_diff"
 
 # Input directory where the files produced at the pre-selection level are
-outputDir = "/eos/user/l/lberiet/ZZjj_results/final/"
+outputDir = "/eos/user/l/lberiet/ttH/final/"
 
 processList = {
     'mgp8_pp_tttt_5f_84TeV_4tlep': {},
 
 
     'mgp8_pp_ttz_5f_84TeV_ttzlep': {},
-    'mgp8_pp_tth_5f_84TeV': {},
+    #'mgp8_pp_tth_5f_84TeV': {},
+    'mgp8_pp_tth01j_5f_hllll': {},
     'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {},
 
     'mgp8_pp_zzz_5f_84TeV': {},
@@ -77,9 +78,9 @@ do_weighted = False
 
 cutList = {
     "all_events": "n_leptons >= 0", # all events (no selection)
-            #"sel1_lep":"n_leptons == 4", # 3 leptons
-            #"sel2_bjets":"(n_leptons == 4) && (n_bjets <= 2) ", # at most 2 b-jets
-            #"sel3_jets":"(n_leptons == 4) && (n_bjets <= 2) && (n_jets <= 3) ", # at most 3 jets
+            "sel1_lep":"n_leptons == 5", # 3 leptons
+            "sel2_bjets":" (n_bjets ==2) && (n_leptons == 5) ", # at most 2 b-jets
+            "sel3_Hmass":" (n_bjets == 2) && (n_leptons == 5) && (Z_ll_2_mass < 60)", # at most 3 jets
             #"sel4_Z_1": "(n_leptons == 4) && (n_bjets <= 2) && (n_jets <= 3) && (Z_ll_1_mass > 80 && Z_ll_1_mass < 100)", # first pair is Z
             #"sel5_Z_2": "(n_leptons == 4) && (n_bjets <= 2) && (n_jets <= 3) && (Z_ll_2_mass > 80 && Z_ll_2_mass < 100) && (Z_ll_1_mass > 80 && Z_ll_1_mass < 100)" # second pair is Z
             # add more cuts here: note you need to && them, they are not sequential!
@@ -89,6 +90,7 @@ histoList = {
     #"n_of_ss_sf_leptons": {"name": "n_of_ss_sf_leptons", "title": "n_of_ss_sf_leptons", "bin": 10, "xmin": 0, "xmax": 10},  
     #"Z_ll_1_pt": {"name": "Z_ll_1_pt", "title": "Z_ll_1_pt", "bin": 25, "xmin": 0, "xmax": 100},
     #"Z_ll_2_pt": {"name": "Z_ll_2_pt", "title": "Z_ll_2_pt", "bin": 25, "xmin": 0, "xmax": 100},
+    "Pair1_Pair2_mass": {"name": "Pair1_Pair2_mass", "title": "Pair1_Pair2_mass", "bin": 50, "xmin": 0, "xmax": 250},
     "Z_ll_2_flavor": {"name": "Z_ll_2_flavor", "title": "Z_ll_2_flavor", "bin": 4, "xmin": 0, "xmax": 4},
     "pT_jets": {"name": "pT_jets", "title": "pT_jets", "bin": 50, "xmin": 0, "xmax": 200},
     "pT_bjets": {"name": "pT_bjets", "title": "pT_bjets", "bin": 50, "xmin": 0, "xmax": 200},
