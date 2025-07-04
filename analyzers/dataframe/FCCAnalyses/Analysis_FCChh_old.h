@@ -30,7 +30,8 @@ TLorentzVector getTLV_MC(edm4hep::MCParticleData MC_part);
 struct RecoParticlePair {
   edm4hep::ReconstructedParticleData particle_1;
   edm4hep::ReconstructedParticleData particle_2;
-  int flavour_flag; // Adding flavour_flag to store pair type information
+  int flavour_flag = 0;
+  int pair_used = false;
   TLorentzVector merged_TLV() {
     TLorentzVector tlv_1 = getTLV_reco(particle_1);
     TLorentzVector tlv_2 = getTLV_reco(particle_2);
@@ -87,6 +88,8 @@ struct MCParticlePair {
 // other functions (in a vector)
 ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>
 merge_pairs(ROOT::VecOps::RVec<RecoParticlePair> pairs);
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>
+merge_pair(RecoParticlePair pair);
 int get_n_pairs(ROOT::VecOps::RVec<RecoParticlePair> pairs);
 ROOT::VecOps::RVec<RecoParticlePair>
 get_first_pair(ROOT::VecOps::RVec<RecoParticlePair>
@@ -134,6 +137,14 @@ bool isGluon(edm4hep::MCParticleData truth_part);
 bool isc(edm4hep::MCParticleData truth_part);
 bool iss(edm4hep::MCParticleData truth_part);
 bool isMuon(edm4hep::MCParticleData truth_part);
+bool isElectron(edm4hep::MCParticleData truth_part);
+int checkZllDecay(edm4hep::MCParticleData truth_Z,
+                ROOT::VecOps::RVec<podio::ObjectID> daughter_ids,
+                ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles);
+ROOT::VecOps::RVec<int> getTruthZ4lFlavourFlag(
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles,
+    ROOT::VecOps::RVec<podio::ObjectID> parent_ids,
+    ROOT::VecOps::RVec<podio::ObjectID> daughter_ids);
 int checkZDecay(edm4hep::MCParticleData truth_Z,
                 ROOT::VecOps::RVec<podio::ObjectID> daughter_ids,
                 ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles);
@@ -172,6 +183,23 @@ ROOT::VecOps::RVec<RecoParticlePair>
 getLeadingPair(ROOT::VecOps::RVec<RecoParticlePair> electron_pairs,
                ROOT::VecOps::RVec<RecoParticlePair>
                    muon_pairs); // pair with leading pT(pair)
+ROOT::VecOps::RVec<RecoParticlePair> getZllAndSecondOSPair(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_electrons);
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> get_pos_particles(
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> particles_in);
+
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> get_neg_particles(
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> particles_in);
+
+// for the H->ZZ->4l analysis: build to OS, SF pairs
+ROOT::VecOps::RVec<RecoParticlePair> build_Zll_pairs(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> selected_muons,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> selected_electrons);
+
+ROOT::VecOps::RVec<int> get_4l_flavour_flag(
+    RecoParticlePair leading_pair,
+    RecoParticlePair subleading_pair);
 
 // make a general pair, not caring about charges, e.g. the two b-jets
 ROOT::VecOps::RVec<RecoParticlePair>
@@ -503,8 +531,7 @@ ROOT::VecOps::RVec<T> get(const ROOT::VecOps::RVec<int> &index,
 }
 
 float get_weight_emugamma(float pt, float weight);
-float get_weight_emugamma_product(const ROOT::VecOps::RVec<float>& pt_values, float weight, float pm1);
-
+float get_weight_emugamma_product(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& particles, float weight, float pm1);
 float get_weight_top(float pt, float weight);
 
 float get_fake_rate(float pt);
@@ -516,35 +543,9 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> findOppositeFlavorSameSig
   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_elecs,
   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons);
 
-ROOT::VecOps::RVec<RecoParticlePair> getZllAndSecondOSPair(
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons,
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_electrons);
-
-ROOT::VecOps::RVec<int> getTruthZ4lFlavourFlag(
-    ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles,
-    ROOT::VecOps::RVec<podio::ObjectID> parent_ids,
-    ROOT::VecOps::RVec<podio::ObjectID> daughter_ids);
-
-ROOT::VecOps::RVec<RecoParticlePair> build_Zll_pairs(
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> selected_muons,
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> selected_electrons);
-
-// Additional helper functions needed for new implementations
-bool isElectron(edm4hep::MCParticleData truth_part);
-
-ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> get_pos_particles(
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> particles);
-
-ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> get_neg_particles(
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> particles);
-
-int checkZllDecay(
-    edm4hep::MCParticleData truth_Z,
-    ROOT::VecOps::RVec<podio::ObjectID> daughter_ids,
-    ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles);
-
-
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> findSameFlavorSameSignWithOppositeFlavor(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_elecs,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons);
 } // namespace AnalysisFCChh
-
 
 #endif

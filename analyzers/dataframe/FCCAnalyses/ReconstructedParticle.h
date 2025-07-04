@@ -185,6 +185,13 @@ namespace ReconstructedParticle{
 
   /// get number of b-jets
   int getJet_ntags(ROOT::VecOps::RVec<bool> in);
+
+  /// get electrons
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> getElectrons(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in);
+
+  /// get muons
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> getMuons(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in);
+
 }//end NS ReconstructedParticle
 
 }//end NS FCCAnalyses

@@ -614,6 +614,42 @@ int getJet_ntags(ROOT::VecOps::RVec<bool> in) {
   return result;
 }
 
+//#######################################################################//
+//                              getElectrons                             //
+//#######################################################################//
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> getElectrons(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& in) {
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+  result.reserve(in.size());
+  for (size_t i = 0; i < in.size(); ++i) {
+#if edm4hep_VERSION > EDM4HEP_VERSION(0, 10, 5)
+    if (std::abs(in.at(i).PDG) == 11) {
+#else
+    if (std::abs(in.at(i).type) == 11) {
+#endif
+      result.emplace_back(in.at(i));
+    }
+  }
+  return result;
+}
+
+//#######################################################################//
+//                                getMuons                               //
+//#######################################################################//
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> getMuons(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& in) {
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+  result.reserve(in.size());
+  for (size_t i = 0; i < in.size(); ++i) {
+#if edm4hep_VERSION > EDM4HEP_VERSION(0, 10, 5)
+    if (std::abs(in.at(i).PDG) == 13) {
+#else
+    if (std::abs(in.at(i).type) == 13) {
+#endif
+      result.emplace_back(in.at(i));
+    }
+  }
+  return result;
+}
+
 }//end NS ReconstructedParticle
 
 }//end NS FCCAnalyses
