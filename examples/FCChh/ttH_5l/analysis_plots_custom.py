@@ -11,7 +11,7 @@ formats        = ['png'] #['png','pdf']
 yaxis          = ['lin','log']
 stacksig       = ['stack','nostack']
 # stacksig       = ['stack','nostack']
-outdir         = '/eos/user/l/lberiet/ttH/plot_H_4l/'
+outdir         = '/eos/user/l/lberiet/www/ttH'
 plotStatUnc    = True
 
 variables = ['n_bjets', 'n_jets','n_leptons', 'Z_ll_1_mass', 'Z_ll_2_mass', 'Z_ll_1_pt', 'Z_ll_2_pt', 'Pair1_Pair2_mass', 'HT', 'MET', 'Z_ll_2_flavor', 'Z_ll_and_second_pairs_size', 'dR_ll']
@@ -43,7 +43,10 @@ colors['ttVV_bkg_lep'] = ROOT.kTeal + 6
 
 plots = {}
 plots['ttH_analysis'] = {
-                            'signal':{'ttH_signal':[ 'mgp8_pp_tth01j_5f_hllll']},
+                            'signal':{'ttH_signal':[ 'mgp8_pp_tth_5f_Q_0_1000_84TeV',
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV',
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV',
+             'mgp8_pp_tth_5f_Q_10000_84000_84TeV']},
                             'backgrounds':{
                                 '4t_bkg':[ 'mgp8_pp_tttt_5f_84TeV_4tlep'],
                                 'ttZ_bkg_lep':[ 'mgp8_pp_ttz_5f_84TeV_ttzlep'],

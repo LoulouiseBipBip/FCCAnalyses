@@ -4,37 +4,37 @@ import ROOT
 
 # global parameters
 intLumi = 30e06  # in pb-1
-ana_tex = "pp #rightarrow tttt 3l"
+ana_tex = "pp #rightarrow tttt 4l"
 delphesVersion = "3.4.2"
 energy = 84
 collider = "FCC-hh"
-inputDir = "/eos/user/l/lberiet/newttttresult/3l/sf_ss=0_sel/histo/"
+inputDir = "/eos/user/l/lberiet/ttttfinal/"
 formats = ["png"]
 # formats        = ['png','pdf']
 # yaxis          = ['log']
 yaxis = ["lin", "log"]
 # stacksig       = ['stack']
 stacksig = ["stack", "nostack"]
-outdir = "/eos/user/l/lberiet/newttttresult/3l/sf_ss=0_sel/plot/"
+outdir = "/eos/user/l/lberiet/www/4t_analysis/4l/SS_OF=0"
 plotStatUnc = True
 
 
-variables = ['n_bjets', 'n_leptons', 'HT', 'MET', 'n_sf_ss_of_leptons', 'n_jets', 'Z_ll_mass', 'Second_Pair_mass', 'dR_ll']
+variables = ['n_bjets', 'n_leptons', 'HT', 'MET', 'n_of_ss_of_leptons', 'n_jets', 'Z_ll_mass', 'Second_Pair_mass', 'dR_ll']
 
 # rebin = [1, 1, 1, 1, 2] # uniform rebin per variable (optional)
 
 ### Dictionary with the analysis name as a key, and the list of selections to be plotted for this analysis. The name of the selections should be the same than in the final selection
 selections = {}
-selections['tttt_analysis_3l_sf_ss=0']   = ["all_events","sel0_sf_ss","sel1_sf_ss","sel2_bjets","sel3_jets","sel4_notZ"]
+selections['tttt_analysis']   = ["all_events","sel1_lep","sel_SS_OF=0","sel2_bjets","sel3_jets","sel4_notZ"]
 
 extralabel = {}
 extralabel['all_events'] = "All events" 
-extralabel['sel0_sf_ss'] = "Sel 3 leptons"
-extralabel['sel1_sf_ss'] = "Sel 0 SFSS OS leptons"
+extralabel['sel1_lep'] = "Sel up to 4 leptons"
+extralabel['sel_SS_OF=0'] = "Sel SS OF=0"
+
 extralabel['sel2_bjets'] = "Sel 3 or more b-Jets"
-extralabel['sel3_jets'] = "Sel 6 or more jets"
-extralabel['sel4_notZ'] = "Not Z"
-#extralabel['sel5_sf_ss'] = "SFSS leptons and 1 OS lepton"
+extralabel['sel3_jets'] = "Sel 3 or more jets"
+extralabel['sel4_notZ'] = "Sel 4 leptons not Z"
 
 
 colors = {}
@@ -48,16 +48,9 @@ colors['ttVV_bkg_lep'] = ROOT.kTeal + 6
 
 
 plots = {}
-plots['tttt_analysis_3l_sf_ss=0'] = {
+plots['tttt_analysis'] = {
                             'signal':{'tttt_signal':[ 
-                                    'mgp8_pp_tttt_wmlep_Q_0_1000_5f_84TeV',
-                                    'mgp8_pp_tttt_wmlep_Q_1000_3000_5f_84TeV',
-                                    'mgp8_pp_tttt_wmlep_Q_3000_10000_5f_84TeV',
-                                    'mgp8_pp_tttt_wmlep_Q_10000_84000_5f_84TeV',
-                                    'mgp8_pp_tttt_wplep_Q_0_1000_5f_84TeV',
-                                    'mgp8_pp_tttt_wplep_Q_1000_3000_5f_84TeV',
-                                    'mgp8_pp_tttt_wplep_Q_3000_10000_5f_84TeV',
-                                    'mgp8_pp_tttt_wplep_Q_10000_84000_5f_84TeV',
+                                    'mgp8_pp_tttt_5f_84TeV_4tlep',
 
                             ]},
                             'backgrounds':{

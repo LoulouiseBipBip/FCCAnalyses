@@ -1,8 +1,9 @@
 """
-Ntuple production for FCC-hh analysis of ttH production
+Ntuple production for FCC-hh analysis of top-quark pair production
 """
 
 from argparse import ArgumentParser
+
 
 fraction = 1
 
@@ -10,7 +11,7 @@ fraction = 1
 # dataframe.
 class Analysis:
     """
-    ttH analysis
+    differential ttbar analysis
     """
 
     def __init__(self, cmdline_args):
@@ -25,24 +26,33 @@ class Analysis:
 
         # Mandatory: List of processes to run over
         self.process_list = {
-             #'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
+             'mgp8_pp_tttt_wmlep_Q_0_1000_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+             'mgp8_pp_tttt_wmlep_Q_1000_3000_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+             'mgp8_pp_tttt_wmlep_Q_3000_10000_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+             'mgp8_pp_tttt_wmlep_Q_10000_84000_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+             'mgp8_pp_tttt_wplep_Q_0_1000_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+             'mgp8_pp_tttt_wplep_Q_1000_3000_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+             'mgp8_pp_tttt_wplep_Q_3000_10000_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+             'mgp8_pp_tttt_wplep_Q_10000_84000_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_ttw_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_zzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
             
-            #'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth01j_5f_hllll': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_zzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_wzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_wwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
             
-            #'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            
-            #'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
            
                 }
 
@@ -51,22 +61,21 @@ class Analysis:
         self.input_dir = "/eos/experiment/fcc/hh/generation/DelphesEvents/fcc_v07/II/"
 
         # Optional: output directory, default is local running directory
-        self.output_dir = "/eos/user/l/lberiet/ttH/results/"
+        self.output_dir = "/eos/user/l/lberiet/newttttresult/3l/"
         #self.output_dir = "/eos/user/s/selvaggi/analysis/ttbar_differential_v2/"
 
         # Optional: analysisName, default is ''
-        self.analysis_name = "FCC-hh ttH analysis"
+        self.analysis_name = "FCC-hh tttt pair analysis 3l"
 
         # Optional: number of threads to run on, default is 'all available'
-        self.ncpus = 2
+        self.ncpus = 16
 
-        # Optional: running on
-        #  HTCondor, default is False
+        # Optional: running on HTCondor, default is False
         # self.run_batch = False
         self.run_batch = True
 
         # Optional: Use weighted events
-        self.do_weighted = False 
+        self.do_weighted = False
 
         # Optional: read the input files with podio::DataSource
         self.use_data_source = False  # explicitly use old way in this version
@@ -87,7 +96,10 @@ class Analysis:
         dframe2 = (
             dframe2
             ########################################### DEFINITION OF VARIABLES ###########################################
-            # select muons 
+            # generator event weight
+           
+            
+            #.Define(f"cut{len(selections)}", f"{len(selections)}")
             .Define("muons",  "FCCAnalyses::ReconstructedParticle::get(Muon_objIdx.index, ReconstructedParticles)") 
 
             .Define("muon_noiso_var", "MuonNoIso_IsolationVar")
@@ -123,23 +135,18 @@ class Analysis:
             .Define("sel_leptons", "AnalysisFCChh::SortParticleCollection(sel_leptons_unsort)") #sort by pT
             .Define("pT_leptons_sel", "FCCAnalyses::ReconstructedParticle::get_pt(sel_leptons)")
            
-            #.Define("Zll_pairs", "AnalysisFCChh::build_Zll_pairs(sel_muons, sel_electrons)")
-            #.Define("Zll_pairs_size", "Zll_pairs.size()")
-            #.Define("Z_ll_1_mass", "FCCAnalyses::ReconstructedParticle::get_mass(Zll_pairs[0])")
-            #.Define('Z_ll_2_mass', 'FCCAnalyses::ReconstructedParticle::get_mass(Zll_pairs[1])')
             .Define("Z_ll_and_second_pairs", "AnalysisFCChh::getZllAndSecondOSPair(sel_muons, sel_electrons)")
             .Define("Z_ll_and_second_pairs_size", "Z_ll_and_second_pairs.size()")
-            .Define("Z_ll_and_second_pairs_merged", "AnalysisFCChh::merge_pairs(Z_ll_and_second_pairs)")
-            
-            .Define('Z_ll_1_mass', 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[0]')
-            .Define('Z_ll_2_mass', 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[1]')
-            .Define('Z_ll_1_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[0]')
-            .Define('Z_ll_2_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[1]')
-            .Define('Z_ll_2_flavor', 'Z_ll_and_second_pairs[1].flavour_flag') #1 or 2 for SF
-            .Define("Pair1_Pair2_mass", 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[0] + FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[1]')
-            #.Define('Z_ll_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[0]')
-            #.Define('Z_ll_eta', 'FCCAnalyses::ReconstructedParticle::get_eta(Z_ll_and_second_pairs_merged)[0]')
-            #.Define('Z_ll_flavor', 'Z_ll_and_second_pairs[0].flavour_flag')
+
+            .Define("sf_ss_of_leptons",  "AnalysisFCChh::findSameFlavorSameSignWithOppositeFlavor(sel_electrons, sel_muons)")
+            .Define("n_sf_ss_of_leptons",  "FCCAnalyses::ReconstructedParticle::get_n(sf_ss_of_leptons)")
+
+            #.Filter("AnalysisFCChh::isSecondPairOSOF(sel_leptons, Z_ll_candidate_unmerged[0])")
+            .Define('Z_ll_and_second_pairs_merged', 'AnalysisFCChh::merge_pairs(Z_ll_and_second_pairs)')
+            .Define('Z_ll_mass', 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[0]')
+            .Define('Z_ll_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[0]')
+            .Define('Z_ll_eta', 'FCCAnalyses::ReconstructedParticle::get_eta(Z_ll_and_second_pairs_merged)[0]')
+            .Define('Z_ll_flavor', 'Z_ll_and_second_pairs[0].flavour_flag')
 
             .Define('Second_Pair_mass', 'FCCAnalyses::ReconstructedParticle::get_mass(Z_ll_and_second_pairs_merged)[1]')
             .Define('Second_Pair_pt', 'FCCAnalyses::ReconstructedParticle::get_pt(Z_ll_and_second_pairs_merged)[1]')
@@ -149,7 +156,6 @@ class Analysis:
             .Define("n_leptons", "FCCAnalyses::ReconstructedParticle::get_n(sel_leptons)")
             .Define('dR_ll', 'AnalysisFCChh::get_angularDist_pair(Z_ll_and_second_pairs, TString(\"dR\"))[0]')
             .Define('dR_second_pair', 'AnalysisFCChh::get_angularDist_pair(Z_ll_and_second_pairs, TString(\"dR\"))[1]')
-            #.Define('dR_second_pair', 'AnalysisFCChh::get_angularDist_pair(Z_ll_and_second_pairs, TString(\"dR\"))[1]')
 
             ########################################### JETS ########################################### 
 
@@ -172,7 +178,7 @@ class Analysis:
             .Define("sel_bjets", "AnalysisFCChh::SortParticleCollection(sel_bjets_unsort)")  # sort by pT
             .Define("sel_bjets_pt", "FCCAnalyses::ReconstructedParticle::get_pt(sel_bjets)")
             .Define("n_bjets", "FCCAnalyses::ReconstructedParticle::get_n(sel_bjets)")
-            .Define("pT_bjets", "FCCAnalyses::ReconstructedParticle::get_pt(sel_bjets)")
+
             
             # missing ET
             .Define("MET", "FCCAnalyses::ReconstructedParticle::get_pt(MissingET)")
@@ -192,7 +198,6 @@ class Analysis:
             
 
             
-   
         )
         return dframe2
 
@@ -203,38 +208,30 @@ class Analysis:
         Output variables which will be saved to output root file.
         """
         branch_list = [
-            "weight",
+             "weight",
             "n_jets",
             "n_bjets",
-            "pT_bjets",
             "pT_jets",
             "n_leptons",
             "HT",
             "ht_tev",
             "MET",
-            "Z_ll_and_second_pairs_size",
-            "Z_ll_1_mass",
-            "Z_ll_2_mass",
-            "Z_ll_1_pt",
-            "Z_ll_2_pt",
-            "Z_ll_2_flavor",
-            "Pair1_Pair2_mass",
-            #"Z_ll_pt",
-            #"Z_ll_eta",
-            #"Second_Pair_flavor",
-            #"Second_Pair_mass",
-            #"Second_Pair_pt",
-            #"Second_Pair_eta",
+            "Z_ll_flavor",
+            "Z_ll_mass",
+            "Z_ll_pt",
+            "Z_ll_eta",
+            "Second_Pair_flavor",
+            "Second_Pair_mass",
+            "Second_Pair_pt",
+            "Second_Pair_eta",
             "dR_ll",
-            "dR_second_pair",
             "type_muons_sel",
+            "Z_ll_and_second_pairs_size",
+            "muon_noiso_var",
+            "muon_iso_var",
+            "electron_noiso_var",
+            "electron_iso_var",
+            "n_sf_ss_of_leptons",
             
-            #"muon_noiso_var",
-            #"muon_iso_var",
-            #"electron_noiso_var",
-            #"electron_iso_var",
-            
-            #"recoHT",
-                       
         ]
         return branch_list

@@ -1,9 +1,9 @@
 # Input directory where the files produced at the pre-selection level are
-inputDir = "/eos/user/l/lberiet/ttZ_diff_results/"
+inputDir = "/eos/user/l/lberiet/ttZ_diff_results"
 #inputDir = "/eos/user/s/selvaggi/analysis/ttbar_diff"
 
 # Input directory where the files produced at the pre-selection level are
-outputDir = "/eos/user/l/lberiet/ttZ_diff_results/finals2/"
+outputDir = "/eos/user/l/lberiet/ttZ_diff_results/3l/"
 
 processList = {
     'mgp8_pp_ttz_5f_84TeV_ttzlep': {},
@@ -75,12 +75,12 @@ do_weighted = False
 
 cutList = {
     "all_events": "n_leptons >= 0", # all events (no selection)
-    "sel1_lep": "n_leptons == 4", # 4 leptons
-    "sel2_bjets": "n_bjets >= 1 && n_bjets <= 2 && n_leptons == 4", # 1 or 2 b-jets and 4 leptons
-    "sel3_njets": "n_jets < 6 && n_leptons == 4 && n_bjets >= 1 && n_bjets <= 2", # 4 leptons and less than 6 jets and 1 or 2 b-jets
+    "sel1_lep": "n_leptons == 3", # 4 leptons
+    "sel2_bjets": "n_bjets >= 1 && n_bjets <= 2 && n_leptons == 3", # 1 or 2 b-jets and 4 leptons
+    "sel3_njets": "n_jets < 6 && n_leptons == 3 && n_bjets >= 1 && n_bjets <= 2", # 4 leptons and less than 6 jets and 1 or 2 b-jets
     #"sel3_bjets": "(n_leptons == 4) && Second_Pair_flavor == 3 && (n_bjets >= 1) && (n_bjets <= 2) ", # 4 leptons and second OS pair and 1 or 2 b-jets
-    "sel4_mll": " (Z_ll_mass) > 80. && (Z_ll_mass  < 100.) && n_bjets >= 1 && n_bjets <= 2 && n_leptons == 4 && n_jets < 6", # 4 leptons and second OS pair and 1 or 2 b-jets and Z mass between 80 and 100 GeV
-    "sel5_second_pair": "(Z_ll_mass) > 80. && (Z_ll_mass  < 100.) && n_bjets >= 1 && n_bjets <= 2 && n_leptons == 4 && n_jets < 6 && Second_Pair_flavor == 3", # 4 leptons and second OS pair and 1 or 2 b-jets and Z mass between 80 and 100 GeV
+    "sel4_mll": " (Z_ll_mass) > 80. && (Z_ll_mass  < 100.) && n_bjets >= 1 && n_bjets <= 2 && n_leptons == 3 && n_jets < 6", # 4 leptons and second OS pair and 1 or 2 b-jets and Z mass between 80 and 100 GeV
+    #"sel5_second_pair": "(Z_ll_mass) > 80. && (Z_ll_mass  < 100.) && n_bjets >= 1 && n_bjets <= 2 && n_leptons == 4 && n_jets < 6 && Second_Pair_flavor == 3", # 4 leptons and second OS pair and 1 or 2 b-jets and Z mass between 80 and 100 GeV
     # add more cuts here: note you need to && them, they are not sequential!
 }
 histoList = {

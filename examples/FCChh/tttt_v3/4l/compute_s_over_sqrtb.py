@@ -1,12 +1,12 @@
 import os
 import json
 # Set paths
-output_dir = "/eos/user/l/lberiet/ttZ_diff_results/final"
+output_dir = "/eos/user/l/lberiet/ttttfinal/"
 json_file = os.path.join(output_dir, "results.json")
 
 # Define signal and background process names
-signal_process = 'mgp8_pp_ttz_5f_84TeV_ttzlep'
-background_processes = ['mgp8_pp_tttt_5f_84TeV_4tlep',
+signal_process = 'mgp8_pp_tttt_5f_84TeV_4tlep'
+background_processes = ['mgp8_pp_ttz_5f_84TeV_ttzlep',
     'mgp8_pp_tth_5f_84TeV',
     'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep',
 

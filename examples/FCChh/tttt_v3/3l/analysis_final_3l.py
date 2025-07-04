@@ -1,31 +1,39 @@
 # Input directory where the files produced at the pre-selection level are
-inputDir = "/eos/user/l/lberiet/newttttresult/"
+inputDir = "/eos/user/l/lberiet/newttttresult/3l/"
 #inputDir = "/eos/user/s/selvaggi/analysis/ttbar_diff"
 
 # Input directory where the files produced at the pre-selection level are
-outputDir = "/eos/user/l/lberiet/ttttfinal/"
+outputDir = "/eos/user/l/lberiet/newttttresult/3l/sf_ss=0_sel/histo/"
 
 processList = {
-    'mgp8_pp_tttt_5f_84TeV_4tlep': {},
+   'mgp8_pp_tttt_wmlep_Q_0_1000_5f_84TeV': {},
+             'mgp8_pp_tttt_wmlep_Q_1000_3000_5f_84TeV': {},
+             'mgp8_pp_tttt_wmlep_Q_3000_10000_5f_84TeV': {},
+             'mgp8_pp_tttt_wmlep_Q_10000_84000_5f_84TeV': {},
+             'mgp8_pp_tttt_wplep_Q_0_1000_5f_84TeV': {},
+             'mgp8_pp_tttt_wplep_Q_1000_3000_5f_84TeV': {},
+             'mgp8_pp_tttt_wplep_Q_3000_10000_5f_84TeV': {},
+             'mgp8_pp_tttt_wplep_Q_10000_84000_5f_84TeV': {},
 
+             'mgp8_pp_ttw_5f_84TeV': {},
 
-    'mgp8_pp_ttz_5f_84TeV_ttzlep': {},
-    'mgp8_pp_tth_5f_84TeV': {},
-    'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {},
+            'mgp8_pp_ttz_5f_84TeV_ttzlep': {},
+            'mgp8_pp_tth_5f_84TeV': {},
+            'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {},
 
-    'mgp8_pp_zzz_5f_84TeV': {},
-    'mgp8_pp_wzz_5f_84TeV': {},
-    'mgp8_pp_wwz_5f_84TeV': {},
-            
-    'mgp8_pp_wwww_5f_84TeV': {},
-    'mgp8_pp_wwwz_5f_84TeV': {},
-    'mgp8_pp_wwzz_5f_84TeV': {},
-    'mgp8_pp_wzzz_5f_84TeV': {},
-    'mgp8_pp_zzzz_5f_84TeV': {},
-            
-    'mgp8_pp_ttzz_5f_84TeV': {},
-    'mgp8_pp_ttwz_5f_84TeV': {},
-           
+            'mgp8_pp_zzz_5f_84TeV': {},
+            'mgp8_pp_wzz_5f_84TeV': {},
+            'mgp8_pp_wwz_5f_84TeV': {},
+                    
+            'mgp8_pp_wwww_5f_84TeV': {},
+            'mgp8_pp_wwwz_5f_84TeV': {},
+            'mgp8_pp_wwzz_5f_84TeV': {},
+            'mgp8_pp_wzzz_5f_84TeV': {},
+            'mgp8_pp_zzzz_5f_84TeV': {},
+                    
+            'mgp8_pp_ttzz_5f_84TeV': {},
+            'mgp8_pp_ttwz_5f_84TeV': {},
+                
 
     
 }
@@ -77,16 +85,18 @@ do_weighted = False
 
 cutList = {
     "all_events": "n_leptons >= 0", # all events (no selection)
-            "sel1_lep":"n_leptons == 4", # 4 leptons
-            "sel2_bjets":"(n_leptons <= 4) && (n_bjets >= 3) ", # at least 3 b-jets
-            "sel3_jets":"(n_leptons <= 4) && (n_bjets >= 3) && (n_jets >= 3) ", # at least 3 jets
-            "sel4_notZ": "(n_leptons <= 4) && (n_bjets >= 3) && (n_jets >= 3) && (Z_ll_mass < 80 || Z_ll_mass > 100)"
+    "sel0_sf_ss":"n_leptons == 0", # 3 leptons
+            "sel1_sf_ss":"n_sf_ss_of_leptons == 0 & n_leptons == 3", # 3 leptons
+            "sel2_bjets":"n_leptons == 3 && n_sf_ss_of_leptons == 0 && (n_bjets >= 4) ", # at least 3 b-jets (4?) (njets>5)
+            "sel3_jets":"n_leptons == 3 && n_sf_ss_of_leptons == 0 && (n_bjets >= 4) && (n_jets >= 7 ) ", # at least 6 jets
+            "sel4_notZ": "n_leptons == 3 && n_sf_ss_of_leptons == 0 && (n_bjets >= 4) && (n_jets >= 7) && (Z_ll_mass < 80 || Z_ll_mass > 100)"
+            #"sel5_sf_ss": "n_sf_ss_of_leptons == 0 && (n_bjets >= 3) && (n_jets >= 6) && (Z_ll_mass < 80 || Z_ll_mass > 100)"
 , # 4 not Z
             # add more cuts here: note you need to && them, they are not sequential!
             }
 histoList = {
     # "n_jets": {"name": "n_jets", "title": "n_jets", "bin": 10, "xmin": 0, "xmax": 10},
-    "n_of_ss_sf_leptons": {"name": "n_of_ss_sf_leptons", "title": "n_of_ss_sf_leptons", "bin": 10, "xmin": 0, "xmax": 10},  
+    "n_sf_ss_of_leptons": {"name": "n_sf_ss_of_leptons", "title": "n_sf_ss_of_leptons", "bin": 10, "xmin": 0, "xmax": 10},  
     "n_jets": {"name": "n_jets", "title": "n_jets", "bin": 10, "xmin": 0, "xmax": 10},
     "n_bjets": {"name": "n_bjets", "title": "n_bjets", "bin": 10, "xmin": 0, "xmax": 10},
     "n_leptons": {"name": "n_leptons", "title": "n_leptons", "bin": 10, "xmin": 0, "xmax": 10},

@@ -8,26 +8,27 @@ intLumiLabel = f"L = {L} ab^{{-1}}"
 ana_tex = ""
 delphesVersion = "3.4.2"
 collider = "FCC-hh"
-formats = ["pdf"]
+formats = ["pdf","png"]
 
 # outdir         = './outputs/plots/recoil/'
-outdir = "/eos/user/l/lberiet/www/Histograms_Syst/4t/4l/"
-inputDir = "/eos/user/l/lberiet/Histmaker/tttt_v3/"
+outdir = "/eos/user/l/lberiet/www/Histograms_Syst/ttH"
+inputDir = "/eos/user/l/lberiet/Histmaker/ttH/"
 
 plotStatUnc = True
 
 # Define custom colors using RGB values
 custom = [
     (213, 62, 79),  # red 0
-    (253, 174, 97),  # orange 1
-    (254, 224, 144),  # yellow 2
-    (230, 245, 152),  # yg 3
-    (26, 152, 80),  # green 4
-    (50, 136, 189),  # blue 5
-    (208, 28, 139),  # pink 6
-    (241, 182, 218),  # light pink 7
-    (128, 205, 193),  # light blue 8
-    (1, 133, 113),  # blue green 9
+    (150, 150, 150),  # grey 1
+    (253, 174, 97),  # orange 2
+    (254, 224, 144),  # yellow 3
+    (230, 245, 152),  # yg 4
+    (26, 152, 80),  # green 5
+    (50, 136, 189),  # blue 6
+    (208, 28, 139),  # pink 7
+    (241, 182, 218),  # light pink 8
+    (128, 205, 193),  # light blue 9
+    (1, 133, 113),  # blue green 10
 ]
 
 # Create custom ROOT colors and store their indices
@@ -38,13 +39,15 @@ for i, (r, g, b) in enumerate(custom):
     custom_color_indices.append(color_index)
 
 colors = {}
-colors["tttt"] = ROOT.kBlack
-colors["VVV"] = custom_color_indices[1]
-colors["VVVV"] = custom_color_indices[2]
-colors["ttVV"] = custom_color_indices[4]
-colors["ttH"] = custom_color_indices[5]
-colors["ttZ"] = custom_color_indices[3]
-colors["ZZjj"] = custom_color_indices[6]
+colors["ttH"] = ROOT.kBlack
+colors["tttt"] = custom_color_indices[0]
+colors["ZZjj"] = custom_color_indices[1]
+colors["VVV"] = custom_color_indices[2]
+colors["VVVV"] = custom_color_indices[3]
+colors["ttV"] = custom_color_indices[4]
+colors["ttVV"] = custom_color_indices[5]
+colors["ttZ"] = custom_color_indices[6]
+colors["tt"] = custom_color_indices[7]
 
 procs = {}
 
@@ -65,25 +68,28 @@ procs = {}
 # 'mgp8_pp_tttt_5f_84TeV': {"fraction": fraction},
 
 procs["signal"] = {
-    "tttt": ["mgp8_pp_tttt_5f_84TeV_4tlep"],
+    "ttH": ["mgp8_pp_tth_5f_Q_0_1000_84TeV", "mgp8_pp_tth_5f_Q_1000_3000_84TeV", "mgp8_pp_tth_5f_Q_3000_10000_84TeV", "mgp8_pp_tth_5f_Q_10000_84000_84TeV"],
     }
 procs["backgrounds"] = {
-    'ttZ': ['mgp8_pp_ttz_5f_84TeV_ttzlep'],
+    "tttt": ["mgp8_pp_tttt_5f_84TeV_4tlep"],
     'ZZjj': ["mgp8_pp_ZZjj_HF_5f_84TeV_zzlep"],
     "VVV": ["mgp8_pp_wwz_5f_84TeV", "mgp8_pp_wzz_5f_84TeV", "mgp8_pp_zzz_5f_84TeV"],
     "VVVV": ["mgp8_pp_wwwz_5f_84TeV", "mgp8_pp_wwww_5f_84TeV", "mgp8_pp_wwzz_5f_84TeV", "mgp8_pp_wzzz_5f_84TeV", "mgp8_pp_zzzz_5f_84TeV"],
-    'ttH': ["mgp8_pp_tth_5f_Q_0_1000_84TeV", "mgp8_pp_tth_5f_Q_1000_3000_84TeV", "mgp8_pp_tth_5f_Q_3000_10000_84TeV", "mgp8_pp_tth_5f_Q_10000_84000_84TeV"],
+    'ttZ': ["mgp8_pp_ttz_5f_84TeV_ttzlep"],
     "ttVV": ["mgp8_pp_ttwz_5f_84TeV",  "mgp8_pp_ttzz_5f_84TeV"],
+    #"tt": ["mgp8_pp_tt_HT_2000_100000_5f_84TeV_blvblv", "mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv"],
     }
 
 legend = {}
-legend["tttt"] = "tttt"
-legend["ttZ"] = "ttZ"
+legend["ttH"] = "ttH"
 legend["ZZjj"] = "ZZjj"
+legend["tttt"] = "tttt"
 legend["VVV"] = "VVV"
 legend["VVVV"] = "VVVV"
+legend["ttV"] = "ttV"
 legend["ttVV"] = "ttVV"
-legend["ttH"] = "ttH"
+legend["ttZ"] = "ttZ"
+legend["tt"] = "tt"
 
 hists = {}
 hists2D = {}
@@ -98,11 +104,11 @@ hists["cutFlow"] = {
     "output": "cutFlow",
     "logy": True,
     "stack": False,
-     "ymin": 1,
-     "ymax": 1e10,
+    # "xmin": -0.5,
+    # "xmax": 2.5,
     # "xtitle": selections,
     "ytitle": "Events",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttH", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttZ"],
 }
 
 
@@ -115,7 +121,7 @@ hists["n_bjets_pre_stack"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttH", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttZ"],
     "density": False,
 }
 
@@ -128,7 +134,7 @@ hists["n_leptons_pre_stack"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttH", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttZ"],
     "density": False,
 }
 
@@ -141,7 +147,7 @@ hists["n_bjets_pre_norm"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
     "density": True,
 }
 
@@ -154,7 +160,7 @@ hists["n_leptons_pre_norm"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttH", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttZ"],
     "density": True,
 }
 
@@ -168,7 +174,7 @@ hists["MET_stack"] = {
     "xmin": 0,
     "xmax": 1000,
     "ytitle": "Events",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttH", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttZ"],
     "density": False,
 }
 
@@ -181,7 +187,7 @@ hists["MET_norm"] = {
     "xmin": 0,
     "xmax": 1000,
     "ytitle": "Events",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttH", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttZ"],
     "density": True,
 }
 
@@ -192,14 +198,14 @@ hists["HT_sel_stack"] = {
     "stack": False,
     "xtitle": "H_{T} [TeV]",
     "xmin": 0.5,
-    "xmax": 6.0,
+    "xmax": 2.5,
     "ymin": 1,
     "ymax": 1e6,
     "rebin_last": True,
     "store_csv": True,
-    "yrange_syst": (-0.5,0.5),
+    "yrange_syst": (-0.1,0.1),
     "ytitle": "Events / TeV",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttH", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttZ"],
     "density": False,
     "divideByBinWidth": True,
 }
@@ -211,45 +217,44 @@ hists["HT_stack"] = {
     "stack": False,
     "xtitle": "H_{T} [TeV]",
     "xmin": 0.5,
-    "xmax": 6.0,
+    "xmax": 4.5,
     "ymin": 1,
-    "ymax": 1e4,
+    "ymax": 1e9,
     "ytitle": "Events / TeV",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttH", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttZ"],
     "density": False,
     "divideByBinWidth": True,
     "rebin_last": True,
     "store_csv": True,
-    "yrange_syst": (-0.5,0.5),
+    "yrange_syst": (-0.1,0.1),
     "systematics": [
     {
         "signal": True,
-        "process": "tttt",
-        "label": "electron id",
-        "type": "shape",
-        "hname": "eleId",
-        "color": custom_color_indices[7],            
-    },
-    {
-        "signal": True,
-        "process": "tttt",
+        "process": "ttH",
         "label": "muon id",
         "type": "shape",
         "hname": "muId",
         "color": custom_color_indices[8],            
     },
-    
     {
         "signal": True,
-        "process": "tttt",
+        "process": "ttH",
+        "label": "electron id",
+        "type": "shape",
+        "hname": "eleId",
+        "color": custom_color_indices[9],            
+    },
+    {
+        "signal": True,
+        "process": "ttH",
         "label": "bjet id",
         "type": "shape",
         "hname": "bjetId",
-        "color": custom_color_indices[9],            
+        "color": custom_color_indices[10],            
     },    
     {
         "signal": True,
-        "process": "tttt",
+        "process": "ttH",
         "label": "luminosity",
         "type": "const",
         "value": 0.01,
@@ -269,8 +274,74 @@ hists["HT_norm"] = {
     "xmin": 0,
     "xmax": 5,
     "ytitle": "Events",
-    "processes": ["tttt", "VVV", "VVVV", "ttZ", "ttVV", "ttH", "ZZjj"],
+    "processes": ["ttH", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttZ"],
     "density": True,
 }
 
+hists['Z_ll_1_pt_stack'] = {
+    'input': 'Z_ll_1_pt_sel',
+    'output': 'Z_ll_1_pt_stack',
+    'logy': True,
+    'stack': False,
+    'xtitle': 'Z* p_{T} [GeV]',
+    'xmin': 0,
+    'xmax': 1500,
+    "ymin": 1,
+    "ymax": 1e6,
+    'ytitle': 'Events / GeV',
+    'processes': ['ttH', 'tttt', 'ZZjj', 'VVV', 'VVVV', 'ttV', 'ttVV', 'ttZ'],
+    'density': False,
+    'divideByBinWidth': True,
+    'rebin_last': True,
+    'store_csv': True,
+    'yrange_syst': (-0.1,0.1),
+    "systematics": [
+    {
+        "signal": True,
+        "process": "ttH",
+        "label": "muon id",
+        "type": "shape",
+        "hname": "muId",
+        "color": custom_color_indices[8],            
+    },
+    {
+        "signal": True,
+        "process": "ttH",
+        "label": "electron id",
+        "type": "shape",
+        "hname": "eleId",
+        "color": custom_color_indices[9],            
+    },
+    {
+        "signal": True,
+        "process": "ttH",
+        "label": "bjet id",
+        "type": "shape",
+        "hname": "bjetId",
+        "color": custom_color_indices[10],            
+    },    
+    {
+        "signal": True,
+        "process": "ttH",
+        "label": "luminosity",
+        "type": "const",
+        "value": 0.01,
+        "color": custom_color_indices[1],            
+    },
 
+    ]       
+
+}
+
+hists['Z_ll_1_pt_norm'] = {
+    'input': 'Z_ll_1_pt_sel',
+    'output': 'Z_ll_1_pt_norm',
+    'logy': False,
+    'stack': False,
+    'xtitle': 'Z* p_{T} [GeV]',
+    'xmin': 0,
+    'xmax': 1000,
+    'ytitle': 'Events',
+    'processes': ['ttH', 'tttt', 'ZZjj', 'VVV', 'VVVV', 'ttV', 'ttVV', 'ttZ'],
+    'density': True,
+}

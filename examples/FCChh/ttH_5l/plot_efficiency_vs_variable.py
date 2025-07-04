@@ -2,10 +2,10 @@ import ROOT
 import os
 
 # Define the variable to plot efficiency against
-variable = "dR_ll"  # Change to "dR_ll" or any other variable as needed
+variable = "HT"  # Change to "dR_ll" or any other variable as needed
 
 # Define the base directory and file names
-output_dir = "/eos/user/l/lberiet/ttH/efficiencies"
+output_dir = "/eos/user/l/lberiet/www/ttH/Selection_efficiencies"
 process = "/eos/user/l/lberiet/ttH/final/mgp8_pp_tth01j_5f_hllll"
 
 all_file = os.path.join(output_dir, f"{process}_all_events_histo.root")
@@ -75,14 +75,14 @@ def get_efficiency_hist(h_all, h_sel, name, color):
 # Compute efficiency histograms
 eff1 = get_efficiency_hist(h_all, h_sel1, "eff_sel1_lep", ROOT.kBlue)
 eff2 = get_efficiency_hist(h_all, h_sel2, "eff_sel2_bjets", ROOT.kRed)
-eff3 = get_efficiency_hist(h_all, h_sel3, "eff_sel3_njets", ROOT.kGreen + 2)
+eff3 = get_efficiency_hist(h_all, h_sel3, "eff_sel3_Hmass", ROOT.kGreen + 2)
 #eff4 = get_efficiency_hist(h_all, h_sel4, "eff_sel4_mll", ROOT.kOrange + 2)
 #eff5 = get_efficiency_hist(h_all, h_sel5, "eff_sel5_second_pair", ROOT.kAzure + 6)
 
 # Plot
 c = ROOT.TCanvas("c", f"Efficiency vs {variable}", 800, 600)
 eff1.SetTitle(f"Selection Efficiency vs {variable};{variable};Efficiency")
-eff1.GetYaxis().SetRangeUser(0, 0.2)
+eff1.GetYaxis().SetRangeUser(0, 0.065)
 eff1.Draw("HIST")
 eff2.Draw("HIST SAME")
 eff3.Draw("HIST SAME")
@@ -91,7 +91,7 @@ eff3.Draw("HIST SAME")
 legend = ROOT.TLegend(0.55, 0.70, 0.88, 0.90)
 legend.AddEntry(eff1, "sel1_lep", "l")
 legend.AddEntry(eff2, "sel2_bjets", "l")
-legend.AddEntry(eff3, "sel3_njets", "l")
+legend.AddEntry(eff3, "sel3_Hmass", "l")
 #legend.AddEntry(eff4, "sel4_mll", "l")
 #legend.AddEntry(eff5, "sel5_second_pair", "l")
 

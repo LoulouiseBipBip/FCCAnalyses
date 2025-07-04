@@ -5,15 +5,17 @@ import os
 variable = "HT"  # Change to "dR_ll" or any other variable as needed
 
 # Define the base directory and file names
-output_dir = "/eos/user/l/lberiet/ttZ_diff_results/efficiencies/"
-process = "/eos/user/l/lberiet/ttZ_diff_results/finals2/mgp8_pp_ttz_5f_84TeV_ttzlep"
+input_dir = "/eos/user/l/lberiet/ttttfinal/"
+output_dir = "/eos/user/l/lberiet/www/4t_analysis/4l/SS_OF=0"
 
-all_file = os.path.join(output_dir, f"{process}_all_events_histo.root")
-sel1_file = os.path.join(output_dir, f"{process}_sel1_lep_histo.root")
-sel2_file = os.path.join(output_dir, f"{process}_sel2_bjets_histo.root")
-sel3_file = os.path.join(output_dir, f"{process}_sel3_njets_histo.root")
-sel4_file = os.path.join(output_dir, f"{process}_sel4_mll_histo.root")
-sel5_file = os.path.join(output_dir, f"{process}_sel5_second_pair_histo.root")
+process = 'mgp8_pp_tttt_5f_84TeV_4tlep'
+all_file = os.path.join(input_dir, f"{process}_all_events_histo.root")
+sel1_file = os.path.join(input_dir, f"{process}_sel1_lep_histo.root")
+sel2_file = os.path.join(input_dir, f"{process}_sel_SS_OF=0_histo.root")
+sel3_file = os.path.join(input_dir, f"{process}_sel2_bjets_histo.root")
+sel4_file = os.path.join(input_dir, f"{process}_sel3_jets_histo.root")
+sel5_file = os.path.join(input_dir, f"{process}_sel4_notZ_histo.root")
+
 
 # Open files
 f_all = ROOT.TFile.Open(all_file)
@@ -22,6 +24,7 @@ f_sel2 = ROOT.TFile.Open(sel2_file)
 f_sel3 = ROOT.TFile.Open(sel3_file)
 f_sel4 = ROOT.TFile.Open(sel4_file)
 f_sel5 = ROOT.TFile.Open(sel5_file)
+#f_sel5 = ROOT.TFile.Open(sel5_file)
 if not f_all or f_all.IsZombie():
     print(f"Could not open file: {all_file}")
     exit(1)
@@ -74,7 +77,7 @@ def get_efficiency_hist(h_all, h_sel, name, color):
 
 # Compute efficiency histograms
 eff1 = get_efficiency_hist(h_all, h_sel1, "eff_sel1_lep", ROOT.kBlue)
-eff2 = get_efficiency_hist(h_all, h_sel2, "eff_sel2_bjets", ROOT.kRed)
+eff2 = get_efficiency_hist(h_all, h_sel2, "eff_sel2_OFSS", ROOT.kRed)
 eff3 = get_efficiency_hist(h_all, h_sel3, "eff_sel3_njets", ROOT.kGreen + 2)
 eff4 = get_efficiency_hist(h_all, h_sel4, "eff_sel4_mll", ROOT.kOrange + 2)
 eff5 = get_efficiency_hist(h_all, h_sel5, "eff_sel5_second_pair", ROOT.kAzure + 6)
@@ -82,7 +85,7 @@ eff5 = get_efficiency_hist(h_all, h_sel5, "eff_sel5_second_pair", ROOT.kAzure + 
 # Plot
 c = ROOT.TCanvas("c", f"Efficiency vs {variable}", 800, 600)
 eff1.SetTitle(f"Selection Efficiency vs {variable};{variable};Efficiency")
-eff1.GetYaxis().SetRangeUser(0, 0.2)
+eff1.GetYaxis().SetRangeUser(0, 0.04)
 eff1.Draw("HIST")
 eff2.Draw("HIST SAME")
 eff3.Draw("HIST SAME")
@@ -90,10 +93,10 @@ eff4.Draw("HIST SAME")
 eff5.Draw("HIST SAME")
 legend = ROOT.TLegend(0.55, 0.70, 0.88, 0.90)
 legend.AddEntry(eff1, "sel1_lep", "l")
-legend.AddEntry(eff2, "sel2_bjets", "l")
-legend.AddEntry(eff3, "sel3_njets", "l")
-legend.AddEntry(eff4, "sel4_mll", "l")
-legend.AddEntry(eff5, "sel5_second_pair", "l")
+legend.AddEntry(eff2, "sel2_OFSS", "l")
+legend.AddEntry(eff3, "sel3_bjets", "l")
+legend.AddEntry(eff4, "sel4_jets", "l")
+legend.AddEntry(eff5, "sel5_noZ", "l")
 
 legend.SetBorderSize(0)
 legend.SetFillStyle(0)

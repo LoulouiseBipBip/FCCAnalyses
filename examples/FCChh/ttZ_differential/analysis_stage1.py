@@ -5,7 +5,7 @@ Ntuple production for FCC-hh analysis of top-quark pair production
 from argparse import ArgumentParser
 
 fraction = 1
-
+bins_ht = 200
 # Mandatory: Analysis class where the user defines the operations on the
 # dataframe.
 class Analysis:
@@ -26,23 +26,23 @@ class Analysis:
         # Mandatory: List of processes to run over
         self.process_list = {
             'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+           # 'mgp8_pp_ttw_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
 
-            'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
-
-            'mgp8_pp_zzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_zzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
             
-            'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, '
+            #'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
             
-            'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
            
                 }
 
@@ -51,7 +51,7 @@ class Analysis:
         self.input_dir = "/eos/experiment/fcc/hh/generation/DelphesEvents/fcc_v07/II/"
 
         # Optional: output directory, default is local running directory
-        self.output_dir = "/eos/user/l/lberiet/ttZ_diff_results/"
+        self.output_dir = "/eos/user/l/lberiet/ttZ_diff_results/final2/"
         #self.output_dir = "/eos/user/s/selvaggi/analysis/ttbar_differential_v2/"
 
         # Optional: analysisName, default is ''
@@ -60,12 +60,13 @@ class Analysis:
         # Optional: number of threads to run on, default is 'all available'
         self.ncpus = 4
 
+        #self.fourl = True 
         # Optional: running on HTCondor, default is False
         # self.run_batch = False
         self.run_batch = False
 
         # Optional: Use weighted events
-        self.do_weighted = False 
+       # self.do_weighted = True 
 
         # Optional: read the input files with podio::DataSource
         self.use_data_source = False  # explicitly use old way in this version
@@ -79,11 +80,13 @@ class Analysis:
         """
         Analysis graph.
         """
+        
+        results = []
         dframe2 = dframe.Define("weight", "EventHeader.weight")
         weightsum = dframe2.Sum("weight")
         print(f"Weight sum: {weightsum}")
         
-        dframe2 = (
+        dframe2 = ( 
             dframe2
             ########################################### DEFINITION OF VARIABLES ###########################################
             # select muons 
@@ -170,7 +173,18 @@ class Analysis:
             # ######### cut on number of bjets and leptons
             #.Filter("n_leptons >= 3")
             #.Define(f"cut{len(selections)}", f"{len(selections)}")
-           
+         
+            #.Filter("Z_ll_and_second_pairs_size ==4")
+            #.Filter("Second_Pair_flavor == 3")
+
+
+            .Define("wp_eleId", "AnalysisFCChh::get_weight_emugamma_product(selpt_electrons, 2.0, 1.0)")
+            .Define("wm_eleId", "AnalysisFCChh::get_weight_emugamma_product(selpt_electrons, 2.0, -1.0)")
+            .Define("wp_muId", "AnalysisFCChh::get_weight_emugamma_product(selpt_muons, 1.0, 1.0)")
+            .Define("wm_muId", "AnalysisFCChh::get_weight_emugamma_product(selpt_muons, 1.0, -1.0)")
+            .Define("wp_bjetId", "AnalysisFCChh::get_weight_emugamma_product(sel_bjets_pt, 3.0, 1.0)")
+            .Define("wm_bjetId", "AnalysisFCChh::get_weight_emugamma_product(sel_bjets_pt, 3.0, -1.0)")
+
 
             #.Filter("n_bjets == 2")
             #.Define(f"cut{len(selections)}", f"{len(selections)}")
@@ -179,9 +193,7 @@ class Analysis:
             # calculate HT
             .Define("HT", "ScalarHT")
             .Define("ht_tev", "HT/1000.")
-            
-
-            
+           
    
         )
         return dframe2
@@ -214,9 +226,14 @@ class Analysis:
             "Z_ll_and_second_pairs_size",
             "muon_noiso_var",
             "muon_iso_var",
-            "electron_noiso_var",
-            "electron_iso_var",
-            
+            #"electron_noiso_var",
+            #"electron_iso_var",
+            "wp_eleId",
+            "wm_eleId",
+            "wp_muId",
+            "wm_muId",
+            "wp_bjetId",
+            "wm_bjetId",
             #"recoHT",
                        
         ]

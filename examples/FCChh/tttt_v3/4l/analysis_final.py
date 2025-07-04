@@ -1,17 +1,16 @@
 # Input directory where the files produced at the pre-selection level are
-inputDir = "/eos/user/l/lberiet/ttH/results/"
+inputDir = "/eos/user/l/lberiet/newttttresult/"
 #inputDir = "/eos/user/s/selvaggi/analysis/ttbar_diff"
 
 # Input directory where the files produced at the pre-selection level are
-outputDir = "/eos/user/l/lberiet/ttH/final/"
+outputDir = "/eos/user/l/lberiet/ttttfinal/"
 
 processList = {
     'mgp8_pp_tttt_5f_84TeV_4tlep': {},
 
 
     'mgp8_pp_ttz_5f_84TeV_ttzlep': {},
-    #'mgp8_pp_tth_5f_84TeV': {},
-    'mgp8_pp_tth01j_5f_hllll': {},
+    'mgp8_pp_tth_5f_84TeV': {},
     'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {},
 
     'mgp8_pp_zzz_5f_84TeV': {},
@@ -32,7 +31,7 @@ processList = {
 }
 
 # Link to the dictonary that contains all the cross section informations etc...
-procDict = "/eos/experiment/fcc/hh/utils/FCCDicts/FCChh_procDict_fcc_v07_II.json"
+procDict = "/eos/experiment/fcc/hh/utils/FCCDicts/FCChh_procDict_fcc_v06_II.json"
 # Note the numbeOfEvents and sumOfWeights are placeholders that get overwritten with the correct values in the samples
 
 # How to add a process that is not in the official dictionary:
@@ -51,7 +50,7 @@ nCPUS = 48
 doTree = True
 
 saveTabular = True
-
+saveJSON = True
 # Optional: Use weighted events
 do_weighted = False
 
@@ -78,32 +77,23 @@ do_weighted = False
 
 cutList = {
     "all_events": "n_leptons >= 0", # all events (no selection)
-            "sel1_lep":"n_leptons == 5", # 3 leptons
-            "sel2_bjets":" (n_bjets ==2) && (n_leptons == 5) ", # at most 2 b-jets
-            "sel3_Hmass":" (n_bjets == 2) && (n_leptons == 5) && (Z_ll_2_mass < 60)", # at most 3 jets
-            #"sel4_Z_1": "(n_leptons == 4) && (n_bjets <= 2) && (n_jets <= 3) && (Z_ll_1_mass > 80 && Z_ll_1_mass < 100)", # first pair is Z
-            #"sel5_Z_2": "(n_leptons == 4) && (n_bjets <= 2) && (n_jets <= 3) && (Z_ll_2_mass > 80 && Z_ll_2_mass < 100) && (Z_ll_1_mass > 80 && Z_ll_1_mass < 100)" # second pair is Z
+    
+            "sel1_lep":"n_leptons == 4 ", # 4 leptons
+            "sel_SS_OF=0": "n_of_ss_sf_leptons == 0 && n_leptons == 4",
+            "sel2_bjets":"(n_leptons == 4) && (n_bjets >= 2) && n_of_ss_sf_leptons == 0", # at least 3 b-jets
+            "sel3_jets":"(n_leptons == 4) && (n_bjets >= 3) && (n_jets >= 3) && n_of_ss_sf_leptons == 0", # at least 3 jets
+            "sel4_notZ": "(n_leptons == 4) && (n_bjets >= 3) && (n_jets >= 3) && (Z_ll_mass < 80 || Z_ll_mass > 100) && n_of_ss_sf_leptons == 0"
+, # 4 not Z
             # add more cuts here: note you need to && them, they are not sequential!
             }
 histoList = {
     # "n_jets": {"name": "n_jets", "title": "n_jets", "bin": 10, "xmin": 0, "xmax": 10},
-    #"n_of_ss_sf_leptons": {"name": "n_of_ss_sf_leptons", "title": "n_of_ss_sf_leptons", "bin": 10, "xmin": 0, "xmax": 10},  
-    #"Z_ll_1_pt": {"name": "Z_ll_1_pt", "title": "Z_ll_1_pt", "bin": 25, "xmin": 0, "xmax": 100},
-    #"Z_ll_2_pt": {"name": "Z_ll_2_pt", "title": "Z_ll_2_pt", "bin": 25, "xmin": 0, "xmax": 100},
-    "Pair1_Pair2_mass": {"name": "Pair1_Pair2_mass", "title": "Pair1_Pair2_mass", "bin": 50, "xmin": 0, "xmax": 250},
-    "Z_ll_2_flavor": {"name": "Z_ll_2_flavor", "title": "Z_ll_2_flavor", "bin": 4, "xmin": 0, "xmax": 4},
-    "pT_jets": {"name": "pT_jets", "title": "pT_jets", "bin": 50, "xmin": 0, "xmax": 200},
-    "pT_bjets": {"name": "pT_bjets", "title": "pT_bjets", "bin": 50, "xmin": 0, "xmax": 200},
-    "Z_ll_and_second_pairs_size": {"name": "Z_ll_and_second_pairs_size", "title": "Z_ll_and_second_pairs_size", "bin": 10, "xmin": 0, "xmax": 10},
-    "Z_ll_1_mass": {"name": "Z_ll_1_mass", "title": "Z_ll_1_mass", "bin": 50, "xmin": 0, "xmax": 250},
-    "Z_ll_2_mass": {"name": "Z_ll_2_mass", "title": "Z_ll_2_mass", "bin": 50, "xmin": 0, "xmax": 250},
-    "Z_ll_1_pt": {"name": "Z_ll_1_pt", "title": "Z_ll_1_pt", "bin": 50, "xmin": 0, "xmax": 250},
-    "Z_ll_2_pt": {"name": "Z_ll_2_pt", "title": "Z_ll_2_pt", "bin": 50, "xmin": 0, "xmax": 250},
+    "n_of_ss_of_leptons": {"name": "n_of_ss_sf_leptons", "title": "n_of_ss_sf_leptons", "bin": 10, "xmin": 0, "xmax": 10},  
     "n_jets": {"name": "n_jets", "title": "n_jets", "bin": 10, "xmin": 0, "xmax": 10},
     "n_bjets": {"name": "n_bjets", "title": "n_bjets", "bin": 10, "xmin": 0, "xmax": 10},
     "n_leptons": {"name": "n_leptons", "title": "n_leptons", "bin": 10, "xmin": 0, "xmax": 10},
-    #"Z_ll_mass": {"name": "Z_ll_mass", "title": "Z_ll_mass", "bin": 50, "xmin": 0, "xmax": 250},
-    #"Second_Pair_mass": {"name": "Second_Pair_mass", "title": "Second_Pair_mass", "bin": 10, "xmin": 0, "xmax": 10},
+    "Z_ll_mass": {"name": "Z_ll_mass", "title": "Z_ll_mass", "bin": 50, "xmin": 0, "xmax": 250},
+    "Second_Pair_mass": {"name": "Second_Pair_mass", "title": "Second_Pair_mass", "bin": 10, "xmin": 0, "xmax": 10},
     "dR_ll": {"name": "dR_ll", "title": "dR_ll", "bin": 10, "xmin": 0, "xmax": 10},
     "HT": {"name": "HT", "title": "H_{T} [TeV]", "bin": 100, "xmin": 0, "xmax": 8000},
     "MET": {"name": "MET", "title": "MET", "bin": 20, "xmin": 0, "xmax": 2000},
