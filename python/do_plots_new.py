@@ -200,15 +200,8 @@ def mapHistosFromHistmaker(config: dict[str, any], hist_name: str, param, hist_c
             with ROOT.TFile(fin) as tf:
                 # print(f"Getting histogram {hist_name} from {fin}")
                 h = tf.Get(hist_name)
-                if not h:
-                    LOGGER.warning(f"Histogram {hist_name} not found in {fin}")
-                    continue
-                if not hasattr(h, 'SetDirectory'):
-                    LOGGER.warning(f"Object {hist_name} in {fin} does not have SetDirectory method, skipping SetDirectory call")
-                    hh = copy.deepcopy(h)
-                else:
-                    hh = copy.deepcopy(h)
-                    hh.SetDirectory(0)
+                hh = copy.deepcopy(h)
+                hh.SetDirectory(0)
             # LOGGER.info("ScaleSig: %g", scaleSig)
             hh.Scale(param.intLumi * scaleSig)
             hh.Rebin(rebin)
@@ -230,17 +223,9 @@ def mapHistosFromHistmaker(config: dict[str, any], hist_name: str, param, hist_c
             with ROOT.TFile(fin) as tf:
                 # print(f"Getting histogram {hist_name} from {fin}")
                 h = tf.Get(hist_name)
-                if not h:
-                    LOGGER.warning(f"Histogram {hist_name} not found in {fin}")
-                    continue
-                if not hasattr(h, 'SetDirectory'):
-                    LOGGER.warning(f"Object {hist_name} in {fin} does not have SetDirectory method, skipping SetDirectory call")
-                    hh = copy.deepcopy(h)
-                else:
-                    hh = copy.deepcopy(h)
-                    hh.SetDirectory(0)
-            # LOGGER.info("ScaleSig: %g", scaleSig)
-            hh.Scale(param.intLumi * scaleSig)
+                hh = copy.deepcopy(h)
+                hh.SetDirectory(0)
+            hh.Scale(param.intLumi)
             hh.Rebin(rebin)
 
             if len(hbackgrounds[b]) == 0:
@@ -271,7 +256,6 @@ def find_empty_bins(histo):
     # --- merge last empty bins  ---
     empty_bin_indices = []
     nbins0 = histo.GetNbinsX()
-    merge_index = nbins0  # Initialize to last bin in case no empty bins are found
 
     for i in range(nbins0, 0, -1):
         if histo.GetBinContent(i) == 0:
@@ -282,10 +266,7 @@ def find_empty_bins(histo):
             break
 
     print("Empty bin indices in histos[0]:", empty_bin_indices)
-    if empty_bin_indices:
-        print("Merging bins from", merge_index+1, "to", nbins0, "into bin", merge_index)
-    else:
-        print("No empty bins found to merge.")
+    print("Merging bins from", merge_index+1, "to", nbins0, "into bin", merge_index)
 
     return empty_bin_indices, merge_index
  
@@ -1139,7 +1120,6 @@ def drawStack(
 ):
     
     print(" --- processing --- ", name)
-    print("logY value is:", logY)  # Debug statement to check logY value
     hist_cfg = config["hists"][name]
     doDensity = hist_cfg.get("density", False)
     divideByBinWidth = hist_cfg.get("divideByBinWidth", False)
@@ -1150,14 +1130,8 @@ def drawStack(
     print(doDensity, divideByBinWidth)
     print(systematics)
 
-    # Explicitly disable global logarithmic scale setting to prevent overrides
-    ROOT.gStyle.SetOptLogy(0)
-    print("Global logarithmic scale setting disabled")
-
     canvas = ROOT.TCanvas(name, name, 800, 800)
-    canvas.SetLogy(0)  # Ensure canvas starts with linear scale
-    if logY:
-        canvas.SetLogy(1)  # Set to logarithmic only if logY is True
+    canvas.SetLogy(logY)
     canvas.SetTicks(1, 1)
     canvas.SetLeftMargin(0.14)
     canvas.SetRightMargin(0.08)
@@ -1197,8 +1171,6 @@ def drawStack(
 
     if logY:
         canvas.SetLogy(1)
-    else:
-        canvas.SetLogy(0)  # Reinforce linear scale if logY is False
 
     # define stacked histo
     hStack = ROOT.THStack("hstack", "")
@@ -1537,11 +1509,7 @@ def drawStack(
     h_dummy.Draw("HIST")
     if doDensity:
         for h in histos:
-            integral = h.Integral(0, h.GetNbinsX()+1)
-            if integral > 0:
-                h.Scale(1.0 / integral)
-            else:
-                LOGGER.warning(f"Histogram {h.GetName()} has zero or negative integral ({integral}), skipping normalization.")
+            h.Scale(1.0 / h.Integral(0, h.GetNbinsX()+1))
             h.Draw("HIST SAME")
 
     elif stacksig:
@@ -1566,7 +1534,7 @@ def drawStack(
             upper_pad.SetLeftMargin(0.14)
             lower_pad.SetLeftMargin(0.14)
             lower_pad.SetTopMargin(0.05)
-            lower_pad.SetBottomMargin(0.2)
+            lower_pad.SetBottomMargin(0.3)
 
             upper_pad.Draw()
             lower_pad.Draw()
@@ -1633,7 +1601,7 @@ def drawStack(
             # legend_ind.SetBorderSize(0)
             legend_ind.SetFillStyle(1001)
             legend_ind.SetFillColor(0)
-            legend_ind.SetTextSize(0.03)
+            legend_ind.SetTextSize(0.05)
 
             for i, syst in enumerate(systematics):
                 for var in ["up", "down"]:
@@ -1895,18 +1863,6 @@ def drawStack(
     canvas.Modified()
     canvas.Update()
 
-    # Final check to ensure correct scale before saving
-    print("Final check - logY value is:", logY)
-    if logY:
-        canvas.SetLogy(1)
-        print("Final setting: Canvas set to logarithmic scale")
-    else:
-        canvas.SetLogy(0)
-        print("Final setting: Canvas set to linear scale")
-
-    # Check for global ROOT style settings that might affect scale
-    print("Checking ROOT global style for log y-axis setting:", ROOT.gStyle.GetOptLogy())
-
     if "AAAyields" in name:
         dummyh = ROOT.TH1F("", "", 1, 0, 1)
         dummyh.SetStats(0)
@@ -1999,9 +1955,6 @@ def print_canvas(canvas, name, formats, directory):
 
     if not os.path.exists(directory):
         os.system("mkdir -p " + directory)
-
-    # Debug statement to check canvas scale setting before saving
-    print("Before saving - Canvas log y-axis setting:", canvas.GetLogy())
 
     for f in formats:
         out_file = os.path.join(directory, name) + "." + f
