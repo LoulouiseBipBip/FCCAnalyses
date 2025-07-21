@@ -8,11 +8,11 @@ intLumiLabel = f"L = {L} ab^{{-1}}"
 ana_tex = ""
 delphesVersion = "3.4.2"
 collider = "FCC-hh"
-formats = ["png"]
+formats = ["png", "pdf"]
 
 # outdir         = './outputs/plots/recoil/'
-outdir = "/eos/user/l/lberiet/www/Histograms_Syst/ttZ"
-inputDir = "/eos/user/l/lberiet/Histmaker/ttZ_differential/"
+outdir = "/eos/user/l/lberiet/www/Histograms_Syst/ttZ/4l"
+inputDir = "/eos/user/l/lberiet/Histmaker/ttZ_differential/4l"
 
 plotStatUnc = True
 
@@ -46,7 +46,11 @@ colors["VVV"] = custom_color_indices[2]
 colors["VVVV"] = custom_color_indices[3]
 colors["ttV"] = custom_color_indices[4]
 colors["ttVV"] = custom_color_indices[5]
-colors["ttH"] = custom_color_indices[6]
+colors["ttH_WW"] = custom_color_indices[6]
+colors["ttH_tauTau"] = custom_color_indices[7]
+colors["ttH_ZZ"] = custom_color_indices[8]
+colors["tt"] = custom_color_indices[9]
+colors['WZjj'] = custom_color_indices[10]    
 #colors["tt"] = custom_color_indices[7]
 
 procs = {}
@@ -68,16 +72,39 @@ procs = {}
 # 'mgp8_pp_tttt_5f_84TeV': {"fraction": fraction},
 
 procs["signal"] = {
-    "ttZ": ["mgp8_pp_ttz_5f_84TeV_ttzlep"],
+    "ttZ": ["mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep",
+    "mgp8_pp_ttz_5f_Q_1000_3000_84TeV_ttzlep",
+    "mgp8_pp_ttz_5f_Q_3000_10000_84TeV_ttzlep",
+    "mgp8_pp_ttz_5f_Q_10000_84000_84TeV_ttzlep",],
     }
+
 procs["backgrounds"] = {
     "tttt": ["mgp8_pp_tttt_5f_84TeV_4tlep"],
     'ZZjj': ["mgp8_pp_ZZjj_HF_5f_84TeV_zzlep"],
-    "VVV": ["mgp8_pp_wwz_5f_84TeV", "mgp8_pp_wzz_5f_84TeV", "mgp8_pp_zzz_5f_84TeV"],
+    "VVV": ["mgp8_pp_wwz_5f_Q_0_1000_84TeV", "mgp8_pp_wzz_5f_Q_0_1000_84TeV", "mgp8_pp_zzz_5f_Q_0_1000_84TeV",
+            "mgp8_pp_wwz_5f_Q_1000_3000_84TeV", "mgp8_pp_wwz_5f_Q_3000_10000_84TeV", "mgp8_pp_wwz_5f_Q_10000_84000_84TeV",
+            "mgp8_pp_wzz_5f_Q_1000_3000_84TeV", "mgp8_pp_wzz_5f_Q_3000_10000_84TeV", "mgp8_pp_wzz_5f_Q_10000_84000_84TeV",
+            "mgp8_pp_zzz_5f_Q_1000_3000_84TeV", "mgp8_pp_zzz_5f_Q_3000_10000_84TeV", "mgp8_pp_zzz_5f_Q_10000_84000_84TeV"],
     "VVVV": ["mgp8_pp_wwwz_5f_84TeV", "mgp8_pp_wwww_5f_84TeV", "mgp8_pp_wwzz_5f_84TeV", "mgp8_pp_wzzz_5f_84TeV", "mgp8_pp_zzzz_5f_84TeV"],
-    'ttH': ["mgp8_pp_tth_5f_Q_0_1000_84TeV", "mgp8_pp_tth_5f_Q_1000_3000_84TeV", "mgp8_pp_tth_5f_Q_3000_10000_84TeV", "mgp8_pp_tth_5f_Q_10000_84000_84TeV"],
+    'ttH_WW': 
+            ['mgp8_pp_tth_5f_Q_0_1000_84TeV_hww',
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww',
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww',
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww'],
+    'ttH_tauTau':       
+            ['mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau',
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau',
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau',
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_htautau'],
+
+    'ttH_ZZ':       
+            ['mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz',
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz',
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz',
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz'],
     "ttVV": ["mgp8_pp_ttwz_5f_84TeV",  "mgp8_pp_ttzz_5f_84TeV"],
-    #"tt": ["mgp8_pp_tt_HT_2000_100000_5f_84TeV_blvblv", "mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv"],
+    "tt": ["mgp8_pp_tt_HT_2000_100000_5f_84TeV_blvblv", "mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv"],
+    "WZjj": ["mgp8_pp_WZjj_HF_5f_84TeV_wzlllv"],
     }
 
 legend = {}
@@ -88,7 +115,10 @@ legend["VVV"] = "VVV"
 legend["VVVV"] = "VVVV"
 legend["ttV"] = "ttV"
 legend["ttVV"] = "ttVV"
-legend["ttH"] = "ttH"
+legend["ttH_WW"] = "ttH_WW"
+legend["ttH_tauTau"] = "ttH_tauTau"
+legend["ttH_ZZ"] = "ttH_ZZ"
+legend["WZjj"] = "WZjj"
 legend["tt"] = "tt"
 
 hists = {}
@@ -108,7 +138,7 @@ hists["cutFlow"] = {
     # "xmax": 2.5,
     # "xtitle": selections,
     "ytitle": "Events",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ", "WZjj", "tt"],
 }
 
 
@@ -121,7 +151,7 @@ hists["n_bjets_pre_stack"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ", "WZjj", "tt"],
     "density": False,
 }
 
@@ -132,9 +162,9 @@ hists["n_leptons_pre_stack"] = {
     "stack": False,
     "xtitle": "N_{leptons}",
     "xmin": -0.5,
-    "xmax": 10.5,
+    "xmax": 8,
     "ytitle": "Events",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ", "WZjj", "tt"],
     "density": False,
 }
 
@@ -147,7 +177,7 @@ hists["n_bjets_pre_norm"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ", "WZjj", "tt"],
     "density": True,
 }
 
@@ -160,7 +190,7 @@ hists["n_leptons_pre_norm"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ", "WZjj", "tt"],
     "density": True,
 }
 
@@ -174,7 +204,7 @@ hists["MET_stack"] = {
     "xmin": 0,
     "xmax": 1000,
     "ytitle": "Events",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ", "WZjj", "tt"],
     "density": False,
 }
 
@@ -187,7 +217,7 @@ hists["MET_norm"] = {
     "xmin": 0,
     "xmax": 1000,
     "ytitle": "Events",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ", "WZjj", "tt"],
     "density": True,
 }
 
@@ -205,14 +235,14 @@ hists["HT_sel_stack"] = {
     "store_csv": True,
     "yrange_syst": (-0.1,0.1),
     "ytitle": "Events / TeV",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ", "WZjj", "tt"],
     "density": False,
     "divideByBinWidth": True,
 }
 
-hists["HT_stack_linear"] = {
+hists["HT_stack"] = {
     "input": "HT",
-    "output": "HT_stack_linear",
+    "output": "HT_stack",
     "logy": False,
     "stack": False,
     "xtitle": "H_{T} [TeV]",
@@ -221,7 +251,7 @@ hists["HT_stack_linear"] = {
     "ymin": 1,
     "ymax": 1e7,
     "ytitle": "Events / TeV",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ ", "WZjj", "tt"],
     "density": False,
     "divideByBinWidth": True,
     "rebin_last": True,
@@ -274,7 +304,7 @@ hists["HT_norm"] = {
     "xmin": 0,
     "xmax": 5,
     "ytitle": "Events",
-    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH"],
+    "processes": ["ttZ", "tttt", "ZZjj", "VVV", "VVVV", "ttV", "ttVV", "ttH_WW", "ttH_tauTau", "ttH_ZZ", "WZjj", "tt"],
     "density": True,
 }
 
@@ -283,18 +313,18 @@ hists['Z_ll_pt_stack'] = {
     'output': 'Z_ll_pt_stack',
     'logy': True,
     'stack': False,
-    'xtitle': 'Z_{ll} p_{T} [GeV]',
+    'xtitle': 'p_{T}(Z_{ll}) [GeV]',
     'xmin': 0,
-    'xmax': 1800,
-    "ymin": 0.1,
-    "ymax": 1e4,
+    'xmax': 2500,
+    "ymin": 0.01,
+    "ymax": 1e3,
     'ytitle': 'Events / GeV',
-    'processes': ['ttZ', 'tttt', 'ZZjj', 'VVV', 'VVVV', 'ttV', 'ttVV', 'ttH'],
+    'processes': ['ttZ', 'tttt', 'ZZjj', 'VVV', 'VVVV', 'ttV', 'ttVV', 'ttH_WW', 'ttH_tauTau', 'ttH_ZZ', 'WZjj', 'tt'],
     'density': False,
     'divideByBinWidth': True,
     'rebin_last': True,
     'store_csv': True,
-    'yrange_syst': (-0.1,0.1),
+    'yrange_syst': (-0.5,0.5),
     "systematics": [
     {
         "signal": True,
@@ -342,6 +372,6 @@ hists['Z_ll_pt_norm'] = {
     'xmin': 0,
     'xmax': 1000,
     'ytitle': 'Events',
-    'processes': ['ttZ', 'tttt', 'ZZjj', 'VVV', 'VVVV', 'ttV', 'ttVV', 'ttH'],
+    'processes': ['ttZ', 'tttt', 'ZZjj', 'VVV', 'VVVV', 'ttV', 'ttVV', 'ttH_WW', 'ttH_tauTau', 'ttH_ZZ', 'WZjj', 'tt'],
     'density': True,
 }

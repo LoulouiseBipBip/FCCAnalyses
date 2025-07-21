@@ -542,7 +542,10 @@ int checkZllDecay(
     edm4hep::MCParticleData truth_Z,
     ROOT::VecOps::RVec<podio::ObjectID> daughter_ids,
     ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles);
-
+    
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> findSameFlavorSameSignWithOppositeFlavor(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_elecs,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons);
 
 } // namespace AnalysisFCChh
 

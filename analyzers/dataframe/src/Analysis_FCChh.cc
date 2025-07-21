@@ -4266,6 +4266,61 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> AnalysisFCChh::get_neg_pa
   }
   return result;
 }
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>
+AnalysisFCChh::findSameFlavorSameSignWithOppositeFlavor( 
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_elecs,
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons) 
+   {
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+
+// Step 1: Collect same-sign leptons
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> posElecs, negElecs, posMuons, negMuons;
+for (const auto& elec : reco_elecs) {
+    if (elec.charge > 0) posElecs.push_back(elec);
+    else negElecs.push_back(elec);
+}
+for (const auto& muon : reco_muons) {
+    if (muon.charge > 0) posMuons.push_back(muon);
+    else negMuons.push_back(muon);
+}
+
+// Step 2: Check for valid combinations and return the first one found
+
+// Option 1: e+ e+ with μ-
+if (posElecs.size() >= 2 && negMuons.size() >= 1) {
+    result.push_back(posElecs[0]);
+    result.push_back(posElecs[1]);
+    result.push_back(negMuons[0]);
+    return result;
+}
+
+// Option 2: e- e- with μ+
+if (negElecs.size() >= 2 && posMuons.size() >= 1) {
+    result.push_back(negElecs[0]);
+    result.push_back(negElecs[1]);
+    result.push_back(posMuons[0]);
+    return result;
+}
+
+// Option 3: μ+ μ+ with e-
+if (posMuons.size() >= 2 && negElecs.size() >= 1) {
+    result.push_back(posMuons[0]);
+    result.push_back(posMuons[1]);
+    result.push_back(negElecs[0]);
+    return result;
+}
+
+// Option 4: μ- μ- with e+
+if (negMuons.size() >= 2 && posElecs.size() >= 1) {
+    result.push_back(negMuons[0]);
+    result.push_back(negMuons[1]);
+    result.push_back(posElecs[0]);
+    return result;
+}
+
+// Step 3: Return empty vector if no valid combination is found
+return result; }
+
 
 
 

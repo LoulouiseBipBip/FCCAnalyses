@@ -9,44 +9,73 @@ logger = logging.getLogger(__name__)
 
 intLumi = 3e7
 
-fraction = 0.1
+fraction = 1
 debug = False
 
 processList = {
-    'mgp8_pp_tttt_5f_84TeV_4tlep':{},
+    'mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    'mgp8_pp_ttz_5f_Q_1000_3000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    'mgp8_pp_ttz_5f_Q_3000_10000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    'mgp8_pp_ttz_5f_Q_10000_84000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_ttw_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+           'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
 
-    'mgp8_pp_ttz_5f_84TeV_ttzlep': {},
-    
-    'mgp8_pp_tth_5f_Q_0_1000_84TeV': {},
-    'mgp8_pp_tth_5f_Q_1000_3000_84TeV': {},
-    'mgp8_pp_tth_5f_Q_3000_10000_84TeV': {},
-    'mgp8_pp_tth_5f_Q_10000_84000_84TeV': {},
-
-    'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {},
-
-    'mgp8_pp_zzz_5f_84TeV': {},
-    'mgp8_pp_wzz_5f_84TeV': {},
-    'mgp8_pp_wwz_5f_84TeV': {},
+            'mgp8_pp_tth_5f_Q_0_1000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
             
-    'mgp8_pp_wwww_5f_84TeV': {},
-    'mgp8_pp_wwwz_5f_84TeV': {},
-    'mgp8_pp_wwzz_5f_84TeV': {},
-    'mgp8_pp_wzzz_5f_84TeV': {},
-    'mgp8_pp_zzzz_5f_84TeV': {},
+            'mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_WZjj_HF_5f_84TeV_wzlllv': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_wwz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_wzz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_zzz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
             
-    'mgp8_pp_ttzz_5f_84TeV': {},
-    'mgp8_pp_ttwz_5f_84TeV': {},
-    #"mgp8_pp_tt012j_5f_84TeV": {"fraction": fraction},
+            'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            
+            'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_tt_HT_2000_100000_5f_84TeV_blvblv': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv': {"fraction": fraction, 'Chunks': 50},
+
     
 }
 
 prodTag = "FCChh/fcc_v07/II/"
 procDict = "/eos/experiment/fcc/hh/utils/FCCDicts/FCChh_procDict_fcc_v07_II.json"
-outputDir = "/eos/user/l/lberiet/Histmaker/tttt_v3/"
+outputDir = "/eos/user/l/lberiet/Histmaker/tttt_v3/4l"
 nCPUS = 16
 
 bins_count = (50, -0.5, 49.5)
-bins_ht = array.array('d', [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.75, 3.5, 4.5])
+bins_ht = array.array('d', [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5, 3.5])
 
 def build_graph(df, dataset):
     results = []
@@ -116,7 +145,10 @@ def build_graph(df, dataset):
     df = df.Define("n_bjets", "FCCAnalyses::ReconstructedParticle::get_n(sel_bjets)")
 
     df = df.Define("MET", "FCCAnalyses::ReconstructedParticle::get_pt(MissingET)")
-
+    df = df.Define("HT", "ScalarHT")
+    df = df.Define("ht_tev", "HT/1000.")
+    results.append(df.Histo1D(("HT_pre", "", len(bins_ht) - 1, bins_ht), "ht_tev"))
+    results.append(df.Histo1D(("MET_pre", "", 20, 0, 2000), "MET"))
     results.append(df.Histo1D(("n_bjets_pre", "", *bins_count), "n_bjets"))
     results.append(df.Histo1D(("n_leptons_pre", "", *bins_count), "n_leptons"))
 
@@ -129,6 +161,7 @@ def build_graph(df, dataset):
     df = df.Define(f"cut{len(selections)}", f"{len(selections)}")
     results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
     selections.append("N_{bjets} >= 3")
+
 
     df = df.Filter("n_of_ss_sf_leptons == 4")
     df = df.Define(f"cut{len(selections)}", f"{len(selections)}")
@@ -147,9 +180,7 @@ def build_graph(df, dataset):
    # results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
     #selections.append("Z_ll_mass < 80 || Z_ll_mass > 100")
 
-    df = df.Define("HT", "ScalarHT")
-    df = df.Define("ht_tev", "HT/1000.")
-
+    
     results.append(df.Histo1D(("HT_sel", "", len(bins_ht) - 1, bins_ht), "ht_tev"))
     results.append(df.Histo1D(("MET_sel", "", 20, 0, 2000), "MET"))
 

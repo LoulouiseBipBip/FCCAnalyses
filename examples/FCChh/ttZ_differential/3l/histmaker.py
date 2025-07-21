@@ -17,28 +17,59 @@ debug = False
 
 
 processList = {
-   'mgp8_pp_ttz_5f_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_ttw_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
-           'mgp8_pp_tth_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
-    'mgp8_pp_tth_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
-    'mgp8_pp_tth_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
-    'mgp8_pp_tth_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
+    #'mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    #'mgp8_pp_ttz_5f_Q_1000_3000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    #'mgp8_pp_ttz_5f_Q_3000_10000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    #'mgp8_pp_ttz_5f_Q_10000_84000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_ttw_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+           # 'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
 
-            'mgp8_pp_zzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_0_1000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
             
-            'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+
+            'mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
+
+            #'mgp8_pp_WZjj_HF_5f_84TeV_wzlllv': {"fraction": fraction, 'Chunks': 50},
+
+            # 'mgp8_pp_wwz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            #'mgp8_pp_wwz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
+
+            # 'mgp8_pp_wzz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wzz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wzz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wzz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
+
+            # 'mgp8_pp_zzz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_zzz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_zzz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_zzz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
             
-            'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-    #"mgp8_pp_tt012j_5f_84TeV": {"fraction": fraction},
+            # 'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wwzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_zzzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            
+            # 'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+
+    #         'mgp8_pp_tt_HT_2000_100000_5f_84TeV_blvblv': {"fraction": fraction, 'Chunks': 50},
+    #         'mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv': {"fraction": fraction, 'Chunks': 50},
+    # #"mgp8_pp_tt012j_5f_84TeV": {"fraction": fraction},
     
 }
 
@@ -53,7 +84,7 @@ procDict = "/eos/experiment/fcc/hh/utils/FCCDicts/FCChh_procDict_fcc_v07_II.json
 # inputDir    = "./localSamples/"
 
 # Optional: output directory, default is local running directory
-outputDir = "/eos/user/l/lberiet/Histmaker/ttZ_differential/3l/"
+outputDir = "/eos/user/l/lberiet/Histmaker/ttZ_differential/3l"
 
 # optional: ncpus, default is 4, -1 uses all cores available
 nCPUS = -1
@@ -161,10 +192,16 @@ def build_graph(df, dataset):
     selections.append("N_{lep} == 3")
     
     # cut on number of jets
-    df = df.Filter("n_jets <6")
+   # df = df.Filter("n_jets <6")
+    #df = df.Define(f"cut{len(selections)}", f"{len(selections)}")
+    #results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
+    #selections.append("N_{jets} < 6")
+
+    # cut on number of bjets
+    df = df.Filter(" n_bjets >= 1 && n_bjets <= 2")
     df = df.Define(f"cut{len(selections)}", f"{len(selections)}")
     results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
-    selections.append("N_{jets} < 6")
+    selections.append("N_{bjets} >= 1 && N_{bjets} <= 2")
 
     # cut on Z_ll mass
     df = df.Filter("Z_ll_mass > 80. && Z_ll_mass < 100.")
@@ -172,10 +209,10 @@ def build_graph(df, dataset):
     results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
     selections.append("Z_ll_mass > 80. && Z_ll_mass < 100.")
 
-    df = df.Filter("Second_Pair_flavor == 3")
-    df = df.Define(f"cut{len(selections)}", f"{len(selections)}")
-    results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
-    selections.append("Second_Pair_flavor == 3")
+    #df = df.Filter("Second_Pair_flavor == 3")
+    #df = df.Define(f"cut{len(selections)}", f"{len(selections)}")
+    #results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
+    #selections.append("Second_Pair_flavor == 3")
 
     # Temporarily comment out the Z_ll_flavor == 3 cut to diagnose empty histograms
     # df = df.Filter("Z_ll_flavor == 3")
@@ -210,7 +247,7 @@ def build_graph(df, dataset):
     results.append(df.Histo1D(("HT_bjetId_wp", "", len(bins_ht) - 1, bins_ht), "ht_tev", "wp_bjetId"))
     results.append(df.Histo1D(("HT_bjetId_wm", "", len(bins_ht) - 1, bins_ht), "ht_tev", "wm_bjetId"))
 
-    bins_zpt = array.array('d', [0, 100, 200, 300, 400, 500, 600, 700, 800, 950, 1150, 1350, 1800])#, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000 ])  # GeV
+    bins_zpt = array.array('d', [0, 100, 200, 300, 400, 500, 600, 700, 800, 950, 1150, 1350, 1800, 2500])#, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000 ])  # GeV
     results.append(df.Histo1D(("Z_ll_pt_sel", "", len(bins_zpt) - 1, bins_zpt), "Z_ll_pt"))
     results.append(df.Histo1D(("Z_ll_pt_sel_eleId_wp", "", len(bins_zpt) - 1, bins_zpt), "Z_ll_pt", "wp_eleId"))
     results.append(df.Histo1D(("Z_ll_pt_sel_eleId_wm", "", len(bins_zpt) - 1, bins_zpt), "Z_ll_pt", "wm_eleId"))
