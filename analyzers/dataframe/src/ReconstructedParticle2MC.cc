@@ -1,4 +1,5 @@
 #include "FCCAnalyses/ReconstructedParticle2MC.h"
+#include "FCCAnalyses/Analysis_FCChh.h"
 #include <iostream>
 
 namespace FCCAnalyses{
@@ -400,6 +401,45 @@ int getTrack2MC_index (int track_index,
       }
  return mc_index;
 }
+//#######################################################################//
+//                        getClosestTrueLeptonDR                         //
+//#######################################################################//
+ROOT::VecOps::RVec<float> getClosestTrueLeptonDR(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& recoLeptons, 
+  const ROOT::VecOps::RVec<edm4hep::MCParticleData>& trueLeptons) {
+  ROOT::VecOps::RVec<float> minDRs;
+  minDRs.reserve(recoLeptons.size());
+
+  // Loop over all reconstructed leptons
+  for (const auto& recoLepton : recoLeptons) {
+    float minDR = std::numeric_limits<float>::max();
+
+    // Create TLorentzVector for the reconstructed lepton
+    TLorentzVector tlvReco;
+    tlvReco.SetXYZM(recoLepton.momentum.x, recoLepton.momentum.y, recoLepton.momentum.z, recoLepton.mass);
+
+    // Loop over all true leptons to find the closest one
+    for (const auto& trueLepton : trueLeptons) {
+      TLorentzVector tlvTrue;
+      tlvTrue.SetXYZM(trueLepton.momentum.x, trueLepton.momentum.y, trueLepton.momentum.z, trueLepton.mass);
+
+      float dR = tlvReco.DeltaR(tlvTrue);
+      if (dR < minDR) {
+        minDR = dR;
+      }
+    }
+
+    // Return -1 if no true leptons were found
+    if (minDR == std::numeric_limits<float>::max()) {
+      minDRs.push_back(-1.0);
+    } else {
+      minDRs.push_back(minDR);
+    }
+  }
+
+  return minDRs;
+}
+
+
 
 }//end NS ReconstructedParticle2MC
 

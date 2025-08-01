@@ -1,8 +1,11 @@
 #include "FCCAnalyses/ReconstructedParticle.h"
+#include "TMath.h"
+#include "TLorentzVector.h"
 
 // std
 #include <cstdlib>
 #include <stdexcept>
+#include <limits>
 
 // ROOT
 #include <ROOT/RDataFrame.hxx>
@@ -33,6 +36,7 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> sel_type::operator()(
       result.emplace_back(in.at(i));
     }
   }
+
   return result;
 }
 
@@ -52,6 +56,7 @@ ROOT::VecOps::RVec<int> sel_type::operator()(ROOT::VecOps::RVec<edm4hep::Reconst
   }
   return idx_result;
 }
+
 
 //#######################################################################//
 //                               sel_absType                             //
@@ -648,6 +653,118 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> getMuons(const ROOT::VecO
     }
   }
   return result;
+}
+// compute the cone isolation for reco particles
+coneIsolation::coneIsolation(float arg_dr_min, float arg_dr_max) : dr_min(arg_dr_min), dr_max(arg_dr_max) {}
+
+double coneIsolation::deltaR(double eta1, double phi1, double eta2, double phi2) {
+    return TMath::Sqrt(TMath::Power(eta1 - eta2, 2) + TMath::Power(phi1 - phi2, 2));
+}
+
+ROOT::VecOps::RVec<float> coneIsolation::operator() (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> rps) {
+    ROOT::VecOps::RVec<float> result;
+    result.reserve(in.size());
+
+    std::vector<TLorentzVector> lv_reco;
+    std::vector<TLorentzVector> lv_charged;
+    std::vector<TLorentzVector> lv_neutral;
+
+    for (size_t i = 0; i < rps.size(); ++i) {
+        TLorentzVector tlv;
+        tlv.SetPxPyPzE(rps.at(i).momentum.x, rps.at(i).momentum.y, rps.at(i).momentum.z, rps.at(i).energy);
+        if (rps.at(i).charge == 0) lv_neutral.push_back(tlv);
+        else lv_charged.push_back(tlv);
+    }
+
+    for (size_t i = 0; i < in.size(); ++i) {
+        TLorentzVector tlv;
+        tlv.SetPxPyPzE(in.at(i).momentum.x, in.at(i).momentum.y, in.at(i).momentum.z, in.at(i).energy);
+        lv_reco.push_back(tlv);
+    }
+
+    // compute the isolation
+    for (auto &lv_reco_ : lv_reco) {
+        double sumNeutral = 0.0;
+        double sumCharged = 0.0;
+
+        // charged
+        for (auto &lv_charged_ : lv_charged) {
+            double dr = this->deltaR(lv_reco_.Eta(), lv_reco_.Phi(), lv_charged_.Eta(), lv_charged_.Phi());
+            if (dr > this->dr_min && dr < this->dr_max) sumCharged += lv_charged_.P();
+        }
+
+        // neutral
+        for (auto &lv_neutral_ : lv_neutral) {
+            double dr = this->deltaR(lv_reco_.Eta(), lv_reco_.Phi(), lv_neutral_.Eta(), lv_neutral_.Phi());
+            if (dr > this->dr_min && dr < this->dr_max) sumNeutral += lv_neutral_.P();
+        }
+
+        double sum = sumCharged + sumNeutral;
+        double ratio = sum / lv_reco_.P();
+        result.emplace_back(ratio);
+    }
+    return result;
+}
+ROOT::VecOps::RVec<float> sumJetPt(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets) {
+    ROOT::VecOps::RVec<float> result;
+    float totalPt = 0.0;
+    for (const auto& jet : jets) {
+        TLorentzVector tlv;
+        tlv.SetPxPyPzE(jet.momentum.x, jet.momentum.y, jet.momentum.z, jet.energy);
+        totalPt += tlv.Pt();
+    }
+    result.emplace_back(totalPt);
+    return result;
+}
+
+/**
+ * Compute the minimum delta R (dR) between each prompt reconstructed particle 
+ * and any other reconstructed particle in the event.
+ * 
+ * @param prompt_parts Vector of prompt reconstructed particles to evaluate.
+ * @param reco_parts_all Vector of all reconstructed particles in the event.
+ * @return A vector of minimum dR values for each prompt particle.
+ */
+ROOT::VecOps::RVec<float> getMinDRToAny(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> prompt_parts,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all) {
+    
+    ROOT::VecOps::RVec<float> min_dR_values;
+    
+    // If no prompt particles, return empty vector
+    if (prompt_parts.size() < 1) {
+        return min_dR_values;
+    }
+    
+    // Loop over each prompt particle
+    for (const auto& prompt_part : prompt_parts) {
+        TLorentzVector tlv_prompt;
+        tlv_prompt.SetPxPyPzE(prompt_part.momentum.x, prompt_part.momentum.y, 
+                             prompt_part.momentum.z, prompt_part.energy);
+        float eps = 1e-6;
+
+        float min_dR = 999.0; // Initialize with a large value
+        
+        // Loop over all reconstructed particles to find minimum dR
+        for (const auto& reco_part : reco_parts_all) {
+            TLorentzVector tlv_reco;
+            tlv_reco.SetPxPyPzE(reco_part.momentum.x, reco_part.momentum.y, 
+                               reco_part.momentum.z, reco_part.energy);
+            // skip if the prompt and reco particles have the same pt  (same particle)                 
+            if (std::abs(tlv_prompt.Pt() - tlv_reco.Pt()) < eps) continue;
+
+            float dR = tlv_prompt.DeltaR(tlv_reco);
+            
+            
+            if (dR < min_dR) {
+                min_dR = dR;
+            }
+        }
+        
+        min_dR_values.push_back(min_dR);
+    }
+    
+    return min_dR_values;
 }
 
 }//end NS ReconstructedParticle

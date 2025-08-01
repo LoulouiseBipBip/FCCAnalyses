@@ -192,6 +192,22 @@ namespace ReconstructedParticle{
   /// get muons
   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> getMuons(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in);
 
+
+struct coneIsolation {
+    coneIsolation(float arg_dr_min, float arg_dr_max);
+    double deltaR(double eta1, double phi1, double eta2, double phi2);
+    float dr_min = 0;
+    float dr_max = 0.4;
+    ROOT::VecOps::RVec<float> operator() (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> rps);
+};
+
+  /// sum the transverse momenta of the input ReconstructedParticles
+  ROOT::VecOps::RVec<float> sumJetPt(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets);
+
+  /// get the minimum delta R between a prompt particle and any other particle in the event
+  ROOT::VecOps::RVec<float> getMinDRToAny(
+      ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> prompt_parts,
+      ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all);
 }//end NS ReconstructedParticle
 
 }//end NS FCCAnalyses

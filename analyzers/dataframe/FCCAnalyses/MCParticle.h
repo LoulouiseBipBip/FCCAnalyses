@@ -38,6 +38,12 @@ namespace MCParticle{
     float m_min_pt = 20; //> transverse momentum threshold [GeV]
     ROOT::VecOps::RVec<edm4hep::MCParticleData>  operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
   };
+   /// select MCParticles with transverse momentum greater than a minimum value [GeV]
+   struct sel_eta {
+    sel_eta(float arg_min_eta);
+    float m_min_eta = 2.5; //> pseudorapidity threshold
+    ROOT::VecOps::RVec<edm4hep::MCParticleData>  operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+  };
 
   /// select MCParticles with their status
   struct sel_genStatus {
@@ -229,10 +235,6 @@ namespace MCParticle{
 
 
   /// return the pdg ID of the parent of a lepton (pre-FSR)
-  int get_lepton_origin(int idx,
-                        const ROOT::VecOps::RVec<edm4hep::MCParticleData> &in,
-                        const ROOT::VecOps::RVec<int> &ind);
-
   int get_lepton_origin(const edm4hep::MCParticleData &p,
                         const ROOT::VecOps::RVec<edm4hep::MCParticleData> &in,
                         const ROOT::VecOps::RVec<int> &ind);
@@ -244,7 +246,23 @@ namespace MCParticle{
   //scalar HT: scalar pT sum of all stable gen particles
   float scalarHT(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
 
+  std::pair<std::vector<edm4hep::MCParticleData>, std::vector<edm4hep::MCParticleData>> getPromptLeptons(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& leptons,
+    const ROOT::VecOps::RVec<int>& ind);
 
+  std::vector<edm4hep::MCParticleData> getNonPromptLeptons(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& leptons,
+    const ROOT::VecOps::RVec<int>& ind);
+
+  edm4hep::MCParticleData getClosestParticle(
+    const edm4hep::MCParticleData& particle,
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& finalStateParticles);
+
+  float getClosestParticleDR(
+    const edm4hep::MCParticleData& particle,
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& finalStateParticles);
 }//end NS MCParticle
 
 }//end NS FCCAnalyses

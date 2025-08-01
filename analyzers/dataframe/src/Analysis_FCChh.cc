@@ -375,10 +375,13 @@ int AnalysisFCChh::checkZDecay(
   auto last_child_index = truth_Z.daughters_end;
 
   if (last_child_index - first_child_index != 2) {
-    std::cout << "Error in checkZDecay! Found more or fewer than exactly 2 "
-                 "daughters of a Z boson - this is not expected by code. Need "
-                 "to implement a solution still!"
-              << std::endl;
+    //std::cout << "PDG ID of first daughter:" << truth_particles.at(daughter_ids.at(first_child_index).index).PDG << std::endl; 
+    //std::cout << "Z boson has " << last_child_index - first_child_index << " daughters" << std::endl;
+    //std::cout << "Daughters: " << daughter_ids.at(first_child_index).index << " and " << daughter_ids.at(last_child_index - 1).index << std::endl;
+    //std::cout << "Error in checkZDecay! Found more or fewer than exactly 2 "
+              //    "daughters of a Z boson - this is not expected by code. Need "
+              //    "to implement a solution still!"
+              // << std::endl;
     return 0;
   }
 
@@ -739,6 +742,82 @@ ROOT::VecOps::RVec<edm4hep::MCParticleData> AnalysisFCChh::getTruthZll(
 
   return z_ll_list;
 }
+
+// Add helper function to trace to lepton final state 
+edm4hep::MCParticleData AnalysisFCChh::traceToFinalState(
+  edm4hep::MCParticleData particle,
+  ROOT::VecOps::RVec<podio::ObjectID> daughter_ids,
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles) {
+  // If particle has no daughters or isn't a lepton anymore, return it as final
+  if (particle.daughters_end == particle.daughters_begin || !isLep(particle)) {
+    return particle;
+  }
+  // Print statement if the particle is not final
+  // std::cout << "traceToFinalState: Particle (PDG=" << particle.PDG 
+  //           << ") is not final, tracing daughters..." << std::endl;
+  // Otherwise, follow the decay chain (assuming single dominant daughter for simplicity)
+  for (size_t i = particle.daughters_begin; i < particle.daughters_end; ++i) {
+    if (i < daughter_ids.size()) {
+      auto daughter = truth_particles[daughter_ids[i].index];
+      // std::cout << "  Found daughter with PDG=" << daughter.PDG;
+      if (!(daughter.daughters_end == daughter.daughters_begin || !isLep(daughter))) {
+        // std::cout << " (not final state, will trace further)";
+      }
+      // std::cout << std::endl;
+      if (isLep(daughter)) {
+        // std::cout << "  Found final lepton with PDG=" << daughter.PDG << std::endl;
+        return traceToFinalState(daughter, daughter_ids, truth_particles);
+      } else {
+       //  std::cout << "  Found non-lepton daughter with PDG=" << daughter.PDG << std::endl;
+      }
+    }
+  }
+  // If no lepton daughter found, return the current particle
+  return particle;
+}
+
+ROOT::VecOps::RVec<edm4hep::MCParticleData> AnalysisFCChh::getTruthll_from_Z(
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles,
+  ROOT::VecOps::RVec<podio::ObjectID> daughter_ids) {
+  // find the Zs and their final state leptons
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> final_leptons;
+  
+  for (auto &truth_part : truth_particles) {
+    if (isZ(truth_part)) {
+      if (checkZDecay(truth_part, daughter_ids, truth_particles) == 1) { // check if is Zll decay
+        // Get the initial daughters of the Z
+        auto daughter1_idx = truth_part.daughters_begin;
+        auto daughter2_idx = daughter1_idx + 1;
+        if (daughter1_idx < daughter_ids.size() && daughter2_idx < daughter_ids.size()) {
+          auto daughter1 = truth_particles[daughter_ids[daughter1_idx].index];
+          auto daughter2 = truth_particles[daughter_ids[daughter2_idx].index];
+          // Trace each daughter to its final state if it's a lepton
+          if (isLep(daughter1)) {
+            auto final_daughter1 = traceToFinalState(daughter1, daughter_ids, truth_particles);
+            if (final_daughter1.PDG != 0) { // Check if a valid particle was returned
+              final_leptons.push_back(final_daughter1);
+            }
+            else {
+              std::cout << "No valid particle found for daughter 1" << std::endl;
+            }
+          }
+          if (isLep(daughter2)) {
+            auto final_daughter2 = traceToFinalState(daughter2, daughter_ids, truth_particles);
+            if (final_daughter2.PDG != 0) { // Check if a valid particle was returned
+              final_leptons.push_back(final_daughter2);
+            }
+            else {
+              std::cout << "No valid particle found for daughter 2" << std::endl;
+            }
+          }
+        }
+      }
+    }
+  }
+  return final_leptons;
+}
+
+
 
 // helper functions for reco particles:
 TLorentzVector
@@ -1201,11 +1280,13 @@ ROOT::VecOps::RVec<RecoParticlePair> AnalysisFCChh::getBestOSPair(
   // if only one pair in input, return that one:
   else if (electron_pairs.size() == 1 && muon_pairs.size() == 0) {
     best_pair.push_back(electron_pairs.at(0));
+    best_pair.at(0).flavour_flag = 1;
     return best_pair;
   }
 
   else if (electron_pairs.size() == 0 && muon_pairs.size() == 1) {
     best_pair.push_back(muon_pairs.at(0));
+    best_pair.at(0).flavour_flag = 2;
     return best_pair;
   }
 
@@ -3173,7 +3254,7 @@ ROOT::VecOps::RVec<float> AnalysisFCChh::get_IP_delphes(
       tlv_reco_part.Clear();
     }
 
-    float IP_val = sum_pT / pT_test_part;
+    float IP_val = (sum_pT-pT_test_part) / pT_test_part;
 
     out_vector.push_back(IP_val);
   }
@@ -3332,8 +3413,8 @@ AnalysisFCChh::find_mc_matched_particle(
           out_vector.at(0) = check_mc_part;
 
           if (pT_diff_old < abs(reco_part_tlv.Pt() - check_mc_part_tlv.Pt())) {
-            std::cout << "Found case where closest in pT is not closest in dR"
-                      << std::endl;
+            //std::cout << "Found case where closest in pT is not closest in dR"
+                      //<< std::endl;
           }
         }
       }
@@ -3384,8 +3465,8 @@ AnalysisFCChh::find_reco_matched_particle(
 
           if (pT_diff_old <
               abs(truth_part_tlv.Pt() - check_reco_part_tlv.Pt())) {
-            std::cout << "Found case where closest in pT is not closest in dR"
-                      << std::endl;
+           // std::cout << "Found case where closest in pT is not closest in dR"
+           //           << std::endl;
           }
         }
       }
@@ -3439,8 +3520,8 @@ ROOT::VecOps::RVec<int> AnalysisFCChh::find_reco_matched_index(
 
           if (pT_diff_old <
               abs(truth_part_tlv.Pt() - check_reco_part_tlv.Pt())) {
-            std::cout << "Found case where closest in pT is not closest in dR"
-                      << std::endl;
+          // std::cout << "Found case where closest in pT is not closest in dR"
+          //           << std::endl;
           }
         }
       }
@@ -4321,6 +4402,74 @@ if (negMuons.size() >= 2 && posElecs.size() >= 1) {
 // Step 3: Return empty vector if no valid combination is found
 return result; }
 
+ROOT::VecOps::RVec<int> AnalysisFCChh::match_leptons(
+  const ROOT::VecOps::RVec<TLorentzVector>& mc_tlvs,
+  const ROOT::VecOps::RVec<TLorentzVector>& reco_tlvs,
+  float deltaR_threshold) {
+ROOT::VecOps::RVec<int> reco_indices(mc_tlvs.size(), -1);
+std::vector<bool> used(reco_tlvs.size(), false);
+for (size_t i = 0; i < mc_tlvs.size(); ++i) {
+  float min_dR = deltaR_threshold;
+  int best_reco_idx = -1;
+  for (size_t j = 0; j < reco_tlvs.size(); ++j) {
+    if (used[j]) continue;
+    float dR = mc_tlvs[i].DeltaR(reco_tlvs[j]);
+    if (dR < min_dR) {
+      min_dR = dR;
+      best_reco_idx = j;
+    }
+  }
+  if (best_reco_idx >= 0) {
+    reco_indices[i] = best_reco_idx;
+    used[best_reco_idx] = true;
+  }
+}
+return reco_indices;
+}
+
+// // Function to check if a tau decays and return PDG IDs of decay products
+// std::vector<int> checkTauDecay(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, int tauIndex) {
+//     std::vector<int> decayProducts;
+//     if (tauIndex < 0 || tauIndex >= mcparticles.size()) {
+//         std::cout << "Debug: Invalid tau index " << tauIndex << std::endl;
+//         return decayProducts;
+//     }
+
+//     const auto& tau = mcparticles[tauIndex];
+//     std::cout << "Debug: Checking tau with PDG " << tau.PDG << " at index " << tauIndex << std::endl;
+    
+//     // Check if the tau has daughters
+//     if (tau.daughters_begin != tau.daughters_end) {
+//         std::cout << "Debug: Tau has daughters, range: " << tau.daughters_begin << " to " << tau.daughters_end << std::endl;
+//         for (unsigned int i = tau.daughters_begin; i < tau.daughters_end; ++i) {
+//             if (i < mcparticles.size()) {
+//                 int pdg = mcparticles[i].PDG;
+//                 decayProducts.push_back(pdg);
+//                 std::cout << "Debug: Daughter at index " << i << " has PDG " << pdg << std::endl;
+//             } else {
+//                 std::cout << "Debug: Daughter index " << i << " out of range" << std::endl;
+//             }
+//         }
+//     } else {
+//         std::cout << "Debug: Tau has no daughters" << std::endl;
+//     }
+//     return decayProducts;
+// }
+
+// // Helper code to find tau indices
+// std::vector<int> findTauIndices(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles) {
+//     std::vector<int> tauIndices;
+//     for (size_t i = 0; i < mcparticles.size(); ++i) {
+//         if (std::abs(mcparticles[i].PDG) == 15) { // Tau or anti-tau
+//             tauIndices.push_back(i);
+//             std::cout << "Debug: Found tau/anti-tau at index " << i << " with PDG " << mcparticles[i].PDG << std::endl;
+//         }
+//     }
+//     if (tauIndices.empty()) {
+//         std::cout << "Debug: No tau particles found in this event." << std::endl;
+//     }
+//     return tauIndices;
+// }
 
 
 

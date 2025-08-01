@@ -1,15 +1,18 @@
 
-#ifndef  RECONSTRUCTEDPARTICLE2MC_ANALYZERS_H
-#define  RECONSTRUCTEDPARTICLE2MC_ANALYZERS_H
-
-#include <cmath>
-#include <vector>
+#ifndef FCCANALYSES_RECONSTRUCTEDPARTICLE2MC_H
+#define FCCANALYSES_RECONSTRUCTEDPARTICLE2MC_H
 
 #include "ROOT/RVec.hxx"
 #include "edm4hep/ReconstructedParticleData.h"
 #include "edm4hep/MCParticleData.h"
 #include "podio/ObjectID.h"
 #include "TLorentzVector.h"
+#include <vector>
+
+// Forward declaration
+namespace AnalysisFCChh {
+  struct RecoParticlePair;
+}
 
 namespace FCCAnalyses{
 
@@ -137,6 +140,10 @@ namespace ReconstructedParticle2MC{
 			   ROOT::VecOps::RVec<int> recind,
 			   ROOT::VecOps::RVec<int> mcind,
 			   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco);
+
+  /// find the closest true lepton to a reconstructed lepton and return the delta R	
+  ROOT::VecOps::RVec<float> getClosestTrueLeptonDR(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& recoLeptons, 
+	const ROOT::VecOps::RVec<edm4hep::MCParticleData>& trueLeptons);
 
 }//end NS ReconstructedParticle2MC
 

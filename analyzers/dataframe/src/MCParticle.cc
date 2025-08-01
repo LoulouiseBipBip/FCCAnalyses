@@ -2,6 +2,8 @@
 #include <iostream>
 #include <algorithm>
 #include <set>
+#include "podio/ObjectID.h"
+
 
 
 namespace FCCAnalyses{
@@ -71,6 +73,23 @@ ROOT::VecOps::RVec<edm4hep::MCParticleData>  sel_pt::operator() (ROOT::VecOps::R
   }
   return result;
 }
+
+sel_eta::sel_eta(float arg_min_eta) : m_min_eta(arg_min_eta) {};
+ROOT::VecOps::RVec<edm4hep::MCParticleData>  sel_eta::operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> result;
+  result.reserve(in.size());
+  for (size_t i = 0; i < in.size(); ++i) {
+    auto & p = in[i];
+    TLorentzVector tlv;
+    tlv.SetXYZM(p.momentum.x, p.momentum.y, p.momentum.z, p.mass);
+    if (std::abs(tlv.Eta()) < m_min_eta) {
+      result.emplace_back(p);
+    }
+  }
+  return result;
+}
+
+
 
 
 filter_pdgID::filter_pdgID(int arg_pdgid, bool arg_abs){m_pdgid = arg_pdgid; m_abs = arg_abs;};
@@ -775,6 +794,7 @@ ROOT::VecOps::RVec<int> get_leptons_origin(const ROOT::VecOps::RVec<edm4hep::MCP
   return result;
 }
 
+
 float scalarHT(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
   float result = 0;
   float result_nomu = 0;
@@ -796,7 +816,174 @@ float scalarHT(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
 
   return result;
 }
+int get_lepton_origin(const edm4hep::MCParticleData &p,
+  const ROOT::VecOps::RVec<edm4hep::MCParticleData> &in,
+  const ROOT::VecOps::RVec<podio::ObjectID> &parent_ids){
 
+// std::cout  << std::endl << " enter in MCParticle::get_lepton_origin  PDG = " << p.PDG << std::endl;
+
+int pdg = std::abs( p.PDG ) ;
+if ( pdg != 11 && pdg != 13 && pdg  != 15 ) return -1;
+
+int result  = 0;
+
+// std::cout << " p.parents_begin p.parents_end " << p.parents_begin <<  " "  << p.parents_end << std::endl;
+for (unsigned j = p.parents_begin; j != p.parents_end; ++j) {
+// retrieve the parent MC particle, by jumping through the index collections 
+int index = parent_ids.at(j).index;
+int pdg_parent = in.at(index).PDG;
+//   int index = ind.at(j);
+//   int pdg_parent = in.at(index).PDG ;
+// std::cout  << " parent has pdg = " << in.at(index).PDG <<  "  status = " << in.at(index).generatorStatus << std::endl;
+
+if ( abs( pdg_parent ) == 23 || abs( pdg_parent ) == 24 ) {
+result = pdg_parent ;
+//std::cout <<  " ... Lepton is from W or Z ,  return code = " << result <<  std::endl;
+break;
+}
+
+if ( abs( pdg_parent ) == 22 ) {
+result = pdg_parent ;
+//std::cout <<  " ... Lepton is from a virtual photon ,  return code = " << result <<  std::endl;
+break;
+}
+
+if ( abs( pdg_parent ) == 15 ) {
+result = pdg_parent ;
+//std::cout <<  " ... Lepton is from a tau,  return code = " << result <<  std::endl;
+break;
+}
+
+// if ( abs( pdg_parent ) == 11 ) {    // beam particle ?
+// // beam particles should have generatorStatus = 4,
+// // but that is not the case in files produced from Whizard + p6
+// if ( in.at(index).generatorStatus == 4 || parent_ids.at  ( in.at(index).parents_begin ) == 0 ) {
+// result = 0;
+// //std::cout <<  " ... Lepton is from the hard subprocess, return code = " << result <<  std::endl;
+// break;
+// }
+// }
+
+if ( pdg == 11 && abs( pdg_parent ) == 13 ) {    // mu -> e
+result  = pdg_parent;
+//std::cout <<  " ... Electron from a muon decay, return code = " << result <<  std::endl;
+break;
+}
+
+if ( abs( pdg_parent ) == pdg  ) {
+//std::cout << " ... iterate ... " << std::endl;
+return get_lepton_origin( in.at(index),  in, parent_ids  );
+}
+// This must come from a hadron decay
+result = pdg_parent;
+//std::cout <<  " ... Lepton from a hadron decay " << std::endl;
+}
+return result;
+}
+
+ROOT::VecOps::RVec<int> get_leptons_origin(const ROOT::VecOps::RVec<edm4hep::MCParticleData> &particles,
+  const ROOT::VecOps::RVec<edm4hep::MCParticleData> &in,
+  const ROOT::VecOps::RVec<podio::ObjectID> &parent_ids)  {
+
+ROOT::VecOps::RVec<int> result;
+result.reserve(particles.size());
+for (size_t i = 0; i < particles.size(); ++i) {
+auto & p = particles[i];
+int origin = MCParticle::get_lepton_origin( p, in, parent_ids );
+result.push_back( origin );
+}
+return result;
+}
+
+// Function to return leptons originating from Z and W separately
+std::pair<std::vector<edm4hep::MCParticleData>, std::vector<edm4hep::MCParticleData>> getPromptLeptons(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& leptons,
+    const ROOT::VecOps::RVec<int>& ind) 
+{
+    std::vector<edm4hep::MCParticleData> fromZ; // Leptons from Z (PDG 23)
+    std::vector<edm4hep::MCParticleData> fromW; // Leptons from W (PDG 24, -24)
+    for (size_t i = 0; i < leptons.size(); ++i) {
+        const auto& lepton = leptons[i];
+        int originPDG = get_lepton_origin(lepton, mcparticles, ind);
+        if (originPDG == 23) {
+            fromZ.push_back(lepton);
+        } else if (originPDG == 24 || originPDG == -24) {
+            fromW.push_back(lepton);
+        }
+    }
+    return std::make_pair(fromZ, fromW);
+}
+
+// Function to return leptons NOT originating from Z or W
+std::vector<edm4hep::MCParticleData> getNonPromptLeptons(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& leptons,
+    const ROOT::VecOps::RVec<int>& ind) 
+{
+    std::vector<edm4hep::MCParticleData> notFromZorW;
+    for (size_t i = 0; i < leptons.size(); ++i) {
+        const auto& lepton = leptons[i];
+        int originPDG = get_lepton_origin(lepton, mcparticles, ind);
+        if (originPDG != 23 && originPDG != 24 && originPDG != -24) {
+            notFromZorW.push_back(lepton);
+        }
+    }
+    return notFromZorW;
+}
+
+// Function to find and return the closest particle in dR
+edm4hep::MCParticleData getClosestParticle(
+    const edm4hep::MCParticleData& particle,
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& finalStateParticles) {
+    float minDR = std::numeric_limits<float>::max();
+    const edm4hep::MCParticleData* closestParticle = nullptr;
+    TLorentzVector tlvParticle;
+    tlvParticle.SetXYZM(particle.momentum.x, particle.momentum.y, particle.momentum.z, particle.mass);
+
+    for (const auto& fsParticle : finalStateParticles) {
+        TLorentzVector tlvFS;
+        tlvFS.SetXYZM(fsParticle.momentum.x, fsParticle.momentum.y, fsParticle.momentum.z, fsParticle.mass);
+        float dR = tlvParticle.DeltaR(tlvFS);
+        if (dR < minDR && dR > 0) { // dR > 0 to avoid comparing particle with itself if it's in the collection
+            minDR = dR;
+            closestParticle = &fsParticle;
+        }
+    }
+
+    if (closestParticle) {
+        return *closestParticle;
+    } else {
+        // If no other particle is found, return a default-constructed MCParticleData
+        return edm4hep::MCParticleData();
+    }
+}
+
+// Function to calculate the dR distance to the closest particle
+float getClosestParticleDR(
+  const edm4hep::MCParticleData& particle,
+  const ROOT::VecOps::RVec<edm4hep::MCParticleData>& finalStateParticles) {
+  float minDR = std::numeric_limits<float>::max();
+  TLorentzVector tlvParticle;
+  tlvParticle.SetXYZM(particle.momentum.x, particle.momentum.y, particle.momentum.z, particle.mass);
+  
+  for (const auto& fsParticle : finalStateParticles) {
+      TLorentzVector tlvFS;
+      tlvFS.SetXYZM(fsParticle.momentum.x, fsParticle.momentum.y, fsParticle.momentum.z, fsParticle.mass);
+      float dR = tlvParticle.DeltaR(tlvFS);
+      if (dR < minDR && dR > 0) { // dR > 0 to avoid comparing particle with itself if it's in the collection
+          minDR = dR;
+      }
+  }
+  
+  if (minDR == std::numeric_limits<float>::max()) {
+      //std::cout << "Debug: No other particles found to calculate dR for particle with PDG " << particle.PDG << std::endl;
+      return -1.0; // Return -1 if no other particles are found
+  }
+  
+  //std::cout << "Debug: Closest dR for particle with PDG " << particle.PDG << " is " << minDR << std::endl;
+  return minDR;
+}
 }//end NS MCParticle
 
 }//end NS FCCAnalyses

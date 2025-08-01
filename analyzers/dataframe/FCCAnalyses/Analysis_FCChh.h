@@ -31,7 +31,7 @@ struct RecoParticlePair {
   edm4hep::ReconstructedParticleData particle_1;
   edm4hep::ReconstructedParticleData particle_2;
   int flavour_flag; // Adding flavour_flag to store pair type information
-  TLorentzVector merged_TLV() {
+  TLorentzVector merged_TLV() const {
     TLorentzVector tlv_1 = getTLV_reco(particle_1);
     TLorentzVector tlv_2 = getTLV_reco(particle_2);
     return tlv_1 + tlv_2;
@@ -59,7 +59,7 @@ struct RecoParticlePair {
 struct MCParticlePair {
   edm4hep::MCParticleData particle_1;
   edm4hep::MCParticleData particle_2;
-  TLorentzVector merged_TLV() {
+  TLorentzVector merged_TLV() const {
     TLorentzVector tlv_1 = getTLV_MC(particle_1);
     TLorentzVector tlv_2 = getTLV_MC(particle_2);
     return tlv_1 + tlv_2;
@@ -547,6 +547,22 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> findSameFlavorSameSignWit
     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_elecs,
     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_muons);
 
+edm4hep::MCParticleData traceToFinalState(
+  edm4hep::MCParticleData particle,
+  ROOT::VecOps::RVec<podio::ObjectID> daughter_ids,
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles);
+
+ROOT::VecOps::RVec<edm4hep::MCParticleData> getTruthll_from_Z(
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles,
+  ROOT::VecOps::RVec<podio::ObjectID> daughter_ids);
+
+ROOT::VecOps::RVec<int> match_leptons(
+  const ROOT::VecOps::RVec<TLorentzVector>& mc_tlvs,
+  const ROOT::VecOps::RVec<TLorentzVector>& reco_tlvs,
+  float deltaR_threshold);
+
+std::vector<int> checkTauDecay(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, int tauIndex);
+std::vector<int> findTauIndices(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles);
 } // namespace AnalysisFCChh
 
 
