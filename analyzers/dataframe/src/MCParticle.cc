@@ -894,7 +894,123 @@ result.push_back( origin );
 }
 return result;
 }
+// Function to check for photon splitting events where a muon radiates a photon that splits into two electrons
+int countMuonPhotonSplitting(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles,
+                        const ROOT::VecOps::RVec<podio::ObjectID>& daughter_ids) {
+    int splittingCount = 0;
+    
+    // Loop through all particles to find muons
+    for (size_t i = 0; i < particles.size(); ++i) {
+        const auto& particle = particles[i];
+        if (abs(particle.PDG) == 13) { // Check if particle is a muon
+            // Get daughters of the muon
+            bool hasPhotonDaughter = false;
+            for (size_t d = particle.daughters_begin; d < particle.daughters_end; ++d) {
+                
+                    auto daughter = particles[daughter_ids[d].index];
+                    if (daughter.PDG == 22) { // Check if daughter is a photon
+                        hasPhotonDaughter = true;
+                        // Check daughters of the photon
+                        bool hasElectronPair = false;
+                        int electronCount = 0;
+                        for (size_t gd = daughter.daughters_begin; gd < daughter.daughters_end; ++gd) {
+                            if (gd < particles.size()) {
+                                auto grandDaughter = particles[daughter_ids[gd].index];
+                                if (abs(grandDaughter.PDG) == 11) { // Check for electrons/positrons
+                                    electronCount++;
+                                }
+                            }
+                        }
+                        if (electronCount == 2) { // Two electrons/positrons from photon
+                            hasElectronPair = true;
+                        }
+                        if (hasElectronPair) {
+                            splittingCount++;
+                            break; // Found a splitting event for this muon, move to next muon
+                        }
+                    
+                }
+            }
+        }
+    }
+    return splittingCount;
+}
 
+int countElectronPhotonSplitting(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles,
+    const ROOT::VecOps::RVec<podio::ObjectID>& daughter_ids) {
+    int splittingCount = 0;
+
+    // Loop through all particles to find electrons
+    for (size_t i = 0; i < particles.size(); ++i) {
+        const auto& particle = particles[i];
+        if (abs(particle.PDG) == 11) { // Check if particle is an electron
+         // Get daughters of the electron
+           bool hasPhotonDaughter = false;
+            for (size_t d = particle.daughters_begin; d < particle.daughters_end; ++d) {
+
+                auto daughter = particles[daughter_ids[d].index];
+                if (daughter.PDG == 22) { // Check if daughter is a photon
+                  hasPhotonDaughter = true;
+                 // Check daughters of the photon
+                  bool hasElectronPair = false;
+                  int electronCount = 0;
+                  for (size_t gd = daughter.daughters_begin; gd < daughter.daughters_end; ++gd) {
+                    if (gd < particles.size()) {
+                        auto grandDaughter = particles[daughter_ids[gd].index];
+                        if (abs(grandDaughter.PDG) == 11) { // Check for electrons/positrons
+                            electronCount++;
+                        }
+                    }
+                    }
+                  if (electronCount == 2) { // Two electrons/positrons from photon
+                      hasElectronPair = true;
+                    }
+                  if (hasElectronPair) {
+                      splittingCount++;
+                      break; // Found a splitting event for this electron, move to next electron
+                    }
+                }
+            }
+        }
+    }
+      return splittingCount;
+}
+
+// New function to trace photon splitting from muons, inspired by traceToFinalState
+int tracePhotonSplitting(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles,
+                        const ROOT::VecOps::RVec<podio::ObjectID>& daughter_ids) {
+    int splittingCount = 0;
+    
+    // Loop through all particles to find muons
+    for (size_t i = 0; i < particles.size(); ++i) {
+        const auto& particle = particles[i];
+        if (abs(particle.PDG) == 13) { // Check if particle is a muon
+            // Trace daughters of the muon
+            for (size_t d = particle.daughters_begin; d < particle.daughters_end; ++d) {
+                if (d < daughter_ids.size() && d < particles.size()) {
+                    auto daughter = particles[daughter_ids[d].index];
+                    if (daughter.PDG == 22) { // Check if daughter is a photon
+                        // Trace daughters of the photon
+                        int electronCount = 0;
+                        for (size_t gd = daughter.daughters_begin; gd < daughter.daughters_end; ++gd) {
+                            if (gd < daughter_ids.size() && gd < particles.size()) {
+                                auto grandDaughter = particles[daughter_ids[gd].index];
+                                if (abs(grandDaughter.PDG) == 11) { // Check for electrons/positrons
+                                    electronCount++;
+                                }
+                            }
+                        }
+                        if (electronCount == 2) { // Exactly two electrons/positrons from photon
+                            splittingCount++;
+                            break; // Found a splitting event for this muon, move to next muon
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return splittingCount;
+}
 // Function to return leptons originating from Z and W separately
 std::pair<std::vector<edm4hep::MCParticleData>, std::vector<edm4hep::MCParticleData>> getPromptLeptons(
     const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, 

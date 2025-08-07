@@ -208,6 +208,60 @@ struct coneIsolation {
   ROOT::VecOps::RVec<float> getMinDRToAny(
       ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> prompt_parts,
       ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all);
+
+  /// calculate the delphes isolation criterion using only hadrons
+  ROOT::VecOps::RVec<float> get_IP_delphes_hadrons(
+      ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
+      ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
+      float dR_min, float pT_min, bool exclude_light_leps);
+
+  struct sel_iso {
+    sel_iso(float arg_max_iso);
+    float m_max_iso = .25;
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> operator() (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, ROOT::VecOps::RVec<float> iso);
+  };
+
+  //#######################################################################//
+//                            overlapRemoval                             //
+//#######################################################################//
+class overlapRemoval {
+  private:
+      float m_dR_threshold;
+      
+      // Helper function to calculate deltaR between two particles
+      float deltaR(const edm4hep::ReconstructedParticleData& p1, 
+                   const edm4hep::ReconstructedParticleData& p2) {
+          TLorentzVector tlv1, tlv2;
+          tlv1.SetXYZM(p1.momentum.x, p1.momentum.y, p1.momentum.z, p1.mass);
+          tlv2.SetXYZM(p2.momentum.x, p2.momentum.y, p2.momentum.z, p2.mass);
+          return tlv1.DeltaR(tlv2);
+      }
+  
+  public:
+      overlapRemoval(float dR_threshold = 0.2);
+      
+      // Individual step functions following your required order
+      ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> removeElectronsNearMuons(
+          ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> electrons,
+          ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> muons);
+      
+      ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> removeJetsNearLeptons(
+          ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets,
+          ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> leptons);
+        
+        
+      ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> removeJetsNearLeptons_standalone(
+          ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets,
+          ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> leptons,
+          float dR_threshold = 0.2);
+
+       ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> removeElectronsNearMuons_standalone(
+          ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> electrons,
+          ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> muons,
+          float dR_threshold = 0.2);
+        
+  };
+  
 }//end NS ReconstructedParticle
 
 }//end NS FCCAnalyses

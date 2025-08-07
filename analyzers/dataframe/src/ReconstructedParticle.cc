@@ -665,6 +665,12 @@ ROOT::VecOps::RVec<float> coneIsolation::operator() (ROOT::VecOps::RVec<edm4hep:
     ROOT::VecOps::RVec<float> result;
     result.reserve(in.size());
 
+    // If input vector is empty, return a vector with -999
+    if (in.size() == 0) {
+        result.emplace_back(-999.0);
+        return result;
+    }
+
     std::vector<TLorentzVector> lv_reco;
     std::vector<TLorentzVector> lv_charged;
     std::vector<TLorentzVector> lv_neutral;
@@ -690,17 +696,31 @@ ROOT::VecOps::RVec<float> coneIsolation::operator() (ROOT::VecOps::RVec<edm4hep:
         // charged
         for (auto &lv_charged_ : lv_charged) {
             double dr = this->deltaR(lv_reco_.Eta(), lv_reco_.Phi(), lv_charged_.Eta(), lv_charged_.Phi());
-            if (dr > this->dr_min && dr < this->dr_max) sumCharged += lv_charged_.P();
+            if (dr > this->dr_min && dr < this->dr_max) {
+                sumCharged += lv_charged_.P();
+                std::cout << "Charged particle in cone: dR=" << dr << ", P=" << lv_charged_.P() << std::endl;
+            }
         }
 
         // neutral
         for (auto &lv_neutral_ : lv_neutral) {
             double dr = this->deltaR(lv_reco_.Eta(), lv_reco_.Phi(), lv_neutral_.Eta(), lv_neutral_.Phi());
-            if (dr > this->dr_min && dr < this->dr_max) sumNeutral += lv_neutral_.P();
+            if (dr > this->dr_min && dr < this->dr_max) {
+                sumNeutral += lv_neutral_.P();
+                std::cout << "Neutral particle in cone: dR=" << dr << ", P=" << lv_neutral_.P() << std::endl;
+            }
         }
 
         double sum = sumCharged + sumNeutral;
+        if (lv_reco_.Pt() == 0) {
+            std::cout << "Warning: Particle pT is 0, isolation ratio cannot be computed properly." << std::endl;
+        }
         double ratio = sum / lv_reco_.P();
+        std::cout << "Isolation calculation for particle: pT=" << lv_reco_.Pt() 
+                  << ", Total P=" << lv_reco_.P() 
+                  << ", Sum Charged=" << sumCharged 
+                  << ", Sum Neutral=" << sumNeutral 
+                  << ", Isolation Ratio=" << ratio << std::endl;
         result.emplace_back(ratio);
     }
     return result;
@@ -767,6 +787,192 @@ ROOT::VecOps::RVec<float> getMinDRToAny(
     return min_dR_values;
 }
 
+sel_iso::sel_iso(float arg_max_iso) : m_max_iso(arg_max_iso) {};
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>  sel_iso::operator() (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>in, ROOT::VecOps::RVec<float> iso) {
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+  result.reserve(in.size());
+  for (size_t i = 0; i < in.size(); ++i) {
+      auto & p = in[i];
+      if (iso[i] < m_max_iso) {
+          result.emplace_back(p);
+      }
+  }
+  return result;
+}
+
+//#######################################################################//
+//                            overlapRemoval                             //
+//#######################################################################//
+
+overlapRemoval::overlapRemoval(float dR_threshold) : m_dR_threshold(dR_threshold) {}
+
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> overlapRemoval::removeElectronsNearMuons(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> electrons,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> muons) {
+    
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+    result.reserve(electrons.size());
+    
+    for (const auto& electron : electrons) {
+        bool keepElectron = true;
+        
+        // Check against muons
+        for (const auto& muon : muons) {
+            if (deltaR(electron, muon) < m_dR_threshold) {
+                keepElectron = false;
+                break;
+            }
+        }
+        
+        if (keepElectron) {
+            result.emplace_back(electron);
+        }
+    }
+    
+    return result;
+}
+
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> overlapRemoval::removeJetsNearLeptons(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> leptons) {
+    
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+    result.reserve(jets.size());
+    
+    for (const auto& jet : jets) {
+        bool keepJet = true;
+        
+        // Check against all leptons
+        for (const auto& lepton : leptons) {
+            if (deltaR(jet, lepton) < m_dR_threshold) {
+                keepJet = false;
+                break;
+            }
+        }
+        
+        if (keepJet) {
+            result.emplace_back(jet);
+        }
+    }
+    
+    return result;
+}
+
+// Convenience standalone functions (can be used directly in DataFrame operations)
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> removeElectronsNearMuons_standalone(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> electrons,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> muons,
+    float dR_threshold = 0.2) {
+    
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+    result.reserve(electrons.size());
+    
+    for (const auto& electron : electrons) {
+        bool keepElectron = true;
+        
+        for (const auto& muon : muons) {
+            TLorentzVector tlv_electron, tlv_muon;
+            tlv_electron.SetXYZM(electron.momentum.x, electron.momentum.y, electron.momentum.z, electron.mass);
+            tlv_muon.SetXYZM(muon.momentum.x, muon.momentum.y, muon.momentum.z, muon.mass);
+            
+            if (tlv_electron.DeltaR(tlv_muon) < dR_threshold) {
+                keepElectron = false;
+                break;
+            }
+        }
+        
+        if (keepElectron) {
+            result.emplace_back(electron);
+        }
+    }
+    
+    return result;
+}
+
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> removeJetsNearLeptons_standalone(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> leptons,
+    float dR_threshold = 0.2) {
+    
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+    result.reserve(jets.size());
+    
+    for (const auto& jet : jets) {
+        bool keepJet = true;
+        
+        for (const auto& lepton : leptons) {
+            TLorentzVector tlv_jet, tlv_lepton;
+            tlv_jet.SetXYZM(jet.momentum.x, jet.momentum.y, jet.momentum.z, jet.mass);
+            tlv_lepton.SetXYZM(lepton.momentum.x, lepton.momentum.y, lepton.momentum.z, lepton.mass);
+            
+            if (tlv_jet.DeltaR(tlv_lepton) < dR_threshold) {
+                keepJet = false;
+                break;
+            }
+        }
+        
+        if (keepJet) {
+            result.emplace_back(jet);
+        }
+    }
+    
+    return result;
+}
+
+// calculate the delphes isolation criterion using only hadrons
+ROOT::VecOps::RVec<float> ReconstructedParticle::get_IP_delphes_hadrons(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
+    float dR_min, float pT_min, bool exclude_light_leps) {
+
+  ROOT::VecOps::RVec<float> out_vector;
+
+  if (test_parts.size() < 1) {
+    out_vector.push_back(-999.);
+    return out_vector;
+  }
+
+  // Get types for all reconstructed particles
+  ROOT::VecOps::RVec<int> reco_types = ReconstructedParticle::get_type(reco_parts_all);
+
+  for (auto &test_part : test_parts) {
+    // first get the pT of the test particle:
+    TLorentzVector tlv_test_part = get_tlv(test_part);
+    float pT_test_part = tlv_test_part.Pt();
+
+    float sum_pT = 0;
+
+    // loop over all other parts and sum up pTs if they are within the dR cone
+    // and above min pT, considering only hadrons
+    for (size_t i = 0; i < reco_parts_all.size(); ++i) {
+      auto &reco_part = reco_parts_all[i];
+      TLorentzVector tlv_reco_part = get_tlv(reco_part);
+      float reco_pT = tlv_reco_part.Pt();
+      float dR = tlv_test_part.DeltaR(tlv_reco_part);
+
+      // Skip if the pT of reco part is equal to the pT of test part
+      if (reco_pT == pT_test_part) {
+        tlv_reco_part.Clear();
+        continue;
+      }
+
+      // Check if the particle is a hadron (PDG ID indicates baryons or mesons)
+      int pdgId = reco_types[i];
+      bool isHadron = (abs(pdgId) >= 100 && abs(pdgId) < 1000) || (abs(pdgId) >= 1000 && abs(pdgId) < 10000);
+
+      if (isHadron && reco_pT > pT_min && dR < dR_min) {
+        sum_pT += reco_pT;
+      }
+
+      tlv_reco_part.Clear();
+    }
+
+    float IP_val = (sum_pT) / pT_test_part;
+    out_vector.push_back(IP_val);
+  }
+
+  return out_vector;
+}
 }//end NS ReconstructedParticle
 
 }//end NS FCCAnalyses

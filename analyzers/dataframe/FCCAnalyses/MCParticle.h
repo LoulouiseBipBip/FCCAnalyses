@@ -11,7 +11,7 @@
 #include "edm4hep/ParticleIDData.h"
 #include "edm4hep/Vector3f.h"
 #include "edm4hep/Vector3d.h"
-
+#include "podio/ObjectID.h"
 
 
 namespace FCCAnalyses{
@@ -263,6 +263,13 @@ namespace MCParticle{
   float getClosestParticleDR(
     const edm4hep::MCParticleData& particle,
     const ROOT::VecOps::RVec<edm4hep::MCParticleData>& finalStateParticles);
+
+
+  int countMuonPhotonSplitting(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles,
+                           const ROOT::VecOps::RVec<podio::ObjectID>& daughter_ids);
+
+  int countElectronPhotonSplitting(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles,
+                           const ROOT::VecOps::RVec<podio::ObjectID>& daughter_ids);
 }//end NS MCParticle
 
 }//end NS FCCAnalyses
