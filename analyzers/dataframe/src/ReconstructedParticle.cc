@@ -919,60 +919,7 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> removeJetsNearLeptons_sta
     return result;
 }
 
-// calculate the delphes isolation criterion using only hadrons
-ROOT::VecOps::RVec<float> ReconstructedParticle::get_IP_delphes_hadrons(
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
-    float dR_min, float pT_min, bool exclude_light_leps) {
 
-  ROOT::VecOps::RVec<float> out_vector;
-
-  if (test_parts.size() < 1) {
-    out_vector.push_back(-999.);
-    return out_vector;
-  }
-
-  // Get types for all reconstructed particles
-  ROOT::VecOps::RVec<int> reco_types = ReconstructedParticle::get_type(reco_parts_all);
-
-  for (auto &test_part : test_parts) {
-    // first get the pT of the test particle:
-    TLorentzVector tlv_test_part = get_tlv(test_part);
-    float pT_test_part = tlv_test_part.Pt();
-
-    float sum_pT = 0;
-
-    // loop over all other parts and sum up pTs if they are within the dR cone
-    // and above min pT, considering only hadrons
-    for (size_t i = 0; i < reco_parts_all.size(); ++i) {
-      auto &reco_part = reco_parts_all[i];
-      TLorentzVector tlv_reco_part = get_tlv(reco_part);
-      float reco_pT = tlv_reco_part.Pt();
-      float dR = tlv_test_part.DeltaR(tlv_reco_part);
-
-      // Skip if the pT of reco part is equal to the pT of test part
-      if (reco_pT == pT_test_part) {
-        tlv_reco_part.Clear();
-        continue;
-      }
-
-      // Check if the particle is a hadron (PDG ID indicates baryons or mesons)
-      int pdgId = reco_types[i];
-      bool isHadron = (abs(pdgId) >= 100 && abs(pdgId) < 1000) || (abs(pdgId) >= 1000 && abs(pdgId) < 10000);
-
-      if (isHadron && reco_pT > pT_min && dR < dR_min) {
-        sum_pT += reco_pT;
-      }
-
-      tlv_reco_part.Clear();
-    }
-
-    float IP_val = (sum_pT) / pT_test_part;
-    out_vector.push_back(IP_val);
-  }
-
-  return out_vector;
-}
 }//end NS ReconstructedParticle
 
 }//end NS FCCAnalyses

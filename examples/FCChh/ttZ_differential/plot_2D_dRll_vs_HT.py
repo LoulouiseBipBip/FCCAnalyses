@@ -10,7 +10,7 @@ def main():
         sys.exit(1)
 
     input_file = sys.argv[1]
-    hist_name = sys.argv[2] if len(sys.argv) > 2 else "dRll_vs_HT"
+    hist_name = sys.argv[2] if len(sys.argv) > 2 else "eta_vs_pt_lep"
 
     f = ROOT.TFile.Open(input_file)
     if not f or f.IsZombie():
@@ -31,7 +31,7 @@ def main():
     c.SetTopMargin(0.08)
     c.SetLogz(False)
     c.Update()
-    output_dir = "/eos/user/l/lberiet/ttZ_diff_results/2Dhistogram"
+    output_dir = "/eos/user/l/lberiet/ttZ_diff_results/lepton_eff/kine_plots"
     outname = f"{output_dir}/{hist_name}.png"
     c.SaveAs(outname)
     print(f"Saved plot as {outname}")

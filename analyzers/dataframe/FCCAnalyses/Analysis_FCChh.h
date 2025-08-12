@@ -563,6 +563,21 @@ ROOT::VecOps::RVec<int> match_leptons(
 
 std::vector<int> checkTauDecay(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, int tauIndex);
 std::vector<int> findTauIndices(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles);
+
+ROOT::VecOps::RVec<int> countParticlesInCone(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
+    float dR_cone);
+
+ROOT::VecOps::RVec<RecoParticlePair> mergeIntoPairs(
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& vec1,
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& vec2);
+
+  /// calculate the delphes isolation criterion using only hadrons
+  ROOT::VecOps::RVec<float> get_IP_delphes_hadrons(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
+    float dR_min, float pT_min, bool exclude_light_leps);
 } // namespace AnalysisFCChh
 
 

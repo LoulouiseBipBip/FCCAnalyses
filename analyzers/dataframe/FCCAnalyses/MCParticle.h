@@ -170,6 +170,9 @@ namespace MCParticle{
   /// return the transverse momenta of the input MCParticles
   ROOT::VecOps::RVec<float> get_pt(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
 
+  /// return the total transverse momentum of the input MCParticles
+  ROOT::VecOps::RVec<float> get_total_pt(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+
   /// return the momenta of the input MCParticles
   ROOT::VecOps::RVec<float> get_p(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
 
@@ -199,6 +202,9 @@ namespace MCParticle{
 
   /// return the masses of the input MCParticles
   ROOT::VecOps::RVec<float> get_mass(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
+
+  /// return the invariant mass of the input total vector of MCParticles
+  ROOT::VecOps::RVec<float> get_invariant_mass(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
 
   /// return the charges of the input MCParticles
   ROOT::VecOps::RVec<float> get_charge(ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
@@ -270,6 +276,8 @@ namespace MCParticle{
 
   int countElectronPhotonSplitting(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles,
                            const ROOT::VecOps::RVec<podio::ObjectID>& daughter_ids);
+
+
 }//end NS MCParticle
 
 }//end NS FCCAnalyses

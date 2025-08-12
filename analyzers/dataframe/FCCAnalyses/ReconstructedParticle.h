@@ -209,11 +209,7 @@ struct coneIsolation {
       ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> prompt_parts,
       ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all);
 
-  /// calculate the delphes isolation criterion using only hadrons
-  ROOT::VecOps::RVec<float> get_IP_delphes_hadrons(
-      ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
-      ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
-      float dR_min, float pT_min, bool exclude_light_leps);
+
 
   struct sel_iso {
     sel_iso(float arg_max_iso);

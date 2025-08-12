@@ -723,6 +723,9 @@ bool AnalysisFCChh::WWlvlvFilter(
   }
 }
 
+
+
+
 // find a Z->ll decay on truth level
 ROOT::VecOps::RVec<edm4hep::MCParticleData> AnalysisFCChh::getTruthZll(
     ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_particles,
@@ -3214,6 +3217,52 @@ AnalysisFCChh::find_reco_matched(
 
   return out_vector;
 }
+// Function to count particles within a specified cone around a test particle
+ROOT::VecOps::RVec<int> AnalysisFCChh::countParticlesInCone(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
+    float dR_cone) {
+
+  ROOT::VecOps::RVec<int> out_vector;
+
+  // If no test particles provided, return empty vector with a default value
+  if (test_parts.size() < 1) {
+    out_vector.push_back(-1);
+    return out_vector;
+  }
+
+  // Loop over each test particle
+  for (auto &test_part : test_parts) {
+    TLorentzVector tlv_test_part = getTLV_reco(test_part);
+    int count = 0;
+
+    // Loop over all reconstructed particles to check if they fall within the cone
+    for (auto &reco_part : reco_parts_all) {
+      TLorentzVector tlv_reco_part = getTLV_reco(reco_part);
+      float dR = tlv_test_part.DeltaR(tlv_reco_part);
+
+      // Skip if it's the same particle (based on exact match of momentum)
+      if (tlv_test_part.Px() == tlv_reco_part.Px() && 
+          tlv_test_part.Py() == tlv_reco_part.Py() && 
+          tlv_test_part.Pz() == tlv_reco_part.Pz()) {
+        tlv_reco_part.Clear();
+        continue;
+      }
+
+      // Increment count if particle is within the specified cone
+      if (dR < dR_cone) {
+        count++;
+      }
+      
+      tlv_reco_part.Clear();
+    }
+    
+    out_vector.push_back(count);
+    tlv_test_part.Clear();
+  }
+
+  return out_vector;
+}
 
 // manual implementation of the delphes isolation criterion
 ROOT::VecOps::RVec<float> AnalysisFCChh::get_IP_delphes(
@@ -3224,37 +3273,51 @@ ROOT::VecOps::RVec<float> AnalysisFCChh::get_IP_delphes(
   ROOT::VecOps::RVec<float> out_vector;
 
   if (test_parts.size() < 1) {
+    out_vector.push_back(-999.);
+    // std::cout << "Debug: No test particles provided, returning -999." << std::endl;
     return out_vector;
   }
+
+  // std::cout << "Debug: Number of test particles: " << test_parts.size() << std::endl;
+  // std::cout << "Debug: Number of all reconstructed particles: " << reco_parts_all.size() << std::endl;
+  // std::cout << "Debug: dR_min: " << dR_min << ", pT_min: " << pT_min << ", exclude_light_leps: " << exclude_light_leps << std::endl;
 
   for (auto &test_part : test_parts) {
     // first get the pT of the test particle:
     TLorentzVector tlv_test_part = getTLV_reco(test_part);
     float pT_test_part = tlv_test_part.Pt();
 
+    // std::cout << "Debug: Test particle pT: " << pT_test_part << std::endl;
+
     float sum_pT = 0;
 
     // loop over all other parts and sum up pTs if they are within the dR cone
     // and above min pT
     for (auto &reco_part : reco_parts_all) {
-
-      // check type of particle first:
-      //  std::cout << "PDG ID of particle:" << reco_part.m_particleIDUsed <<
-      //  std::endl;
-
-      // exclude electrons and muons
-
       TLorentzVector tlv_reco_part = getTLV_reco(reco_part);
+      float reco_pT = tlv_reco_part.Pt();
+      float dR = tlv_test_part.DeltaR(tlv_reco_part);
 
-      if (tlv_reco_part.Pt() > pT_min &&
-          tlv_test_part.DeltaR(tlv_reco_part) < dR_min) {
-        sum_pT += tlv_reco_part.Pt();
+      // Skip if the pT of reco part is equal to the pT of test part
+      if (reco_pT == pT_test_part) {
+        // std::cout << "Debug: Skipping the same particle (equal pT): " << reco_pT << ", dR: " << dR << std::endl;
+        tlv_reco_part.Clear();
+        continue;
+      }
+
+      if (reco_pT > pT_min && dR < dR_min) {
+        sum_pT += reco_pT;
+        // std::cout << "Debug: Particle within cone, pT: " << reco_pT << ", dR: " << dR << ", Sum pT now: " << sum_pT << std::endl;
+      } else {
+        // std::cout << "Debug: Particle excluded, pT: " << reco_pT << ", dR: " << dR << std::endl;
       }
 
       tlv_reco_part.Clear();
     }
 
-    float IP_val = (sum_pT-pT_test_part) / pT_test_part;
+    float IP_val = (sum_pT) / pT_test_part;
+
+    // std::cout << "Debug: Calculated IP value: " << IP_val << ", Sum pT: " << sum_pT << ", Test pT: " << pT_test_part << std::endl;
 
     out_vector.push_back(IP_val);
   }
@@ -4427,6 +4490,24 @@ for (size_t i = 0; i < mc_tlvs.size(); ++i) {
 return reco_indices;
 }
 
+ROOT::VecOps::RVec<AnalysisFCChh::RecoParticlePair> AnalysisFCChh::mergeIntoPairs(
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& vec1,
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& vec2) {
+    ROOT::VecOps::RVec<AnalysisFCChh::RecoParticlePair> result;
+    size_t minSize = std::min(vec1.size(), vec2.size());
+    
+    for (size_t i = 0; i < minSize; ++i) {
+        AnalysisFCChh::RecoParticlePair pair;
+        pair.particle_1 = vec1[i];
+        pair.particle_2 = vec2[i];
+        pair.flavour_flag = 0; // Default value, can be set based on specific needs
+        result.push_back(pair);
+    }
+    
+    return result;
+}
+
+
 // // Function to check if a tau decays and return PDG IDs of decay products
 // std::vector<int> checkTauDecay(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, int tauIndex) {
 //     std::vector<int> decayProducts;
@@ -4470,6 +4551,60 @@ return reco_indices;
 //     }
 //     return tauIndices;
 // }
+// calculate the delphes isolation criterion using only hadrons
+ROOT::VecOps::RVec<float> AnalysisFCChh::get_IP_delphes_hadrons(
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
+  float dR_min, float pT_min, bool exclude_light_leps) {
+
+ROOT::VecOps::RVec<float> out_vector;
+
+if (test_parts.size() < 1) {
+  out_vector.push_back(-999.);
+  return out_vector;
+}
+
+for (auto &test_part : test_parts) {
+  // first get the pT of the test particle:
+  TLorentzVector tlv_test_part = getTLV_reco(test_part);
+  float pT_test_part = tlv_test_part.Pt();
+
+  float sum_pT = 0;
+
+  // loop over all other parts and sum up pTs if they are within the dR cone
+  // and above min pT, excluding muons and electrons if requested
+  for (size_t i = 0; i < reco_parts_all.size(); ++i) {
+    auto &reco_part = reco_parts_all[i];
+    TLorentzVector tlv_reco_part = getTLV_reco(reco_part);
+    float reco_pT = tlv_reco_part.Pt();
+    float dR = tlv_test_part.DeltaR(tlv_reco_part);
+
+    // Skip if the pT of reco part is equal to the pT of test part
+    if (reco_pT == pT_test_part) {
+      tlv_reco_part.Clear();
+      continue;
+    }
+
+    // Check if the particle is an electron (PDG ID 11) or muon (PDG ID 13)
+    bool isLightLepton = false;
+    if (exclude_light_leps) {
+      int pdg = reco_part.PDG;
+      isLightLepton = (abs(pdg) == 11 || abs(pdg) == 13);
+    }
+
+    if (!isLightLepton && reco_pT > pT_min && dR < dR_min) {
+      sum_pT += reco_pT;
+    }
+
+    tlv_reco_part.Clear();
+  }
+
+  float IP_val = (sum_pT) / pT_test_part;
+  out_vector.push_back(IP_val);
+}
+
+return out_vector;
+} 
 
 
 

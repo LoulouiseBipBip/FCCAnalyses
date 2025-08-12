@@ -33,7 +33,7 @@ for q_bin in q_bins:
     # Construct file paths for this Q bin
     all_file = os.path.join(input_dir, f"mgp8_pp_ttz_5f_84TeV_ttzlep_all_events_histo.root")
     #sel0_sf_ss_file = os.path.join(input_dir, f"mgp8_pp_tttt_wmlep_Q_{q_bin}_5f_84TeV_sel0_sf_ss_histo.root")
-    sel1_file = os.path.join(input_dir, f"mgp8_pp_ttz_5f_84TeV_ttzlep_lep_eta_pt_histo.root")
+    sel1_file = os.path.join(input_dir, f"mgp8_pp_ttz_5f_84TeV_ttzlep_lep_pT_eta_cut_histo.root")
     
    
 
@@ -41,7 +41,7 @@ for q_bin in q_bins:
     files = [
         (all_file, "all"),
         #(sel0_sf_ss_file, "sel0_sf_ss"),
-        (sel1_file, "sel1_lep_eta_pt"),
+        (sel1_file, "sel1_lep_pT_eta_cut"),
         #(sel2_file, "sel2_bjets"),
         #(sel3_file, "sel3_jets"),
         #(sel4_file, "sel4_notZ"),
@@ -76,7 +76,7 @@ for q_bin in q_bins:
         #        h_sel0_sf_ss.SetDirectory(0)
         #    else:
         #        h_sel0_sf_ss.Add(h)
-        elif label == "sel1_lep_eta_pt":
+        elif label == "sel1_lep_pT_eta_cut":
             if h_sel1 is None:
                 h_sel1 = h.Clone("h_sel1")
                 h_sel1.SetDirectory(0)

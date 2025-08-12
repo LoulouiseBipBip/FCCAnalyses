@@ -189,6 +189,16 @@ ROOT::VecOps::RVec<int> get_tree::operator() (ROOT::VecOps::RVec<edm4hep::MCPart
 }
 
 
+ROOT::VecOps::RVec<float> get_total_pt(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
+  ROOT::VecOps::RVec<float> result;
+  float totalPt = 0.0;
+  for (auto & p : in) {
+    float pt = sqrt(p.momentum.x * p.momentum.x + p.momentum.y * p.momentum.y);
+    totalPt += pt;
+  }
+  result.push_back(totalPt);
+  return result;
+}
 
 
 
@@ -335,6 +345,18 @@ ROOT::VecOps::RVec<float> get_mass(ROOT::VecOps::RVec<edm4hep::MCParticleData> i
   }
   return result;
 }
+ROOT::VecOps::RVec<float> get_invariant_mass(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
+  ROOT::VecOps::RVec<float> result;
+  TLorentzVector total_tlv;
+  for (auto & p : in) {
+    TLorentzVector tlv;
+    tlv.SetXYZM(p.momentum.x, p.momentum.y, p.momentum.z, p.mass);
+    total_tlv += tlv;
+  }
+  result.push_back(total_tlv.M());
+  return result;
+}
+
 
 ROOT::VecOps::RVec<float> get_eta(ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
   ROOT::VecOps::RVec<float> result;
@@ -647,16 +669,16 @@ ROOT::VecOps::RVec<int>  get_indices_ExclusiveDecay_MotherByIndex( int imother,
 }
 // ----------------------------------------------------------------------------------------------------------------------------------
 
-get_indices::get_indices( int pdg_mother, std::vector<int> pdg_daughters, bool stableDaughters, bool chargeConjugateMother, bool chargeConjugateDaughters, bool inclusiveDecay) {
+MCParticle::get_indices::get_indices( int pdg_mother, std::vector<int> pdg_daughters, bool stableDaughters, bool chargeConjugateMother, bool chargeConjugateDaughters, bool inclusiveDecay) {
   m_pdg_mother = pdg_mother;
   m_pdg_daughters = pdg_daughters;
   m_stableDaughters = stableDaughters;
   m_chargeConjugateMother = chargeConjugateMother;
   m_chargeConjugateDaughters = chargeConjugateDaughters;
   m_inclusiveDecay = inclusiveDecay;
-} ;
+}
 
-ROOT::VecOps::RVec<int>  get_indices::operator() ( ROOT::VecOps::RVec<edm4hep::MCParticleData> in, ROOT::VecOps::RVec<int> ind) {
+ROOT::VecOps::RVec<int> MCParticle::get_indices::operator() ( ROOT::VecOps::RVec<edm4hep::MCParticleData> in, ROOT::VecOps::RVec<int> ind) {
 
    // Look for a specific decay specified by the mother PDG_id and
    // the PDG_ids of the daughters
@@ -684,12 +706,11 @@ ROOT::VecOps::RVec<int>  get_indices::operator() ( ROOT::VecOps::RVec<edm4hep::M
    return result;
 }
 
-get_indices_ExclusiveDecay::get_indices_ExclusiveDecay( int pdg_mother, std::vector<int> pdg_daughters, bool stableDaughters, bool chargeConjugate) : get_indices(pdg_mother, pdg_daughters, stableDaughters, chargeConjugate, chargeConjugate, false)  {
+MCParticle::get_indices_ExclusiveDecay::get_indices_ExclusiveDecay( int pdg_mother, std::vector<int> pdg_daughters, bool stableDaughters, bool chargeConjugate) : get_indices(pdg_mother, pdg_daughters, stableDaughters, chargeConjugate, chargeConjugate, false)  {
 };
 
 
 // --------------------------------------------------------------------------------------------------
-
 ROOT::VecOps::RVec<float> AngleBetweenTwoMCParticles( ROOT::VecOps::RVec<edm4hep::MCParticleData> p1, ROOT::VecOps::RVec<edm4hep::MCParticleData> p2 ) {
 
   ROOT::VecOps::RVec<float> result;
@@ -698,11 +719,13 @@ ROOT::VecOps::RVec<float> AngleBetweenTwoMCParticles( ROOT::VecOps::RVec<edm4hep
         return result;
   }
 
-  for (int i=0; i < p1.size(); i++) {
-     TVector3 q1( p1[i].momentum.x, p1[i].momentum.y, p1[i].momentum.z );
-     TVector3 q2( p2[i].momentum.x, p2[i].momentum.y, p2[i].momentum.z );
-     float delta = fabs( q1.Angle( q2 ) ) ;
-     result.push_back( delta );
+  for (int i = 0; i < p1.size(); i++) {
+     TLorentzVector tlv1;
+     tlv1.SetXYZM(p1[i].momentum.x, p1[i].momentum.y, p1[i].momentum.z, p1[i].mass);
+     TLorentzVector tlv2;
+     tlv2.SetXYZM(p2[i].momentum.x, p2[i].momentum.y, p2[i].momentum.z, p2[i].mass);
+     float dR = tlv1.DeltaR(tlv2);
+     result.push_back(dR);
   }
 
   return result;
@@ -1100,6 +1123,7 @@ float getClosestParticleDR(
   //std::cout << "Debug: Closest dR for particle with PDG " << particle.PDG << " is " << minDR << std::endl;
   return minDR;
 }
+
 }//end NS MCParticle
 
 }//end NS FCCAnalyses
