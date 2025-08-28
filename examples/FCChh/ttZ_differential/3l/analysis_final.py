@@ -1,15 +1,18 @@
 # Input directory where the files produced at the pre-selection level are
-inputDir = "/eos/user/l/lberiet/ttZ_diff_results"
+inputDir = "/eos/user/l/lberiet/ttZ_diff_results/result/"
 #inputDir = "/eos/user/s/selvaggi/analysis/ttbar_diff"
 
 # Input directory where the files produced at the pre-selection level are
-outputDir = "/eos/user/l/lberiet/ttZ_diff_results/3l/"
+outputDir = "/eos/user/l/lberiet/ttZ_diff_results/result/3l/"
 
 processList = {
     'mgp8_pp_ttz_5f_84TeV_ttzlep': {},
 
     'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": 1},
-    'mgp8_pp_tth_5f_84TeV': {},
+    'mgp8_pp_tth_5f_Q_0_1000_84TeV': {},
+    'mgp8_pp_tth_5f_Q_1000_3000_84TeV': {},
+    'mgp8_pp_tth_5f_Q_3000_10000_84TeV': {},
+    'mgp8_pp_tth_5f_Q_10000_84000_84TeV': {},
     'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {},
 
     'mgp8_pp_zzz_5f_84TeV': {},
@@ -84,26 +87,28 @@ cutList = {
     # add more cuts here: note you need to && them, they are not sequential!
 }
 histoList = {
-    "n_jets": {"name": "n_jets", "title": "Number of jets", "bin": 10, "xmin": 0, "xmax": 10},
-    "Second_Pair_mass": {"name": "Second_Pair_mass", "title": "Second OS pair mass [GeV]", "bin": 50, "xmin": 5, "xmax": 250},
-    "Second_Pair_flavor": {"name": "Second_Pair_flavor", "title": "Second OS pair flavor", "bin": 4, "xmin": 0, "xmax": 4},
-    "Z_ll_and_second_pairs_size": {"name": "Z_ll_and_second_pairs_size", "title": "Z_ll and second OS pair size", "bin": 10, "xmin": 0, "xmax": 10},
-    "electron_noiso_var": {"name": "electron_noiso_var", "title": "Electron noiso var", "bin": 100, "xmin": 0, "xmax": 2.5},
-    "electron_iso_var": {"name": "electron_iso_var", "title": "Electron iso var", "bin": 100, "xmin": 0, "xmax": 2.5},
-    "muon_noiso_var": {"name": "muon_noiso_var", "title": "Muon noiso var", "bin": 100, "xmin": 0, "xmax": 2.5},
-    "muon_iso_var": {"name": "muon_iso_var", "title": "Muon iso var", "bin": 100, "xmin": 0, "xmax": 2.5},
+    #"n_jets": {"name": "n_jets", "title": "Number of jets", "bin": 10, "xmin": 0, "xmax": 10},
+    #"Second_Pair_mass": {"name": "Second_Pair_mass", "title": "Second OS pair mass [GeV]", "bin": 50, "xmin": 5, "xmax": 250},
+    #"Second_Pair_flavor": {"name": "Second_Pair_flavor", "title": "Second OS pair flavor", "bin": 4, "xmin": 0, "xmax": 4},
+    #"Z_ll_and_second_pairs_size": {"name": "Z_ll_and_second_pairs_size", "title": "Z_ll and second OS pair size", "bin": 10, "xmin": 0, "xmax": 10},
+    #"electron_noiso_var": {"name": "electron_noiso_var", "title": "Electron noiso var", "bin": 100, "xmin": 0, "xmax": 2.5},
+    #"electron_iso_var": {"name": "electron_iso_var", "title": "Electron iso var", "bin": 100, "xmin": 0, "xmax": 2.5},
+    #"muon_noiso_var": {"name": "muon_noiso_var", "title": "Muon noiso var", "bin": 100, "xmin": 0, "xmax": 2.5},
+   # "muon_iso_var": {"name": "muon_iso_var", "title": "Muon iso var", "bin": 100, "xmin": 0, "xmax": 2.5},
     #"Zll_and_second_pairs": {"name": "Zll_and_second_pairs_flavor", "title": "Zll and second OS pair is e-mu", "bin": 10, "xmin": 0, "xmax": 10},
-    "n_bjets": {"name": "n_bjets", "title": "Number of b-Jets", "bin": 15, "xmin": 0, "xmax": 15},
-    "n_leptons": {"name": "n_leptons", "title": "Number of Leptons", "bin": 10, "xmin": 0, "xmax": 10},
-    "Z_ll_mass": {"name": "Z_ll_mass", "title": "Z_{ll} mass [GeV]", "bin": 50, "xmin": 5, "xmax": 250},
-    "dR_ll": {"name": "dR_ll", "title": "dR_{ll}", "bin": 50, "xmin": 0, "xmax": 10},
-    "HT": {"name": "HT", "title": "H_{T} [GeV]", "bin": 100, "xmin": 0, "xmax": 3500},
-    "MET": {"name": "MET", "title": "MET [GeV]", "bin": 20, "xmin": 0, "xmax": 2000},
-    "dRll_vs_HT": {
-        "name": ["dR_ll", "HT"],
-        "title": "dR_{ll} vs H_{T};dR_{ll};H_{T} [GeV]",
-        "bin": [50, 50],
-        "xmin": [0, 0],
-        "xmax": [10, 2000]
-    },
+    #"Z_ll_pt": {"name": "Z_ll_pt", "title": "Z_{ll} p_{T} [GeV]", "bin": 50, "xmin": 0, "xmax": 250},
+    #"n_bjets": {"name": "n_bjets", "title": "Number of b-Jets", "bin": 15, "xmin": 0, "xmax": 15},
+    #"n_leptons": {"name": "n_leptons", "title": "Number of Leptons", "bin": 10, "xmin": 0, "xmax": 10},
+    #"Z_ll_mass": {"name": "Z_ll_mass", "title": "Z_{ll} mass [GeV]", "bin": 50, "xmin": 5, "xmax": 250},
+    #"dR_ll": {"name": "dR_ll", "title": "dR_{ll}", "bin": 50, "xmin": 0, "xmax": 10},
+    "dR_second_pair": {"name": "dR_second_pair", "title": "dR_{second_pair}", "bin": 50, "xmin": 0, "xmax": 10},
+    #"HT": {"name": "HT", "title": "H_{T} [GeV]", "bin": 100, "xmin": 0, "xmax": 3500},
+    #"MET": {"name": "MET", "title": "MET [GeV]", "bin": 20, "xmin": 0, "xmax": 2000},
+    #"dRll_vs_HT": {
+    #    "name": ["dR_ll", "HT"],
+    #    "title": "dR_{ll} vs H_{T};dR_{ll};H_{T} [GeV]",
+    #    "bin": [50, 50],
+    #    "xmin": [0, 0],
+   #    "xmax": [10, 2000]
+    #},
 }

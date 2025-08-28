@@ -1,20 +1,22 @@
 import uproot
 import numpy as np
 import matplotlib.pyplot as plt
-
+import glob
 # Open the ROOT file
-file_path = "/eos/user/l/lberiet/ttZ_diff_results/lepton_eff/result/mgp8_pp_ttz_5f_84TeV_ttzlep.root"
-file = uproot.open(file_path)
-if not file:
-    print("Error opening file!")
-    exit(1)
+file_list = glob.glob("/eos/user/l/lberiet/ttZ_diff_results/lepton_eff/result/mgp8_pp_ttz_5f_Q_*_84TeV_ttzlep.root")
+print(f"Found {len(file_list)} ROOT files")
 
 # Get the tree
-tree = file["events"]
-if not tree:
-    print("Error getting tree!")
-    file.close()
-    exit(1)
+for file_path in file_list:
+    file = uproot.open(file_path)
+    if not file:
+        print("Error opening file!")
+        exit(1)
+    tree = file["events"]
+    if not tree:
+        print("Error getting tree!")
+        file.close()
+        exit(1)
 
 # Print available branches to debug
 print("Available branches in the tree:")
@@ -143,23 +145,23 @@ plt.ylabel('Efficiency (Prompt)')
 plt.title('Muon ROC Curves')
 
 plt.xscale('log')
-plt.xlim(1e-5, 1)  # Adjusted to avoid issues with log scale at 0
+plt.xlim(1e-4, 1)  # Adjusted to avoid issues with log scale at 0
 plt.ylim(0.1, 1)
 plt.legend()
 
 # Electron ROC curves
 plt.subplot(1, 2, 2)
 for i, (efficiency, inefficiency, dr) in enumerate(electron_roc_data):
-    plt.plot(inefficiency, efficiency, label=f'ΔR = 0.{dr}', color=colors[i % len(colors)])
+    plt.plot(inefficiency, efficiency, label=f'ΔR = {dr}', color=colors[i % len(colors)])
 
 # Add markers for iso=0.1 for electrons, only for ΔR=0.3
 for eff, ineff, dr in electron_markers:
     if dr == "03":
-        plt.plot(ineff, eff, '.', markersize=10, color=colors[dr_values.index(dr) % len(colors)], label=f'Iso=0.1 (ΔR={dr})')
+        plt.plot(ineff, eff, '.', markersize=10, color=colors[dr_values.index(dr) % len(colors)], label=f'Old Iso=0.1 (ΔR={dr})')
 
 # Add markers for Youden's optimal iso for electrons
 for eff, ineff, threshold, dr in electron_youden_markers:
-    plt.plot(ineff, eff, '*', markersize=12, color=youden_colors[dr_values.index(dr) % len(youden_colors)], label=f'Youden Iso={threshold:.3f} (ΔR={dr})')
+    plt.plot(ineff, eff, '*', markersize=12, color=youden_colors[dr_values.index(dr) % len(youden_colors)], label=f'Optimal Iso={threshold:.3f}')
 
 plt.xlabel('Inefficiency (Non-Prompt)')
 plt.ylabel('Efficiency (Prompt)')

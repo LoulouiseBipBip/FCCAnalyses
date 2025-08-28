@@ -17,46 +17,50 @@ debug = False
 
 
 processList = {
-    #'mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
-    #'mgp8_pp_ttz_5f_Q_1000_3000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
-    #'mgp8_pp_ttz_5f_Q_3000_10000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
-    #'mgp8_pp_ttz_5f_Q_10000_84000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_ttw_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
-           # 'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+    # 'mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    # 'mgp8_pp_ttz_5f_Q_1000_3000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    # 'mgp8_pp_ttz_5f_Q_3000_10000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    # 'mgp8_pp_ttz_5f_Q_10000_84000_84TeV_ttzlep': {"fraction": fraction, 'Chunks': 50},
+    # 'mgp8_pp_ttz_5f_Q_0_1000_84TeV_zll': {"fraction": fraction, 'Chunks': 50},
+    # 'mgp8_pp_ttz_5f_Q_1000_3000_84TeV_zll': {"fraction": fraction, 'Chunks': 50},
+    # 'mgp8_pp_ttz_5f_Q_3000_10000_84TeV_zll': {"fraction": fraction, 'Chunks': 50},
+    # 'mgp8_pp_ttz_5f_Q_10000_84000_84TeV_zll': {"fraction": fraction, 'Chunks': 50},
+        #     'mgp8_pp_ttw_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+        #    'mgp8_pp_tttt_5f_84TeV_4tlep': {"fraction": fraction, 'Chunks': 50},
+        #     'mgp8_pp_tth_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
 
-            'mgp8_pp_tth_5f_Q_0_1000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_0_1000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww': {"fraction": fraction, 'Chunks': 50},
             
-            'mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_10000_84000_84TeV_htautau': {"fraction": fraction, 'Chunks': 50},
 
-            'mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
-            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {"fraction": fraction, 'Chunks': 50},
 
-            #'mgp8_pp_WZjj_HF_5f_84TeV_wzlllv': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_WZjj_HF_5f_84TeV_wzlllv': {"fraction": fraction, 'Chunks': 50},
 
             # 'mgp8_pp_wwz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_wwz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_wwz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            #'mgp8_pp_wwz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wwz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wwz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_wwz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
 
-            # 'mgp8_pp_wzz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            # 'mgp8_pp_wzz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            # 'mgp8_pp_wzz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            # 'mgp8_pp_wzz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_wzz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
 
-            # 'mgp8_pp_zzz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            # 'mgp8_pp_zzz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            # 'mgp8_pp_zzz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
-            # 'mgp8_pp_zzz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzz_5f_Q_0_1000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzz_5f_Q_1000_3000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzz_5f_Q_3000_10000_84TeV': {"fraction": fraction, 'Chunks': 50},
+            'mgp8_pp_zzz_5f_Q_10000_84000_84TeV': {"fraction": fraction, 'Chunks': 50},
             
             # 'mgp8_pp_wwww_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
             # 'mgp8_pp_wwwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
@@ -67,9 +71,11 @@ processList = {
             # 'mgp8_pp_ttzz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
             # 'mgp8_pp_ttwz_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
 
-    #         'mgp8_pp_tt_HT_2000_100000_5f_84TeV_blvblv': {"fraction": fraction, 'Chunks': 50},
-    #         'mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv': {"fraction": fraction, 'Chunks': 50},
-    # #"mgp8_pp_tt012j_5f_84TeV": {"fraction": fraction},
+            # 'mgp8_pp_ttw_5f_84TeV': {"fraction": fraction, 'Chunks': 50},
+
+            # 'mgp8_pp_tt_HT_2000_100000_5f_84TeV_blvblv': {"fraction": fraction, 'Chunks': 50},
+            # 'mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv': {"fraction": fraction, 'Chunks': 50},
+    #"mgp8_pp_tt012j_5f_84TeV": {"fraction": fraction},
     
 }
 
@@ -84,7 +90,7 @@ procDict = "/eos/experiment/fcc/hh/utils/FCCDicts/FCChh_procDict_fcc_v07_II.json
 # inputDir    = "./localSamples/"
 
 # Optional: output directory, default is local running directory
-outputDir = "/eos/user/l/lberiet/Histmaker/ttZ_differential/3l"
+outputDir = "/eos/user/l/lberiet/Histmaker/ttZ_differential/new3l"
 
 # optional: ncpus, default is 4, -1 uses all cores available
 nCPUS = -1
@@ -113,7 +119,21 @@ def build_graph(df, dataset):
     results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
     selections.append("All events")
 
-    # select muons 
+    df = df.Define("mc_particles", "Particle")  # All Monte Carlo particles
+    df = df.Alias("mc_parents", "_Particle_parents.index")  # Alias for particle parents
+    df = df.Alias("mc_daughters", "_Particle_daughters.index")  # Alias for particle daughters
+            
+
+
+    df = df.Define("top_decay_channel","AnalysisFCChh::findTopDecayChannel(mc_particles, mc_daughters)")
+    #df = df.Filter("top_decay_channel == 2 || top_decay_channel == 3")
+    # df = df.Define(f"cut{len(selections)}", f"{len(selections)}")
+    # results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
+    # selections.append("top_decay_channel == 2 or top_decay_channel == 3")
+ #--------------------------------reco level--------------------------------#
+ 
+   
+    # select muons up
     df = df.Define("muons",  "FCCAnalyses::ReconstructedParticle::get(Muon_objIdx.index, ReconstructedParticles)") 
     df = df.Define("selpt_muons", "FCCAnalyses::ReconstructedParticle::sel_pt(30.)(muons)")
     df = df.Define("sel_muons_unsort", "FCCAnalyses::ReconstructedParticle::sel_eta(4)(selpt_muons)")
@@ -216,12 +236,12 @@ def build_graph(df, dataset):
 
     # Temporarily comment out the Z_ll_flavor == 3 cut to diagnose empty histograms
     # df = df.Filter("Z_ll_flavor == 3")
-    df = df.Define(f"cut{len(selections)}", f"{len(selections)}")
-    results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
+   #df = df.Define(f"cut{len(selections)}", f"{len(selections)}")
+    #results.append(df.Histo1D(("cutFlow", "", *bins_count), f"cut{len(selections)}"))
     #selections.append("Z_ll_flavor == 3 (commented out)")
 
     # calculate HT
-    df = df.Define("HT","ScalarHT")
+    df = df.Define("HT","pT_leptons_sel[0] + pT_leptons_sel[1] + pT_leptons_sel[2] + sel_bjets_pt[0] + sel_bjets_pt[1]")
 
     df = df.Define("ht_tev", "HT/1000.")
 
@@ -247,7 +267,8 @@ def build_graph(df, dataset):
     results.append(df.Histo1D(("HT_bjetId_wp", "", len(bins_ht) - 1, bins_ht), "ht_tev", "wp_bjetId"))
     results.append(df.Histo1D(("HT_bjetId_wm", "", len(bins_ht) - 1, bins_ht), "ht_tev", "wm_bjetId"))
 
-    bins_zpt = array.array('d', [0, 100, 200, 300, 400, 500, 600, 700, 800, 950, 1150, 1350, 1800, 2500])#, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000 ])  # GeV
+    #, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000 ])  # GeV
+    bins_zpt = array.array('d', [0.0,100.0,200.0,300.0,400.0,500.0,650.0,800.0,1000.0,1300.0,1800.0,2500.0])
     results.append(df.Histo1D(("Z_ll_pt_sel", "", len(bins_zpt) - 1, bins_zpt), "Z_ll_pt"))
     results.append(df.Histo1D(("Z_ll_pt_sel_eleId_wp", "", len(bins_zpt) - 1, bins_zpt), "Z_ll_pt", "wp_eleId"))
     results.append(df.Histo1D(("Z_ll_pt_sel_eleId_wm", "", len(bins_zpt) - 1, bins_zpt), "Z_ll_pt", "wm_eleId"))

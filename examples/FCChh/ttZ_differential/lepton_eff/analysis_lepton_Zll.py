@@ -14,7 +14,10 @@ class Analysis():
         self.ana_args, _ = parser.parse_known_args(cmdline_args['unknown'])
 
         self.process_list = {
-            'mgp8_pp_ttz_5f_84TeV_ttzlep': {'fraction': 0.1},
+            'mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep': {"fraction": 1.0, 'Chunks': 50},
+            'mgp8_pp_ttz_5f_Q_1000_3000_84TeV_ttzlep': {"fraction": 1.0, 'Chunks': 50},
+            'mgp8_pp_ttz_5f_Q_3000_10000_84TeV_ttzlep': {"fraction": 1.0, 'Chunks': 50},
+            'mgp8_pp_ttz_5f_Q_10000_84000_84TeV_ttzlep': {"fraction": 1.0, 'Chunks': 50},
         }
 
         self.input_dir = "/eos/experiment/fcc/hh/generation/DelphesEvents/fcc_v07/II/"
@@ -56,10 +59,10 @@ class Analysis():
             .Define("n_truth_taus", "tau_truth.size()")  # Number of truth taus (used in filter)
             .Filter("n_truth_taus == 0", "no_tau")  # Filter out events with taus
             
-           .Define("p_Z_ll", "FCCAnalyses::MCParticle::get_p(Z_truth)")
+            .Define("p_Z_ll", "FCCAnalyses::MCParticle::get_p(Z_truth)")
          
-           .Define("pz_Z_ll", "FCCAnalyses::MCParticle::get_pz(Z_truth)")
-           .Define("eta_Z_ll", "FCCAnalyses::MCParticle::get_eta(Z_truth)")
+            .Define("pz_Z_ll", "FCCAnalyses::MCParticle::get_pz(Z_truth)")
+            .Define("eta_Z_ll", "FCCAnalyses::MCParticle::get_eta(Z_truth)")
             # Merging leptons and kinematic properties
             .Define("truth_leptons", "FCCAnalyses::MCParticle::mergeParticles(electron_truth, muon_truth)")  # Merge electrons and muons
             #.Define("truth_leptons", "FCCAnalyses::MCParticle::mergeParticles(truth_leptons_temp, tau_truth)")  # Commented out: unused tau merging
@@ -67,11 +70,6 @@ class Analysis():
             .Define("truth_lep_eta", "FCCAnalyses::MCParticle::get_eta(truth_leptons)")  # Truth lepton eta 
             .Define("electron_truth_tlv", "FCCAnalyses::MCParticle::get_tlv(electron_truth)")  # Electron truth four-vector 
             .Define("muon_truth_tlv", "FCCAnalyses::MCParticle::get_tlv(muon_truth)")  # Muon truth four-vector 
-            
-            # Tau-related definitions (commented out as unused)
-            #§.Define("tau_index", "AnalysisFCChh::findTauIndices(tau_truth)")  # Unused tau index
-            #.Define("tau_daughters", "AnalysisFCChh::checkTauDecay(mc_daughters, tau_index)")  # Unused tau decay daughters
-            #.Define("tau_daughters_size", "tau_daughters.size()")  # Unused tau daughters size
             
             # Counting truth particles
             .Define("n_truth_Zll", "truth_Zll.size()")  # Number of Z->ll decays 
@@ -103,23 +101,10 @@ class Analysis():
             .Define("truth_ll_cut_pt", "FCCAnalyses::MCParticle::sel_pt(10.)(truth_ll)")  # Z decay leptons with pT > 10 
             .Define("truth_ll_cut_eta_pt", "FCCAnalyses::MCParticle::sel_eta(4)(FCCAnalyses::MCParticle::sel_pt(10.)(truth_ll))")  # Z decay leptons passing cuts
             .Define("n_truth_ll_cut_eta_pt", "truth_ll_cut_eta_pt.size()")  # Number of Z decay leptons passing cuts 
-            .Define("dR_Zll_truth", "FCCAnalyses::MCParticle::AngleBetweenTwoMCParticles(ROOT::VecOps::RVec<edm4hep::MCParticleData>{truth_ll[0]}, ROOT::VecOps::RVec<edm4hep::MCParticleData>{truth_ll[1]})[0]")  # Delta R between Z decay leptons 
-            #.Define("pT_Zll_truth", "FCCAnalyses::MCParticle::get_pt(ROOT::VecOps::RVec<edm4hep::MCParticleData>{truth_ll[0]})[0] + FCCAnalyses::MCParticle::get_pt(ROOT::VecOps::RVec<edm4hep::MCParticleData>{truth_ll[1]})[0]")  # pT of Z decay leptons 
-            #.Define("truth_ll_index", "FCCAnalyses::MCParticle::get_i2ndex(truth_ll)")  # Unused index of Z decay leptons
-            .Define("flavour_Z_decay", "truth_Zll.size() > 0 ? AnalysisFCChh::checkZllDecay(truth_Zll[0], mc_daughters, mc_particles) : 0")  # Z decay flavor 
-            
-            # Kinematic variables for individual leptons from Z decay
-            .Define("lepton_1", "truth_ll.size() > 0 ? truth_ll[0] : edm4hep::MCParticleData{}")  # First lepton from Z decay
-            .Define("lepton_2", "truth_ll.size() > 1 ? truth_ll[1] : edm4hep::MCParticleData{}")  # Second lepton from Z decay
-            .Define("n_truth_ll", "truth_ll.size()")  # Number of Z decay leptons 
-            .Define("lepton_1_pt", "truth_ll.size() > 0 ? MCParticle::get_pt(ROOT::VecOps::RVec<edm4hep::MCParticleData>{lepton_1})[0] : 0.0")  # pT of first lepton 
-            .Define("lepton_2_pt", "truth_ll.size() > 1 ? MCParticle::get_pt(ROOT::VecOps::RVec<edm4hep::MCParticleData>{lepton_2})[0] : 0.0")  # pT of second lepton 
-            .Define("lepton_1_eta", "truth_ll.size() > 0 ? MCParticle::get_eta(ROOT::VecOps::RVec<edm4hep::MCParticleData>{lepton_1})[0] : 0.0")  # eta of first lepton 
-            .Define("lepton_2_eta", "truth_ll.size() > 1 ? MCParticle::get_eta(ROOT::VecOps::RVec<edm4hep::MCParticleData>{lepton_2})[0] : 0.0")  # eta of second lepton 
-            .Define("truth_l1_tlv", "truth_ll.size() > 0 ? MCParticle::get_tlv(ROOT::VecOps::RVec<edm4hep::MCParticleData>{lepton_1})[0] : TLorentzVector{}")  # Four-vector of first lepton 
-            .Define("truth_l2_tlv", "truth_ll.size() > 1 ? MCParticle::get_tlv(ROOT::VecOps::RVec<edm4hep::MCParticleData>{lepton_2})[0] : TLorentzVector{}")  # Four-vector of second lepton 
-            .Define("dR_ll", "truth_ll.size() >= 2 ? MCParticle::AngleBetweenTwoMCParticles(ROOT::VecOps::RVec<edm4hep::MCParticleData>{lepton_1}, ROOT::VecOps::RVec<edm4hep::MCParticleData>{lepton_2})[0] : 0.0")  # Delta R between Z decay leptons 
-            
+        )
+        
+        dframe3 = (
+            dframe2
             # Lepton origin and kinematics
             .Define("lep_origin", "FCCAnalyses::MCParticle::get_leptons_origin(lepton_truth_final, mc_particles, mc_parents)")  # Origin of leptons 
             .Define("pt_leptons_origin", "FCCAnalyses::MCParticle::get_pt(lep_origin)")  # pT of leptons by origin 
@@ -127,6 +112,7 @@ class Analysis():
 
             # Prompt and non-prompt lepton categorization
             .Define("prompt_leptons", "FCCAnalyses::MCParticle::getPromptLeptons(mc_particles, lepton_truth_final, mc_parents)")  # Prompt lepton pairs
+         
             .Define("truth_prompt_electrons1", "FCCAnalyses::MCParticle::getPromptLeptons(mc_particles, electrons_truth_final, mc_parents)")  # Prompt electrons
             .Define("truth_prompt_e_first", "truth_prompt_electrons1.first")  # Prompt electrons
             .Define("truth_prompt_e_second", "truth_prompt_electrons1.second")  # Prompt electrons
@@ -144,22 +130,16 @@ class Analysis():
             .Define("Z_truth_prompt_lep", "prompt_leptons.first")  # Prompt leptons from Z
             #.Define("truth_ll_mass", "FCCAnalyses::MCParticle::get_mass(truth_Zll)")
            # .Define("truth_ll_mass2", "Z_truth_prompt_lep.size() > 1 ? FCCAnalyses::MCParticle::get_mass(ROOT::VecOps::RVec<edm4hep::MCParticleData>{Z_truth_prompt_lep[1]})[0] : 0.0")
-            .Define("gen_Z_truth_prompt_lep", "FCCAnalyses::MCParticle::get_genStatus(Z_truth_prompt_lep)")  # Gen status of Z prompt leptons 
 
-            # Counting and kinematics of prompt leptons
-            .Define("n_Z_truth_prompt_lep", "Z_truth_prompt_lep.size()")  # Number of Z prompt leptons 
-            .Define("pt_Z_truth_prompt_lep", "FCCAnalyses::MCParticle::get_pt(Z_truth_prompt_lep)")  # pT of Z prompt leptons 
-            .Define("eta_Z_truth_prompt_lep", "FCCAnalyses::MCParticle::get_eta(Z_truth_prompt_lep)")  # eta of Z prompt leptons 
             .Define("t_truth_prompt_lep", "prompt_leptons.second")  # Prompt leptons from top
             .Define("n_t_truth_prompt_lep", "t_truth_prompt_lep.size()")  # Number of top prompt leptons 
             .Define("pt_t_truth_prompt_lep", "FCCAnalyses::MCParticle::get_pt(t_truth_prompt_lep)")  # pT of top prompt leptons 
             .Define("eta_t_truth_prompt_lep", "FCCAnalyses::MCParticle::get_eta(t_truth_prompt_lep)")  # eta of top prompt leptons 
             .Define("truth_prompt_lep", "FCCAnalyses::MCParticle::mergeParticles(Z_truth_prompt_lep, t_truth_prompt_lep)")  # All prompt leptons
-            .Define("truth_prompt_lep_size", "truth_prompt_lep.size()")  # Size of prompt leptons 
+            .Define("truth_prompt_lep_size", "truth_prompt_lep.size()")  # Size of prompt leptons merged
             .Define("truth_prompt_lep_pt", "FCCAnalyses::MCParticle::get_pt(truth_prompt_lep)")  # pT of prompt leptons 
             .Define("truth_prompt_lep_eta", "FCCAnalyses::MCParticle::get_eta(truth_prompt_lep)")  # eta of prompt leptons 
-            #.Define("Z_mass", "FCCAnalyses::MCParticle::get_mass(truth_prompt_lep)")
-            # Non-prompt leptons
+          
             .Define("truth_non_prompt_lep", "FCCAnalyses::MCParticle::getNonPromptLeptons(mc_particles, lepton_truth_final, mc_parents)")  # Non-prompt leptons
             .Define("truth_non_prompt_lep_size", "truth_non_prompt_lep.size()")  # Size of non-prompt leptons 
             #.Define("truth_non_prompt_lep_pt", "FCCAnalyses::MCParticle::get_pt(truth_non_prompt_lep)")  # pT of non-prompt leptons (commented out)
@@ -169,12 +149,7 @@ class Analysis():
 
             # Closest particle calculations for prompt leptons
             #.Define("min_DR_prompt", "ROOT::VecOps::RVec<float>{min_DR_prompt_lep_1, min_DR_prompt_lep_2, min_DR_prompt_lep_3, min_DR_prompt_lep_4}")  # Unused DR calculation
-            .Define("closest_part_prompt_lep", "Z_truth_prompt_lep.size() > 0 ? FCCAnalyses::MCParticle::getClosestParticle(Z_truth_prompt_lep[0], particle_final) : edm4hep::MCParticleData{}")  # Closest particle to prompt lepton 
-            .Define("closest_DR_test", "Z_truth_prompt_lep.size() > 0 ? FCCAnalyses::MCParticle::AngleBetweenTwoMCParticles(ROOT::VecOps::RVec<edm4hep::MCParticleData>{Z_truth_prompt_lep[0]}, ROOT::VecOps::RVec<edm4hep::MCParticleData>{closest_part_prompt_lep})[0] : 999.0")  # Delta R to closest particle 
-            .Define("pt_closest_part_prompt_lep", "Z_truth_prompt_lep.size() > 0 ? FCCAnalyses::MCParticle::get_pt(ROOT::VecOps::RVec<edm4hep::MCParticleData>{closest_part_prompt_lep})[0] : 0.0")  # pT of closest particle 
-            
-            .Define("Muon_Photon_Splitting", "FCCAnalyses::MCParticle::countMuonPhotonSplitting(mc_particles, mc_daughters)")  # Photon splitting
-            .Define("Electron_Photon_Splitting", "FCCAnalyses::MCParticle::countElectronPhotonSplitting(mc_particles, mc_daughters)")  # Photon splitting
+           # .Define("Electron_Photon_Splitting", "FCCAnalyses::MCParticle::countElectronPhotonSplitting(mc_particles, mc_daughters)")  # Photon splitting
             #--------------------------------reco level--------------------------------
             # Muon selection and kinematics
             .Define("muons", "FCCAnalyses::ReconstructedParticle::get(MuonNoIso_objIdx.index, ReconstructedParticles)")  # Reconstructed muons
@@ -202,7 +177,10 @@ class Analysis():
             .Define("n_electrons_sel", "FCCAnalyses::ReconstructedParticle::get_n(sel_electrons)")  # Number of selected electrons 
             .Define("pT_electrons_sel", "FCCAnalyses::ReconstructedParticle::get_pt(sel_electrons)")  # pT of selected electrons 
             .Define("eta_electrons_sel", "FCCAnalyses::ReconstructedParticle::get_eta(sel_electrons)")  # eta of selected electrons 
-            
+        )
+        
+        dframe4 = (
+            dframe3
             # Merged lepton collection
             .Define("sel_leptons_unsort", "FCCAnalyses::ReconstructedParticle::merge(muons, electrons)")  # Merge muons and electrons
             .Define("selpt_leptons", "FCCAnalyses::ReconstructedParticle::sel_pt(30.)(sel_leptons_unsort)")  # Leptons with pT > 30 GeV
@@ -281,7 +259,10 @@ class Analysis():
             .Define("matched_muons_all_size", "matched_muons_all.size()")
             .Define("matched_electrons_all", "FCCAnalyses::ReconstructedParticle::merge(matched_prompt_electrons, matched_non_prompt_electrons)")
             .Define("matched_electrons_all_size", "matched_electrons_all.size()")
-            
+        )
+        
+        dframe5 = (
+            dframe4
             # Isolation calculations for matched leptons
             .Define("Iso_Prompt", "AnalysisFCChh::get_IP_delphes(matched_prompt_lep, ReconstructedParticles, 0.3, 0.5)")
             .Define("Iso_Non_Prompt", "AnalysisFCChh::get_IP_delphes(matched_non_prompt_lep, ReconstructedParticles, 0.3, 0.5)")
@@ -342,40 +323,15 @@ class Analysis():
             # Scalar HT calculation
             .Define("HT", "ScalarHT")  # Scalar HT 
         )
-        return dframe2
+        return dframe5
         
     def output(self):
         '''
         Output variables which will be saved to output root file.
         '''
         branch_list = [
-            # 'weight',  # Event weight 
-            'n_truth_Zll',  # Number of truth Z->ll decays
-           "dR_prompt_lep",
-           "prompt_lep_pt",
-           "prompt_lep_eta",
-             "n_leptons_sel",
-             "n_muons_sel",
-            #  "n_bjets",
-            #   "Mass_Z",
-            #   "Comp_Mass_Z",
-              "pT_Comp_Z",
-            #  "Second_Pair_flavor",
-            "n_electrons_iso",
-            "diff_iso_muons",
-            "diff_iso_electrons",
-            "n_electron_iso_delphes",
-            "electron_iso_delphes",
-            "n_muon_iso_delphes",
-            "matched_prompt_lep_size",
-            "matched_non_prompt_lep_size",
-            "Z_ll_pt",
-            "truth_lep_pt",
-            "truth_lep_eta",
-            "eff_lep_pt_eta",
-            "n_lep_cut_pt_eta",
-            "n_truth_leptons_final",
-            # "prompt_muons_iso_dr01",
+        #     # 'weight',  # Event weight 
+        
             "prompt_muons_iso_dr01",
             "prompt_electrons_iso_dr01",
             "non_prompt_muons_iso_dr01",
@@ -396,38 +352,40 @@ class Analysis():
             "prompt_electrons_iso_dr05",
             "non_prompt_muons_iso_dr05",
             "non_prompt_electrons_iso_dr05",
-            # "Iso_Prompt",
-            # "Iso_Non_Prompt",
-            # "prompt_lep_pt",
-            # "prompt_lep_eta",
-            # "non_prompt_lep_pt",
-            # "non_prompt_lep_eta",
-            # "prompt_lep_mass",
-            # "non_prompt_lep_mass",
-            # "muon_iso",
-            # "electron_iso",
-            # #"prompt_lep_dR",
-            # "pT_electrons_sel",
-            # "pT_muons_sel",
-            # "iso_all_muons",
-            # "iso_delphes_muons",
-            # "diff_iso_muons",
-            # "n_iso_delphes_muons",
-            # "n_muons",
-            # "Iso_Prompt",
-            # "Iso_Prompt_Zll",
-            "dR_Zll_truth",
-            "truth_ll_pt",
-            #"truth_ll_mass",
-            "matched_leptons_Zll_mass",
-            "n_truth_ll",
+        #     # "Iso_Prompt",
+        #     # "Iso_Non_Prompt",
+        #     # "prompt_lep_pt",
+        #     # "prompt_lep_eta",
+        #     # "non_prompt_lep_pt",
+        #     # "non_prompt_lep_eta",
+        #     # "prompt_lep_mass",
+        #     # "non_prompt_lep_mass",
+        #     # "muon_iso",
+        #     # "electron_iso",
+        #     # #"prompt_lep_dR",
+        #     # "pT_electrons_sel",
+        #     # "pT_muons_sel",
+        #     # "iso_all_muons",
+        #     # "iso_delphes_muons",
+        #     # "diff_iso_muons",
+        #     # "n_iso_delphes_muons",
+        #     # "n_muons",
+        #     # "Iso_Prompt",
+        #     # "Iso_Prompt_Zll",
+        #     "dR_Zll_truth",
+        #     "truth_ll_pt",
+        #     #"truth_ll_mass",
+        #     "matched_leptons_Zll_mass",
+        #     "n_truth_ll",
    
-            "Z_mass",
-            "pt_tot_Z",
-            "Z_mass_truth",
-            "Z_pt_truth",
-            "p_Z_ll",
-            "pz_Z_ll",
-            "eta_Z_ll",
+        #     "Z_mass",
+        #     "pt_tot_Z",
+        #     "Z_mass_truth",
+        #     "Z_pt_truth",
+        #     "p_Z_ll",
+        #     "pz_Z_ll",
+        #     "eta_Z_ll",
+          "truth_prompt_lep_size",
+          "matched_prompt_lep_size",
         ]
         return branch_list

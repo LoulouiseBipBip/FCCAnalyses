@@ -65,7 +65,7 @@ do_weighted = False
 # "t2_m",
 
 cutList = {
-    "all_events": "n_truth_Zll >=0 ", # all events (no selection)
+    "all_events": "truth_prompt_lep_size >=0 ", # all events (no selection)
    # "lep_pt_cut": "truth_lep_pt > 1000",
     #"lep_pT_eta_cut": "All(abs(truth_lep_eta) < 6) && All(truth_lep_pt > 30)",
     #"cluster_test": "pt_tot_Z.size() > 0 && pt_tot_Z[0] < 200 && dR_Zll_truth < 0.2",
@@ -80,7 +80,8 @@ cutList = {
     #"lep_eta_pt": "abs(truth_prompt_lep_eta[0]) < 4 && truth_prompt_lep_pt[0] > 30 && abs(truth_prompt_lep_eta[1]) < 4 && truth_prompt_lep_pt[1] > 30 && abs(truth_prompt_lep_eta[2]) < 4 && truth_prompt_lep_pt[2] > 30 && abs(truth_prompt_lep_eta[3]) < 4 && truth_prompt_lep_pt[3] > 30",
 }
 histoList = {
-   
+    "truth_prompt_lep_size": {"name": "truth_prompt_lep_size", "title": "truth_prompt_lep_size", "bin": 10, "xmin": 0, "xmax": 10},
+    "matched_prompt_lep_size": {"name": "matched_prompt_lep_size", "title": "matched_prompt_lep_size", "bin": 10, "xmin": 0, "xmax": 10},
     # "Z_ll_pt": {"name": "Z_ll_pt", "title": "Z_ll_pt", "bin": 50, "xmin": 0, "xmax": 2000},
     # "eff_lep_pt_eta": {"name": "eff_lep_pt_eta", "title": "eff_lep_pt_eta", "bin": 100, "xmin": 0, "xmax": 1},
    # "diff_iso_electrons": {"name": "diff_iso_electrons", "title": "diff_iso_electrons", "bin": 100, "xmin": -1, "xmax": 1},
@@ -106,13 +107,13 @@ histoList = {
     # "pz_Z_ll": {"name": "pz_Z_ll", "title": "pz_Z_ll", "bin": 50, "xmin": 0, "xmax": 2000},
     # "eta_Z_ll": {"name": "eta_Z_ll", "title": "eta_Z_ll", "bin": 10, "xmin": -4, "xmax": 4},
     # "matched_leptons_Zll_mass": {"name": "matched_leptons_Zll_mass", "title": "matched_leptons_Zll_mass", "bin": 50, "xmin": 0, "xmax": 500},
-    "eta_vs_pt_lep": {
-       "name": ["prompt_lep_pt", "prompt_lep_eta"],
-       "title": "pT_{lep} vs eta_{lep};pT_{lep} [GeV];eta_{lep}",
-       "bin": [100, 50],
-       "xmin": [0, 0],
-       "xmax": [1000, 6]  
-    },
+    # "eta_vs_pt_lep": {
+    #    "name": ["prompt_lep_pt", "prompt_lep_eta"],
+    #    "title": "pT_{lep} vs eta_{lep};pT_{lep} [GeV];eta_{lep}",
+    #    "bin": [100, 50],
+    #    "xmin": [0, 0],
+    #    "xmax": [1000, 6]  
+    # },
     # "prompt_muons_iso_dr01": {"name": "prompt_muons_iso_dr01", "title": "prompt_muons_iso_dr01", "bin": 100, "xmin": 0, "xmax": 1},
     # "prompt_electrons_iso_dr01": {"name": "prompt_electrons_iso_dr01", "title": "prompt_electrons_iso_dr01", "bin": 100, "xmin": 0, "xmax": 1},
     # "non_prompt_muons_iso_dr01": {"name": "non_prompt_muons_iso_dr01", "title": "non_prompt_muons_iso_dr01", "bin": 100, "xmin": 0, "xmax": 1},

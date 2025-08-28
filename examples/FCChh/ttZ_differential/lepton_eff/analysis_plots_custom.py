@@ -11,10 +11,10 @@ formats        = ['png'] #['png','pdf']
 yaxis          = ['log','lin']
 stacksig       = ['nostack']
 # stacksig       = ['stack','nostack']
-outdir         = '/eos/user/l/lberiet/ttZ_diff_results/lepton_eff/iso'
+outdir         = '/eos/user/l/lberiet/ttZ_diff_results/lepton_eff/plots'
 plotStatUnc    = True
 
-variables = ["diff_iso_muons"]#,"n_electron_iso_delphes","n_electrons_iso","n_muon_iso_delphes","n_prompt_muons_iso_dr03"] #, "prompt_muons_iso_dr03","prompt_electrons_iso_dr03","non_prompt_muons_iso_dr03","non_prompt_electrons_iso_dr03"]#,"non_prompt_muons_iso_dr03","prompt_electrons_iso_dr03","non_prompt_electrons_iso_dr03"]
+variables = ["matched_prompt_lep_size","truth_prompt_lep_size"]#,"n_electron_iso_delphes","n_electrons_iso","n_muon_iso_delphes","n_prompt_muons_iso_dr03"] #, "prompt_muons_iso_dr03","prompt_electrons_iso_dr03","non_prompt_muons_iso_dr03","non_prompt_electrons_iso_dr03"]#,"non_prompt_muons_iso_dr03","prompt_electrons_iso_dr03","non_prompt_electrons_iso_dr03"]
 
 # rebin = [1, 1, 1, 1, 2] # uniform rebin per variable (optional)
 

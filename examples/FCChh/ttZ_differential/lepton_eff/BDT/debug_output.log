@@ -1,0 +1,29 @@
+----> INFO: Loading analyzers from libFCCAnalyses...
+----> INFO: Loading analysis script:
+            /afs/cern.ch/user/l/lberiet/MatteoCode/FCCAnalyses/examples/FCChh/ttZ_differential/lepton_eff/BDT/histmaker.py
+----> INFO: Multithreading enabled. Running over 1 threads
+----> INFO: Loading process dictionary from:
+            /eos/experiment/fcc/hh/utils/FCCDicts/FCChh_procDict_fcc_v07_II.json
+----> INFO: Reducing the input file list by fraction "0.01" of total events:
+            	- total number of events: 1,000,000
+            	- targeted number of events: 10,000
+            	- number of events in the resulting file list: 10,000
+            	- number of files after reduction: 1
+----> INFO: Add process "mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep" with:
+            	fraction = 0.01
+            	nFiles = 1
+            	output = mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep
+            	chunks = 1
+computeBDTScores called with n_entries=3
+First entry: d0=0.0351604, z0=1.22403, iso1=0, iso2=0.0255563, iso3=0.0414253, iso4=0.0484358, pt=224.032, eta=0.351263, phi=-1.95758
+Loading model from: /eos/user/l/lberiet/ttZ_diff_results/BDT/bdt_model_muons.json
+Creating DMatrix
+Processing entry 0
+RDataFrame::Run: event loop was interrupted
+----> ERROR: During loading of the analysis an error occurred!
+             Aborting...
+Loaded BDT models for muons and electrons
+Added XGBoost library path /cvmfs/sw.hsf.org/key4hep/releases/2024-10-03/x86_64-almalinux9-gcc14.2.0-opt/xgboost/2.1.1-xijqyj/lib to ROOT dynamic path
+Added XGBoost include path /cvmfs/sw.hsf.org/key4hep/releases/2024-10-03/x86_64-almalinux9-gcc14.2.0-opt/xgboost/2.1.1-xijqyj/include to ROOT interpreter
+Successfully loaded BDT scorer shared library
+Declared computeBDTScores function to ROOT

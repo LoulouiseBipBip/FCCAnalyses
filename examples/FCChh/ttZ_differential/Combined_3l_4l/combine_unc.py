@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 
 # Read the CSV files for 3l and 4l channels
-df_3l = pd.read_csv("/eos/user/l/lberiet/www/Histograms_Syst/ttZ/3l/Z_ll_pt_stack_uncertainties.csv")
-df_4l = pd.read_csv("/eos/user/l/lberiet/www/Histograms_Syst/ttZ/4l/Z_ll_pt_stack_uncertainties.csv")
+df_3l = pd.read_csv("/eos/user/l/lberiet/Histmaker/ttZ_differential/new3l/plots/Z_ll_pt_stack_uncertainties.csv")
+df_4l = pd.read_csv("/eos/user/l/lberiet/ttZ_diff_results/new_iso_noORL/plot_iso_hadrons/Z_ll_pt_stack_uncertainties.csv")
 
 # Extract the relevant columns for electron, muon, and b-jet systematic uncertainties
 # Assuming the columns are named 'rel_syst_electron id', 'rel_syst_muon id', and 'rel_syst_bjet id'
@@ -69,7 +69,7 @@ for i in range(min_length):
     muon_combined_unc_bin = np.sqrt((muon_unc_3l_bin**2 + muon_unc_4l_bin**2 + 2*muon_unc_3l_bin*muon_unc_4l_bin)) / total_nsig_bin if total_nsig_bin > 0 else 0.0
     bjet_combined_unc_bin = np.sqrt((bjet_unc_3l_bin**2 + bjet_unc_4l_bin**2 + 2*bjet_unc_3l_bin*bjet_unc_4l_bin)) / total_nsig_bin if total_nsig_bin > 0 else 0.0
 
-    lumi_combined_unc_bin = np.sqrt((lumi_unc_3l_bin**2 + lumi_unc_4l_bin**2)) if total_nsig_bin > 0 else 0.0
+    lumi_combined_unc_bin = np.sqrt((lumi_unc_3l_bin**2 + lumi_unc_4l_bin**2 + 2*lumi_unc_3l_bin*lumi_unc_4l_bin)) if total_nsig_bin > 0 else 0.0
     stat_combined_unc_bin = np.sqrt((stat_unc_3l_bin**2 + stat_unc_4l_bin**2)) if total_nsig_bin > 0 else 0.0
     syst_tot_combined_unc_bin = np.sqrt((syst_tot_3l_bin**2 + syst_tot_4l_bin**2)) if total_nsig_bin > 0 else 0.0
     rel_unc_total_bin = np.sqrt((electron_combined_unc_bin**2 + muon_combined_unc_bin**2 + bjet_combined_unc_bin**2 + lumi_combined_unc_bin**2 + stat_combined_unc_bin**2)) if total_nsig_bin > 0 else 0.0
