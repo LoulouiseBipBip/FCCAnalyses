@@ -15,11 +15,11 @@ formats = ["png"]
 yaxis = ["lin", "log"]
 # stacksig       = ['stack']
 stacksig = ["stack", "nostack"]
-outdir = "/eos/user/l/lberiet/www/4t_analysis/4l/SS_OF=0"
+outdir = "/eos/user/l/lberiet/www/Histograms_Syst/4t/4l/"
 plotStatUnc = True
 
 
-variables = ['n_bjets', 'n_leptons', 'HT', 'MET', 'n_of_ss_of_leptons', 'n_jets', 'Z_ll_mass', 'Second_Pair_mass', 'dR_ll']
+variables = ['n_bjets', 'n_leptons', 'HT']
 
 # rebin = [1, 1, 1, 1, 2] # uniform rebin per variable (optional)
 
@@ -29,22 +29,22 @@ selections['tttt_analysis']   = ["all_events","sel1_lep","sel_SS_OF=0","sel2_bje
 
 extralabel = {}
 extralabel['all_events'] = "All events" 
-extralabel['sel1_lep'] = "Sel up to 4 leptons"
-extralabel['sel_SS_OF=0'] = "Sel SS OF=0"
 
-extralabel['sel2_bjets'] = "Sel 3 or more b-Jets"
-extralabel['sel3_jets'] = "Sel 3 or more jets"
-extralabel['sel4_notZ'] = "Sel 4 leptons not Z"
 
 
 colors = {}
 colors['tttt_signal'] = ROOT.kRed
-colors['ttZ_bkg'] = ROOT.kGray
-colors['ttH_bkg_lep'] = ROOT.kPink + 1
-colors['ZZ_bkg_lep'] = ROOT.kViolet - 2
-colors['VVV_bkg_lep'] = ROOT.kYellow - 7
-colors['VVVV_bkg_lep'] = ROOT.kAzure +6
-colors['ttVV_bkg_lep'] = ROOT.kTeal + 6
+colors['ttZ'] = ROOT.kGray
+colors['ttH_WW'] = ROOT.kBlue
+colors['ttH_tauTau'] = ROOT.kBlue
+colors['ttH_ZZ'] = ROOT.kBlue
+colors['ttVV'] = ROOT.kBlue
+colors['WZjj'] = ROOT.kBlue
+colors['ZZjj'] = ROOT.kGreen
+colors['VVV'] = ROOT.kOrange
+colors['VVVV'] = ROOT.kPurple
+colors['ttVV'] = ROOT.kPink
+colors['WZjj'] = ROOT.kBrown
 
 
 plots = {}
@@ -54,22 +54,70 @@ plots['tttt_analysis'] = {
 
                             ]},
                             'backgrounds':{
-                                'ttZ_bkg':[ 'mgp8_pp_ttz_5f_84TeV_ttzlep'],
-                                'ttH_bkg_lep':[ 'mgp8_pp_tth_5f_84TeV'],
-                                'ZZ_bkg_lep':[ 'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep'],
-                                'VVV_bkg_lep':[ 'mgp8_pp_zzz_5f_84TeV', 'mgp8_pp_wzz_5f_84TeV', 'mgp8_pp_wwz_5f_84TeV'],
-                                'VVVV_bkg_lep':[ 'mgp8_pp_wwww_5f_84TeV', 'mgp8_pp_wwwz_5f_84TeV', 'mgp8_pp_wwzz_5f_84TeV', 'mgp8_pp_wzzz_5f_84TeV', 'mgp8_pp_zzzz_5f_84TeV'],
-                                'ttVV_bkg_lep':[ 'mgp8_pp_ttzz_5f_84TeV', 'mgp8_pp_ttwz_5f_84TeV'],
-                            },
+                               'ttZ': ['mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep',
+                                'mgp8_pp_ttz_5f_Q_1000_3000_84TeV_ttzlep',
+                                'mgp8_pp_ttz_5f_Q_3000_10000_84TeV_ttzlep',
+                                'mgp8_pp_ttz_5f_Q_10000_84000_84TeV_ttzlep',],
+
+                                'ZZjj': ["mgp8_pp_ZZjj_HF_5f_84TeV_zzlep"],
+                                "VVV": [ 'mgp8_pp_wwz_5f_Q_0_1000_84TeV',
+                                'mgp8_pp_wwz_5f_Q_1000_3000_84TeV',
+                                'mgp8_pp_wwz_5f_Q_3000_10000_84TeV',
+                                'mgp8_pp_wwz_5f_Q_10000_84000_84TeV',
+
+                                'mgp8_pp_wzz_5f_Q_0_1000_84TeV',
+                                'mgp8_pp_wzz_5f_Q_1000_3000_84TeV',
+                                'mgp8_pp_wzz_5f_Q_3000_10000_84TeV',
+                                'mgp8_pp_wzz_5f_Q_10000_84000_84TeV',
+
+                                'mgp8_pp_zzz_5f_Q_0_1000_84TeV',
+                                'mgp8_pp_zzz_5f_Q_1000_3000_84TeV',
+                                'mgp8_pp_zzz_5f_Q_3000_10000_84TeV',
+                                'mgp8_pp_zzz_5f_Q_10000_84000_84TeV',],
+                                "VVVV": ["mgp8_pp_wwwz_5f_84TeV", "mgp8_pp_wwww_5f_84TeV", "mgp8_pp_wwzz_5f_84TeV", "mgp8_pp_wzzz_5f_84TeV", "mgp8_pp_zzzz_5f_84TeV"],
+                                'ttH_WW': 
+                                        ['mgp8_pp_tth_5f_Q_0_1000_84TeV_hww',
+                                        'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww',
+                                        'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww',
+                                        'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww'],
+                                'ttH_tauTau':       
+                                        ['mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau',
+                                        'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau',
+                                        'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau',
+                                        'mgp8_pp_tth_5f_Q_10000_84000_84TeV_htautau'],
+
+                                'ttH_ZZ':       
+                                        ['mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz',
+                                        'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz',
+                                        'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz',
+                                        'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz'],
+                                "ttH": ["mgp8_pp_tth_5f_Q_0_1000_84TeV_hww",
+                                        'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww',
+                                        'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww',
+                                        'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww',
+                                        'mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau',
+                                        'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau',
+                                        'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau',
+                                        'mgp8_pp_tth_5f_Q_10000_84000_84TeV_htautau',
+                                        'mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz',
+                                        'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz',
+                                        'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz',
+                                        'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz'],
+                                "ttVV": ["mgp8_pp_ttwz_5f_84TeV",  "mgp8_pp_ttzz_5f_84TeV"],
+                                "WZjj": ["mgp8_pp_WZjj_HF_5f_84TeV_wzlllv"],
            }
 
 
 legend = {}
 legend['tttt_signal'] = 'tttt'
-legend['ttZ_bkg'] = 'ttZ'
-legend['ttH_bkg_lep'] = 'ttH'
-legend['ZZ_bkg_lep'] = 'ZZ'
-legend['VVV_bkg_lep'] = 'VVV'
-legend['VVVV_bkg_lep'] = 'VVVV'
-legend['ttVV_bkg_lep'] = 'ttVV'
+legend['ttZ'] = 'ttZ'
+legend['ZZjj'] = 'ZZjj'
+legend['VVV'] = 'VVV'
+legend['VVVV'] = 'VVVV'
+legend['ttH_WW'] = 'ttH WW'
+legend['ttH_tauTau'] = 'ttH tauTau'
+legend['ttH_ZZ'] = 'ttH ZZ'
+legend['ttH'] = 'ttH'
+legend['ttVV'] = 'ttVV'
+legend['WZjj'] = 'WZjj'
 

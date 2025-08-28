@@ -19,17 +19,17 @@ leg_position = [0.7, 0.7, 0.9, 0.9]
 # Define custom colors using RGB values
 custom = [
     (213, 62, 79),  # red 0
-    (253, 174, 97),  # orange 1
-    (254, 224, 144),  # yellow 2
-    (230, 245, 152),  # yg 3
-    (26, 152, 80),  # green 4
-    (50, 136, 189),  # blue 5
-    (208, 28, 139),  # pink 6
-    (241, 182, 218),  # light pink 7
-    (128, 205, 193),  # light blue 8
-    (1, 133, 113),  # blue green 9
-    (128, 205, 193),  # light blue 10
-    (1, 133, 113),  # blue green 11
+    (150, 150, 150),  # grey 1
+    (253, 174, 97),  # orange 2
+    (254, 224, 144),  # yellow 3
+    (230, 245, 152),  # yg 4
+    (26, 152, 80),  # green 5
+    (50, 136, 189),  # blue 6
+    (208, 28, 139),  # pink 7
+    (241, 182, 218),  # light pink 8
+    (128, 205, 193),  # light blue 9
+    (1, 133, 113),  # blue green 10
+    (102, 102, 102),  # dark grey 11
 ]
 
 # Create custom ROOT colors and store their indices
@@ -42,17 +42,18 @@ for i, (r, g, b) in enumerate(custom):
 colors = {}
 colors["tttt"] = ROOT.kBlack
 colors["ttZ"] = custom_color_indices[0]
-colors["ZZjj"] = custom_color_indices[1]
+colors["ZZjj"] = custom_color_indices[7]
 colors["VVV"] = custom_color_indices[2]
 colors["VVVV"] = custom_color_indices[3]
 colors["ttV"] = custom_color_indices[4]
 colors["ttVV"] = custom_color_indices[5]
 colors["ttH"] = custom_color_indices[6]
-colors["ttH_WW"] = custom_color_indices[6]
-colors["ttH_tauTau"] = custom_color_indices[7]
-colors["ttH_ZZ"] = custom_color_indices[8]
+# colors["ttH_WW"] = custom_color_indices[6]
+# colors["ttH_tauTau"] = custom_color_indices[7]
+# colors["ttH_ZZ"] = custom_color_indices[8]
 colors["tt"] = custom_color_indices[9]
 colors["WZjj"] = custom_color_indices[10]
+colors["tt"] = custom_color_indices[11]
 
 procs = {}
 
@@ -82,26 +83,11 @@ procs["backgrounds"] = {
     'mgp8_pp_zzz_5f_Q_3000_10000_84TeV',
     'mgp8_pp_zzz_5f_Q_10000_84000_84TeV',],
     "VVVV": ["mgp8_pp_wwwz_5f_84TeV", "mgp8_pp_wwww_5f_84TeV", "mgp8_pp_wwzz_5f_84TeV", "mgp8_pp_wzzz_5f_84TeV", "mgp8_pp_zzzz_5f_84TeV"],
-       'ttH_WW': 
+       'ttH': 
             ['mgp8_pp_tth_5f_Q_0_1000_84TeV_hww',
             'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww',
             'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww',
-            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww'],
-    'ttH_tauTau':       
-            ['mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau',
-            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau',
-            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau',
-            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_htautau'],
-
-    'ttH_ZZ':       
-            ['mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz',
-            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz',
-            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz',
-            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz'],
-    "ttH": ["mgp8_pp_tth_5f_Q_0_1000_84TeV_hww",
-            'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww',
-            'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww',
-            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww',
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww',     
             'mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau',
             'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau',
             'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau',
@@ -109,10 +95,11 @@ procs["backgrounds"] = {
             'mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz',
             'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz',
             'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz',
-            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz'],
+            'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz',],
+    
     "ttVV": ["mgp8_pp_ttwz_5f_84TeV",  "mgp8_pp_ttzz_5f_84TeV"],
     "WZjj": ["mgp8_pp_WZjj_HF_5f_84TeV_wzlllv"],
-    "tt": ["mgp8_pp_tt_HT_2000_10000_5f_84TeV_blvblv", "mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv"],
+   # "tt": ["mgp8_pp_tt_HT_2000_10000_5f_84TeV_blvblv", "mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv"],
     }
 
 legend = {}
@@ -121,15 +108,14 @@ legend["ttZ"] = "ttZ"
 legend["ZZjj"] = "ZZjj"
 legend["VVV"] = "VVV"
 legend["VVVV"] = "VVVV"
-#legend["ttVV"] = "ttVV"
+legend["ttVV"] = "ttVV"
 legend["ttH"] = "ttH"
-legend["ttH_WW"] = "ttH_WW"
-legend["ttH_tauTau"] = "ttH_tauTau"
-legend["ttH_ZZ"] = "ttH_ZZ"
+# legend["ttH_WW"] = "ttH_WW"
+# legend["ttH_tauTau"] = "ttH_tauTau"
+# legend["ttH_ZZ"] = "ttH_ZZ"
 legend["WZjj"] = "WZjj"
-legend["tt"] = "tt"
+# legend["tt"] = "tt"
 legend["WZjj"] = "WZjj"
-
 
 hists = {}
 hists2D = {}
@@ -144,11 +130,11 @@ hists["cutFlow"] = {
     "output": "cutFlow",
     "logy": True,
     "stack": False,
-     "ymin": 1,
-     "ymax": 1e12,
+    # "xmin": -0.5,
+    # "xmax": 2.5,
     # "xtitle": selections,
     "ytitle": "Events",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"]#, "ttH_WW", "ttH_tauTau", "ttH_ZZ", ],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
 }
 
 
@@ -161,7 +147,7 @@ hists["n_bjets_pre_stack"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
     "density": False,
 }
 
@@ -172,9 +158,9 @@ hists["n_leptons_pre_stack"] = {
     "stack": False,
     "xtitle": "N_{leptons}",
     "xmin": -0.5,
-    "xmax": 8,
+    "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
     "density": False,
 }
 
@@ -187,7 +173,7 @@ hists["n_bjets_pre_norm"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
     "density": True,
 }
 
@@ -200,7 +186,7 @@ hists["n_leptons_pre_norm"] = {
     "xmin": -0.5,
     "xmax": 10.5,
     "ytitle": "Events",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
     "density": True,
 }
 
@@ -214,7 +200,7 @@ hists["MET_stack"] = {
     "xmin": 0,
     "xmax": 1000,
     "ytitle": "Events",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
     "density": False,
 }
 
@@ -227,7 +213,7 @@ hists["MET_norm"] = {
     "xmin": 0,
     "xmax": 1000,
     "ytitle": "Events",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
     "density": True,
 }
 
@@ -238,32 +224,27 @@ hists["HT_sel_stack"] = {
     "stack": False,
     "xtitle": "H_{T} [TeV]",
     "xmin": 0.5,
-    "xmax": 6.0,
+    "xmax": 2.5,
     "ymin": 1,
     "ymax": 1e6,
     "rebin_last": True,
     "store_csv": True,
     "yrange_syst": (-0.5,0.5),
     "ytitle": "Events / TeV",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
     "density": False,
     "divideByBinWidth": True,
 }
-
-hists["HT_pre_stack"] = {
+hists["HT_pre"] = {
     "input": "HT_pre",
-    "output": "HT_pre_stack",
+    "output": "HT_pre",
     "logy": True,
     "stack": False,
     "xtitle": "H_{T} [TeV]",
     "xmin": 0.5,
-    "xmax": 3.5,
-    "ytitle": "Events",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
-    "density": False,
+    "xmax": 2.5,
+    "ymin": 1e-2,
 }
-
-
 
 hists["HT_stack"] = {
     "input": "HT",
@@ -272,31 +253,31 @@ hists["HT_stack"] = {
     "stack": False,
     "xtitle": "H_{T} [TeV]",
     "xmin": 0.5,
-    "xmax": 4.5,
-    "ymin": 1,
-    "ymax": 1e4,
+    "xmax": 2.5,
+    "ymin": 1e-2,
+    "ymax": 1e7,
     "ytitle": "Events / TeV",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
     "density": False,
     "divideByBinWidth": True,
     "rebin_last": True,
     "store_csv": True,
-    "yrange_syst": (-0.8,0.8),
+    "yrange_syst": (-0.7,0.7),
     "systematics": [
-    {
-        "signal": True,
-        "process": "tttt",
-        "label": "electron id",
-        "type": "shape",
-        "hname": "eleId",
-        "color": custom_color_indices[7],            
-    },
     {
         "signal": True,
         "process": "tttt",
         "label": "muon id",
         "type": "shape",
         "hname": "muId",
+        "color": custom_color_indices[7],            
+    },
+    {
+        "signal": True,
+        "process": "tttt",
+        "label": "electron id",
+        "type": "shape",
+        "hname": "eleId",
         "color": custom_color_indices[8],            
     },
     {
@@ -315,6 +296,7 @@ hists["HT_stack"] = {
         "value": 0.01,
         "color": custom_color_indices[1],            
     },
+
     ]       
 }
 
@@ -328,18 +310,8 @@ hists["HT_norm"] = {
     "xmin": 0,
     "xmax": 5,
     "ytitle": "Events",
-    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV","ttH","tt","WZjj"],
+    "processes": ["tttt", "ttZ", "ZZjj", "VVV", "VVVV", "ttVV", "ttH", "WZjj"],
     "density": True,
 }
-
-# Adding staged analysis setup to trigger AAAyields plot alongside histmaker setup
-variables = ['dummy_var']
-selections = {'yields': ['sel']}
-extralabel = {'sel': ''}
-stacksig = ['stack']
-yaxis = ['lin']
-rebin = [1]
-plots = {'yields': {'signal': procs['signal'], 'backgrounds': procs['backgrounds']}}
-
 
 

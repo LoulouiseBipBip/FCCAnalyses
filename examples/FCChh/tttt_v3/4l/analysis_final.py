@@ -1,31 +1,54 @@
 # Input directory where the files produced at the pre-selection level are
-inputDir = "/eos/user/l/lberiet/newttttresult/"
+inputDir = "/eos/user/l/lberiet/Histmaker/tttt_v3/4l/"
 #inputDir = "/eos/user/s/selvaggi/analysis/ttbar_diff"
 
 # Input directory where the files produced at the pre-selection level are
 outputDir = "/eos/user/l/lberiet/ttttfinal/"
 
 processList = {
-    'mgp8_pp_tttt_5f_84TeV_4tlep': {},
+    'mgp8_pp_ttz_5f_Q_0_1000_84TeV_ttzlep',
+    'mgp8_pp_ttz_5f_Q_1000_3000_84TeV_ttzlep',
+    'mgp8_pp_ttz_5f_Q_3000_10000_84TeV_ttzlep',
+    'mgp8_pp_ttz_5f_Q_10000_84000_84TeV_ttzlep',
+    'mgp8_pp_ttw_5f_84TeV',
+    'mgp8_pp_tttt_5f_84TeV_4tlep',
+    'mgp8_pp_tth_5f_84TeV',
 
-
-    'mgp8_pp_ttz_5f_84TeV_ttzlep': {},
-    'mgp8_pp_tth_5f_84TeV': {},
-    'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep': {},
-
-    'mgp8_pp_zzz_5f_84TeV': {},
-    'mgp8_pp_wzz_5f_84TeV': {},
-    'mgp8_pp_wwz_5f_84TeV': {},
+    'mgp8_pp_tth_5f_Q_0_1000_84TeV_hww',
+    'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hww',
+    'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hww',
+    'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hww',
             
-    'mgp8_pp_wwww_5f_84TeV': {},
-    'mgp8_pp_wwwz_5f_84TeV': {},
-    'mgp8_pp_wwzz_5f_84TeV': {},
-    'mgp8_pp_wzzz_5f_84TeV': {},
-    'mgp8_pp_zzzz_5f_84TeV': {},
+    'mgp8_pp_tth_5f_Q_0_1000_84TeV_htautau',
+    'mgp8_pp_tth_5f_Q_1000_3000_84TeV_htautau',
+    'mgp8_pp_tth_5f_Q_3000_10000_84TeV_htautau',
+    'mgp8_pp_tth_5f_Q_10000_84000_84TeV_htautau',
+
+    'mgp8_pp_tth_5f_Q_0_1000_84TeV_hzz',
+    'mgp8_pp_tth_5f_Q_1000_3000_84TeV_hzz',
+    'mgp8_pp_tth_5f_Q_3000_10000_84TeV_hzz',
+    'mgp8_pp_tth_5f_Q_10000_84000_84TeV_hzz',
+    'mgp8_pp_ZZjj_HF_5f_84TeV_zzlep',
+
+    'mgp8_pp_WZjj_HF_5f_84TeV_wzlllv',
+
+    'mgp8_pp_wzz_5f_Q_0_1000_84TeV',
+    'mgp8_pp_wzz_5f_Q_1000_3000_84TeV',
+    'mgp8_pp_wzz_5f_Q_3000_10000_84TeV',
+    'mgp8_pp_wzz_5f_Q_10000_84000_84TeV',
+
+    'mgp8_pp_zzz_5f_Q_0_1000_84TeV',
+    'mgp8_pp_zzz_5f_Q_1000_3000_84TeV',
+    'mgp8_pp_zzz_5f_Q_3000_10000_84TeV',
+    'mgp8_pp_zzz_5f_Q_10000_84000_84TeV',
             
-    'mgp8_pp_ttzz_5f_84TeV': {},
-    'mgp8_pp_ttwz_5f_84TeV': {},
-           
+
+            
+    'mgp8_pp_ttzz_5f_84TeV',
+    'mgp8_pp_ttwz_5f_84TeV',
+
+    #'mgp8_pp_tt_HT_2000_100000_5f_84TeV_blvblv',
+    #'mgp8_pp_tt_HT_200_2000_5f_84TeV_blvblv',
 
     
 }
@@ -77,26 +100,15 @@ do_weighted = False
 
 cutList = {
     "all_events": "n_leptons >= 0", # all events (no selection)
-    
-            "sel1_lep":"n_leptons == 4 ", # 4 leptons
-            "sel_SS_OF=0": "n_of_ss_sf_leptons == 0 && n_leptons == 4",
-            "sel2_bjets":"(n_leptons == 4) && (n_bjets >= 2) && n_of_ss_sf_leptons == 0", # at least 3 b-jets
-            "sel3_jets":"(n_leptons == 4) && (n_bjets >= 3) && (n_jets >= 3) && n_of_ss_sf_leptons == 0", # at least 3 jets
-            "sel4_notZ": "(n_leptons == 4) && (n_bjets >= 3) && (n_jets >= 3) && (Z_ll_mass < 80 || Z_ll_mass > 100) && n_of_ss_sf_leptons == 0"
-, # 4 not Z
             # add more cuts here: note you need to && them, they are not sequential!
             }
 histoList = {
     # "n_jets": {"name": "n_jets", "title": "n_jets", "bin": 10, "xmin": 0, "xmax": 10},
-    "n_of_ss_of_leptons": {"name": "n_of_ss_sf_leptons", "title": "n_of_ss_sf_leptons", "bin": 10, "xmin": 0, "xmax": 10},  
-    "n_jets": {"name": "n_jets", "title": "n_jets", "bin": 10, "xmin": 0, "xmax": 10},
     "n_bjets": {"name": "n_bjets", "title": "n_bjets", "bin": 10, "xmin": 0, "xmax": 10},
     "n_leptons": {"name": "n_leptons", "title": "n_leptons", "bin": 10, "xmin": 0, "xmax": 10},
-    "Z_ll_mass": {"name": "Z_ll_mass", "title": "Z_ll_mass", "bin": 50, "xmin": 0, "xmax": 250},
-    "Second_Pair_mass": {"name": "Second_Pair_mass", "title": "Second_Pair_mass", "bin": 10, "xmin": 0, "xmax": 10},
-    "dR_ll": {"name": "dR_ll", "title": "dR_ll", "bin": 10, "xmin": 0, "xmax": 10},
+    
     "HT": {"name": "HT", "title": "H_{T} [TeV]", "bin": 100, "xmin": 0, "xmax": 8000},
-    "MET": {"name": "MET", "title": "MET", "bin": 20, "xmin": 0, "xmax": 2000},
+    
     #"HT_sel": {"name": "HT_sel", "title": "H_{T} [TeV]", "bin": 50, "xmin": 0, "xmax": 2000},
     #"MET_sel": {"name": "MET_sel", "title": "MET", "bin": 20, "xmin": 0, "xmax": 2000},
 }

@@ -85,7 +85,7 @@ do_weighted = False
 
 cutList = {
     "all_events": "n_leptons >= 0", # all events (no selection)
-    "sel0_sf_ss":"n_leptons == 0", # 3 leptons
+    "sel0_sf_ss":"n_leptons == 3", # 3 leptons
             "sel1_sf_ss":"n_sf_ss_of_leptons == 0 & n_leptons == 3", # 3 leptons
             "sel2_bjets":"n_leptons == 3 && n_sf_ss_of_leptons == 0 && (n_bjets >= 4) ", # at least 3 b-jets (4?) (njets>5)
             "sel3_jets":"n_leptons == 3 && n_sf_ss_of_leptons == 0 && (n_bjets >= 4) && (n_jets >= 7 ) ", # at least 6 jets
