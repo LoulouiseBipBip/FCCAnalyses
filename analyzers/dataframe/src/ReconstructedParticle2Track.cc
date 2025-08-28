@@ -278,6 +278,23 @@ getRP2TRK_D0_sig(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,
   return result;
 }
 
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>
+selRP2TRK_D0_sig(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,
+                  ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+                  float threshold) {
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+  for (auto & p : in) {
+    if (p.tracks_begin < tracks.size()) {
+      float d0_sig = tracks.at(p.tracks_begin).D0 / sqrt(tracks.at(p.tracks_begin).covMatrix[0]);
+      if (abs(d0_sig) < threshold) {
+        result.push_back(p);
+      }
+    }
+  }
+  return result;
+}
+
+
 ROOT::VecOps::RVec<float>
 getRP2TRK_Z0(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,
 					  ROOT::VecOps::RVec<edm4hep::TrackState> tracks) {

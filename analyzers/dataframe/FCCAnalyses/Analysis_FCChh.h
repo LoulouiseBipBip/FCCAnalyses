@@ -92,6 +92,10 @@ ROOT::VecOps::RVec<RecoParticlePair>
 get_first_pair(ROOT::VecOps::RVec<RecoParticlePair>
                    pairs); // can use to get leading pair if the inputs to pair
                            // finding fct were pT sorted
+ROOT::VecOps::RVec<RecoParticlePair>
+get_nth_pair(ROOT::VecOps::RVec<RecoParticlePair>
+    pairs, int n);            
+    
 
 // functions to separate the pair again - ONLY DOES THIS FOR THE FIRST PAIR IN
 // THE VECTOR
@@ -107,6 +111,14 @@ ROOT::VecOps::RVec<MCParticlePair>
 get_first_pair(ROOT::VecOps::RVec<MCParticlePair>
                    pairs); // can use to get leading pair if the inputs to pair
                            // finding fct were pT sorted
+ROOT::VecOps::RVec<MCParticlePair>                          
+get_nth_pair(ROOT::VecOps::RVec<MCParticlePair>
+    pairs, int n);
+// same for MCParticlePair
+ROOT::VecOps::RVec<edm4hep::MCParticleData>
+get_first_from_pair(ROOT::VecOps::RVec<MCParticlePair> pairs);
+ROOT::VecOps::RVec<edm4hep::MCParticleData>
+get_second_from_pair(ROOT::VecOps::RVec<MCParticlePair> pairs);
 
 // truth filter used to get ZZ(llvv) events from the ZZ(llvv+4l+4v) inclusive
 // signal samples
@@ -159,6 +171,16 @@ getOSPairs(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> leptons_in);
 // find OS pairs in truth particles
 ROOT::VecOps::RVec<MCParticlePair>
 getOSPairs(ROOT::VecOps::RVec<edm4hep::MCParticleData> truth_parts);
+
+// Function to create pairs of opposite charge particles from two collections for reconstructed particles
+ROOT::VecOps::RVec<RecoParticlePair> makeOppositeChargePairs(
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& collection1,
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& collection2);
+
+// find OS pairs in truth particles
+ROOT::VecOps::RVec<MCParticlePair> makeOppositeChargePairs(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& collection1,
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& collection2);
 
 ROOT::VecOps::RVec<RecoParticlePair> getDFOSPairs(
     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> electrons_in,
@@ -578,6 +600,37 @@ ROOT::VecOps::RVec<RecoParticlePair> mergeIntoPairs(
     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
     float dR_min, float pT_min, bool exclude_light_leps);
+
+
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> applyD0IsoCut(
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& particles,
+    const ROOT::VecOps::RVec<float>& d0,
+    const ROOT::VecOps::RVec<float>& iso,
+    float a, float b);
+
+ROOT::VecOps::RVec<float> computeD0Cut(
+    const ROOT::VecOps::RVec<float>& d0,
+    float a, float b);
+
+ROOT::VecOps::RVec<float> getLep_pT_over_closest_jet_pT(
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& leptons,
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& jets);
+
+// select leptons based on pT over closest jet pT
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>
+sel_Lep_pT_over_closest_jet_pT(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> leptons,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets,
+    float min_pT_over_closest_jet_pT);
+
+ROOT::VecOps::RVec<edm4hep::MCParticleData> getTopPhotons(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles,
+    const ROOT::VecOps::RVec<int>& daughter_indices);
+
+ROOT::VecOps::RVec<RecoParticlePair> getLeptonBPairsfromTop(
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& reco_muons,
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& reco_electrons,
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& bjets);
 } // namespace AnalysisFCChh
 
 

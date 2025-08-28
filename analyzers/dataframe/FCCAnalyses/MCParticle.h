@@ -38,6 +38,10 @@ namespace MCParticle{
     float m_min_pt = 20; //> transverse momentum threshold [GeV]
     ROOT::VecOps::RVec<edm4hep::MCParticleData>  operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in);
   };
+  //Sort MCParticles by transverse momentum
+  ROOT::VecOps::RVec<edm4hep::MCParticleData>  SortParticleCollection(
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> particles_in);
+
    /// select MCParticles with transverse momentum greater than a minimum value [GeV]
    struct sel_eta {
     sel_eta(float arg_min_eta);
@@ -277,6 +281,48 @@ namespace MCParticle{
   int countElectronPhotonSplitting(const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles,
                            const ROOT::VecOps::RVec<podio::ObjectID>& daughter_ids);
 
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> sel_origin_lep(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+    const ROOT::VecOps::RVec<int>& ind, 
+    int parent_pdg);
+
+  //Select particles from a collection based on the PDG ID of their parent
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> sel_parent_pdg(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+    const ROOT::VecOps::RVec<int>& ind, 
+    int parent_pdg);
+
+  ROOT::VecOps::RVec<float> get_angularDist_MC(
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> particle_1,
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> particle_2,
+    TString type);
+
+  //return the PDG of the parent of a given list of MC particles
+  ROOT::VecOps::RVec<int> get_parent_pdg(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+    const ROOT::VecOps::RVec<int>& ind);
+
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> getWLeptons(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& leptons,
+    const ROOT::VecOps::RVec<int>& ind);
+
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> remove(
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> x,
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> y);
+
+  ROOT::VecOps::RVec<int> get_parent_pdg_photon(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+    const ROOT::VecOps::RVec<int>& ind);
+
+    ROOT::VecOps::RVec<int> get_direct_daughters(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+    const ROOT::VecOps::RVec<int>& ind);
 
 }//end NS MCParticle
 

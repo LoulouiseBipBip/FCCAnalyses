@@ -853,7 +853,68 @@ TLorentzVector AnalysisFCChh::getTLV_MC(edm4hep::MCParticleData MC_part) {
   tlv.SetXYZM(MC_part.momentum.x, MC_part.momentum.y, MC_part.momentum.z,
               MC_part.mass);
   return tlv;
+  }
+
+
+// Function to create pairs of opposite charge particles from two collections for reconstructed particles
+ROOT::VecOps::RVec<RecoParticlePair> AnalysisFCChh::makeOppositeChargePairs(
+  const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& collection1,
+  const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& collection2) {
+  ROOT::VecOps::RVec<RecoParticlePair> result;
+  
+  // Iterate over the first collection
+  for (size_t i = 0; i < collection1.size(); ++i) {
+    const auto& part1 = collection1[i];
+    // Iterate over the second collection
+    for (size_t j = 0; j < collection2.size(); ++j) {
+      const auto& part2 = collection2[j];
+      // Check if charges are opposite (opposite charges have opposite sign charge)
+      if (part1.charge * part2.charge < 0) {
+        RecoParticlePair pair;
+        pair.particle_1 = part1;
+        pair.particle_2 = part2;
+        result.emplace_back(pair);
+        // If we only want two pairs, break after finding the second pair
+        if (result.size() == 2) {
+          return result;
+        }
+      }
+    }
+  }
+  
+  return result;
 }
+
+
+// Function to create pairs of opposite charge particles from two collections
+ROOT::VecOps::RVec<MCParticlePair> AnalysisFCChh::makeOppositeChargePairs(
+  const ROOT::VecOps::RVec<edm4hep::MCParticleData>& collection1,
+  const ROOT::VecOps::RVec<edm4hep::MCParticleData>& collection2) {
+  ROOT::VecOps::RVec<MCParticlePair> result;
+  
+  // Iterate over the first collection
+  for (size_t i = 0; i < collection1.size(); ++i) {
+    const auto& part1 = collection1[i];
+    // Iterate over the second collection
+    for (size_t j = 0; j < collection2.size(); ++j) {
+      const auto& part2 = collection2[j];
+      // Check if charges are opposite using PDG values (opposite charges have opposite sign PDG for most particles)
+      if (part1.PDG * part2.PDG < 0) {
+        MCParticlePair pair;
+        pair.particle_1 = part1;
+        pair.particle_2 = part2;
+        result.emplace_back(pair);
+        // If we only want two pairs, break after finding the second pair
+        if (result.size() == 2) {
+          return result;
+        }
+      }
+    }
+  }
+  
+  return result;
+}
+
 
 ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>
 AnalysisFCChh::merge_pairs(ROOT::VecOps::RVec<RecoParticlePair> pairs) {
@@ -908,6 +969,18 @@ AnalysisFCChh::get_first_pair(ROOT::VecOps::RVec<RecoParticlePair> pairs) {
 
   return first_pair;
 }
+// ONLY WORKS IF THERE IS A PAIR AT THE GIVEN INDEX (add filtering before using or use get_fist_pair)
+ROOT::VecOps::RVec<RecoParticlePair>
+AnalysisFCChh::get_nth_pair(ROOT::VecOps::RVec<RecoParticlePair> pairs,
+int n ) {
+  ROOT::VecOps::RVec<RecoParticlePair> nth_pair;
+
+  if (pairs.size()) {
+    nth_pair.push_back(pairs.at(n));
+  }
+  
+  return nth_pair;
+}
 
 //same for MCParticlePair
 ROOT::VecOps::RVec<MCParticlePair>
@@ -920,6 +993,18 @@ AnalysisFCChh::get_first_pair(ROOT::VecOps::RVec<MCParticlePair> pairs) {
 
   return first_pair;
 }
+ROOT::VecOps::RVec<MCParticlePair>
+AnalysisFCChh::get_nth_pair(ROOT::VecOps::RVec<MCParticlePair> pairs,
+int n ) {
+  ROOT::VecOps::RVec<MCParticlePair> nth_pair;
+
+  if (pairs.size() >= n ) {
+    nth_pair.push_back(pairs.at(n));
+  }
+
+  return nth_pair;
+}
+
 
 // split the pair again: return only the first particle or second particle in
 // the pairs - needed for getting eg. pT etc of the selected DFOS pair
@@ -942,6 +1027,35 @@ AnalysisFCChh::get_second_from_pair(
     ROOT::VecOps::RVec<RecoParticlePair> pairs) {
 
   ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> second_particle;
+
+  if (pairs.size()) {
+    pairs.at(0).sort_by_pT();
+    second_particle.push_back(pairs.at(0).particle_2);
+  }
+
+  return second_particle;
+}
+
+// same functions for MC particles
+ROOT::VecOps::RVec<edm4hep::MCParticleData>
+AnalysisFCChh::get_first_from_pair(ROOT::VecOps::RVec<MCParticlePair> pairs) {
+
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> first_particle;
+
+  if (pairs.size()) {
+    // sort by pT first:
+    pairs.at(0).sort_by_pT();
+    first_particle.push_back(pairs.at(0).particle_1);
+  }
+
+  return first_particle;
+}
+
+ROOT::VecOps::RVec<edm4hep::MCParticleData>
+AnalysisFCChh::get_second_from_pair(
+    ROOT::VecOps::RVec<MCParticlePair> pairs) {
+
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> second_particle;
 
   if (pairs.size()) {
     pairs.at(0).sort_by_pT();
@@ -3264,7 +3378,7 @@ ROOT::VecOps::RVec<int> AnalysisFCChh::countParticlesInCone(
   return out_vector;
 }
 
-// manual implementation of the delphes isolation criterion
+ // manual implementation of the delphes isolation criterion
 ROOT::VecOps::RVec<float> AnalysisFCChh::get_IP_delphes(
     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> test_parts,
     ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> reco_parts_all,
@@ -3273,8 +3387,7 @@ ROOT::VecOps::RVec<float> AnalysisFCChh::get_IP_delphes(
   ROOT::VecOps::RVec<float> out_vector;
 
   if (test_parts.size() < 1) {
-    out_vector.push_back(-999.);
-    // std::cout << "Debug: No test particles provided, returning -999." << std::endl;
+    // std::cout << "Debug: No test particles provided, returning empty vector." << std::endl;
     return out_vector;
   }
 
@@ -3991,6 +4104,7 @@ float AnalysisFCChh::get_weight_emugamma(float pt, float weight) {
 
     return weight *  std::exp(log_f) / 100.;
 }
+// Does the product/sum of the weights automatically, pm1 =1 for upper unc, pm1 = -1 for lower unc
 float AnalysisFCChh::get_weight_emugamma_product(const ROOT::VecOps::RVec<float>& pt_values, float weight, float pm1) {
     float product = 1.0;
     for (size_t i = 0; i < pt_values.size(); ++i) {
@@ -4604,8 +4718,181 @@ for (auto &test_part : test_parts) {
 }
 
 return out_vector;
+
+
+
 } 
 
 
 
+// Function to compute the pT of the lepton divided by the pT of the closest jet in terms of delta R 
+// (messy to implement because of iso jet definition, probaly need to rewrite)
+ROOT::VecOps::RVec<float> AnalysisFCChh::getLep_pT_over_closest_jet_pT(
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& leptons,
+    const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& jets) {
+  ROOT::VecOps::RVec<float> out_vector;
 
+  // If either collection is empty, return empty vector or default value
+  if (leptons.empty() || jets.empty()) {
+    for (size_t i = 0; i < leptons.size(); ++i) {
+      out_vector.push_back(-999.);
+    }
+    return out_vector;
+  }
+
+  // For each lepton, find the closest jet in terms of delta R
+  for (const auto& lepton : leptons) {
+    TLorentzVector tlv_lepton = getTLV_reco(lepton);
+    float min_dR = 999.;
+    float closest_jet_pt = -999.;
+
+    // Loop over jets to find the closest one
+    for (const auto& jet : jets) {
+      TLorentzVector tlv_jet = getTLV_reco(jet);
+      float dR = tlv_lepton.DeltaR(tlv_jet);
+      if (dR < min_dR) {
+        min_dR = dR;
+        closest_jet_pt = tlv_jet.Pt();
+      }
+    }
+
+    // Compute the ratio of lepton pT to closest jet pT
+    if (closest_jet_pt > 0) {
+      out_vector.push_back(tlv_lepton.Pt() / closest_jet_pt);
+    } else {
+      out_vector.push_back(-999.);
+    }
+  }
+
+  return out_vector;
+}
+
+// select leptons based on pT over closest jet pT (same as function above, probably physically messy to implement)
+ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>
+AnalysisFCChh::sel_Lep_pT_over_closest_jet_pT(
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> leptons,
+    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets,
+    float min_pT_over_closest_jet_pT) {
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
+  for (const auto& lepton : leptons) {
+    TLorentzVector tlv_lepton = getTLV_reco(lepton);
+    float min_dR = 999.;
+    float closest_jet_pt = -999.;
+    for (const auto& jet : jets) {
+      TLorentzVector tlv_jet = getTLV_reco(jet);
+      float dR = tlv_lepton.DeltaR(tlv_jet);
+      if (dR < min_dR) {
+        min_dR = dR;
+        closest_jet_pt = tlv_jet.Pt();
+      }
+    }
+    if (closest_jet_pt > 0) {
+      if (tlv_lepton.Pt() / closest_jet_pt > min_pT_over_closest_jet_pT) {
+        result.push_back(lepton);
+      }
+    }
+  }
+  return result;
+}
+
+// Function to get photons that are direct daughters of top quarks at MC level
+ROOT::VecOps::RVec<edm4hep::MCParticleData> AnalysisFCChh::getTopPhotons(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles,
+    const ROOT::VecOps::RVec<int>& daughter_indices) {
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> top_photons;
+
+  // Loop over all MC particles to find top quarks
+  for (size_t i = 0; i < mcparticles.size(); ++i) {
+    const auto& particle = mcparticles[i];
+    // Check if the particle is a top quark (PDG ID = 6)
+    if (abs(particle.PDG) == 6) {
+      // Loop over the daughters of the top quark
+      for (unsigned j = particle.daughters_begin; j != particle.daughters_end; ++j) {
+        int daughter_index = daughter_indices.at(j);
+        if (daughter_index >= 0 && daughter_index < mcparticles.size()) {
+          const auto& daughter = mcparticles[daughter_index];
+          // Check if the daughter is a photon (PDG ID = 22)
+          if (daughter.PDG == 22) {
+            top_photons.push_back(daughter);
+          }
+        }
+      }
+    }
+  }
+
+  return top_photons;
+}
+
+// Function to create lepton-b pairs from selected leptons and b-jets
+ROOT::VecOps::RVec<RecoParticlePair> AnalysisFCChh::getLeptonBPairsfromTop(
+  const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& reco_muons,
+  const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& reco_electrons,
+  const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& bjets) {
+ROOT::VecOps::RVec<RecoParticlePair> selected_pairs;
+
+// If we don't have at least one electron and one muon, return empty result
+if (reco_electrons.empty() || reco_muons.empty() || bjets.size() < 2) {
+  return selected_pairs;
+}
+
+// Variables to store the best pairs and their properties
+RecoParticlePair best_eb_pair;
+RecoParticlePair best_mub_pair;
+float best_eb_dR = 999.0;
+float best_mub_dR = 999.0;
+bool found_valid_pairs = false;
+const float top_mass = 172.5; // Top quark mass in GeV
+
+// Try all possible combinations of electron-b and muon-b pairs
+for (const auto& electron : reco_electrons) {
+  for (const auto& muon : reco_muons) {
+    // Check if electron and muon are opposite sign
+    if (electron.charge * muon.charge >= 0) continue;
+    
+    for (size_t i = 0; i < bjets.size(); ++i) {
+      for (size_t j = 0; j < bjets.size(); ++j) {
+        if (i == j) continue; // Don't pair a b-jet with itself
+        
+        // Get TLorentzVectors for calculations
+        TLorentzVector tlv_e = getTLV_reco(electron);
+        TLorentzVector tlv_mu = getTLV_reco(muon);
+        TLorentzVector tlv_b1 = getTLV_reco(bjets[i]);
+        TLorentzVector tlv_b2 = getTLV_reco(bjets[j]);
+        
+        // Calculate dR for each potential pair
+        float dR_eb = tlv_e.DeltaR(tlv_b1);
+        float dR_mub = tlv_mu.DeltaR(tlv_b2);
+        
+        // Calculate invariant mass of the pairs
+        TLorentzVector tlv_eb = tlv_e + tlv_b1;
+        TLorentzVector tlv_mub = tlv_mu + tlv_b2;
+        float mass_eb = tlv_eb.M();
+        float mass_mub = tlv_mub.M();
+        
+        // Check if the masses are smaller than the top quark mass
+        // and if the dR is smaller than the current best
+        if (mass_eb < top_mass && dR_eb < best_eb_dR) {
+          best_eb_pair.particle_1 = electron;
+          best_eb_pair.particle_2 = bjets[i];
+          best_eb_dR = dR_eb;
+          found_valid_pairs = true;
+        }
+        if (mass_mub < top_mass && dR_mub < best_mub_dR) {
+          best_mub_pair.particle_1 = muon;
+          best_mub_pair.particle_2 = bjets[j];
+          best_mub_dR = dR_mub;
+          found_valid_pairs = true;
+        }
+      }
+    }
+  }
+}
+
+// If we found valid pairs, add them to the result
+if (found_valid_pairs) {
+  selected_pairs.push_back(best_eb_pair);
+  selected_pairs.push_back(best_mub_pair);
+}
+
+return selected_pairs;
+}

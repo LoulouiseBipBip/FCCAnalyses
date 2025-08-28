@@ -91,6 +91,11 @@ namespace ReconstructedParticle2Track{
   ROOT::VecOps::RVec<float> getRP2TRK_D0_sig (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,
 					      ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
 
+  ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>
+  selRP2TRK_D0_sig(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,
+                  ROOT::VecOps::RVec<edm4hep::TrackState> tracks,
+                  float threshold);
+
   /// Return the Z0 significance of a track to a reconstructed particle
   ROOT::VecOps::RVec<float> getRP2TRK_Z0_sig (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,
 					      ROOT::VecOps::RVec<edm4hep::TrackState> tracks);

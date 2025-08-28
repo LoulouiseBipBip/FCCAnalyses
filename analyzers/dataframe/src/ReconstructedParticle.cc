@@ -698,7 +698,7 @@ ROOT::VecOps::RVec<float> coneIsolation::operator() (ROOT::VecOps::RVec<edm4hep:
             double dr = this->deltaR(lv_reco_.Eta(), lv_reco_.Phi(), lv_charged_.Eta(), lv_charged_.Phi());
             if (dr > this->dr_min && dr < this->dr_max) {
                 sumCharged += lv_charged_.P();
-                std::cout << "Charged particle in cone: dR=" << dr << ", P=" << lv_charged_.P() << std::endl;
+                // std::cout << "Charged particle in cone: dR=" << dr << ", P=" << lv_charged_.P() << std::endl;
             }
         }
 
@@ -707,7 +707,7 @@ ROOT::VecOps::RVec<float> coneIsolation::operator() (ROOT::VecOps::RVec<edm4hep:
             double dr = this->deltaR(lv_reco_.Eta(), lv_reco_.Phi(), lv_neutral_.Eta(), lv_neutral_.Phi());
             if (dr > this->dr_min && dr < this->dr_max) {
                 sumNeutral += lv_neutral_.P();
-                std::cout << "Neutral particle in cone: dR=" << dr << ", P=" << lv_neutral_.P() << std::endl;
+               // std::cout << "Neutral particle in cone: dR=" << dr << ", P=" << lv_neutral_.P() << std::endl;
             }
         }
 
@@ -716,11 +716,11 @@ ROOT::VecOps::RVec<float> coneIsolation::operator() (ROOT::VecOps::RVec<edm4hep:
             std::cout << "Warning: Particle pT is 0, isolation ratio cannot be computed properly." << std::endl;
         }
         double ratio = sum / lv_reco_.P();
-        std::cout << "Isolation calculation for particle: pT=" << lv_reco_.Pt() 
-                  << ", Total P=" << lv_reco_.P() 
-                  << ", Sum Charged=" << sumCharged 
-                  << ", Sum Neutral=" << sumNeutral 
-                  << ", Isolation Ratio=" << ratio << std::endl;
+        //std::cout << "Isolation calculation for particle: pT=" << lv_reco_.Pt() 
+        //          << ", Total P=" << lv_reco_.P() 
+        //          << ", Sum Charged=" << sumCharged 
+        //          << ", Sum Neutral=" << sumNeutral 
+        //          << ", Isolation Ratio=" << ratio << std::endl;
         result.emplace_back(ratio);
     }
     return result;
@@ -798,125 +798,6 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>  sel_iso::operator() (ROO
       }
   }
   return result;
-}
-
-//#######################################################################//
-//                            overlapRemoval                             //
-//#######################################################################//
-
-overlapRemoval::overlapRemoval(float dR_threshold) : m_dR_threshold(dR_threshold) {}
-
-ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> overlapRemoval::removeElectronsNearMuons(
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> electrons,
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> muons) {
-    
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
-    result.reserve(electrons.size());
-    
-    for (const auto& electron : electrons) {
-        bool keepElectron = true;
-        
-        // Check against muons
-        for (const auto& muon : muons) {
-            if (deltaR(electron, muon) < m_dR_threshold) {
-                keepElectron = false;
-                break;
-            }
-        }
-        
-        if (keepElectron) {
-            result.emplace_back(electron);
-        }
-    }
-    
-    return result;
-}
-
-ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> overlapRemoval::removeJetsNearLeptons(
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets,
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> leptons) {
-    
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
-    result.reserve(jets.size());
-    
-    for (const auto& jet : jets) {
-        bool keepJet = true;
-        
-        // Check against all leptons
-        for (const auto& lepton : leptons) {
-            if (deltaR(jet, lepton) < m_dR_threshold) {
-                keepJet = false;
-                break;
-            }
-        }
-        
-        if (keepJet) {
-            result.emplace_back(jet);
-        }
-    }
-    
-    return result;
-}
-
-// Convenience standalone functions (can be used directly in DataFrame operations)
-ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> removeElectronsNearMuons_standalone(
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> electrons,
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> muons,
-    float dR_threshold = 0.2) {
-    
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
-    result.reserve(electrons.size());
-    
-    for (const auto& electron : electrons) {
-        bool keepElectron = true;
-        
-        for (const auto& muon : muons) {
-            TLorentzVector tlv_electron, tlv_muon;
-            tlv_electron.SetXYZM(electron.momentum.x, electron.momentum.y, electron.momentum.z, electron.mass);
-            tlv_muon.SetXYZM(muon.momentum.x, muon.momentum.y, muon.momentum.z, muon.mass);
-            
-            if (tlv_electron.DeltaR(tlv_muon) < dR_threshold) {
-                keepElectron = false;
-                break;
-            }
-        }
-        
-        if (keepElectron) {
-            result.emplace_back(electron);
-        }
-    }
-    
-    return result;
-}
-
-ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> removeJetsNearLeptons_standalone(
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> jets,
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> leptons,
-    float dR_threshold = 0.2) {
-    
-    ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;
-    result.reserve(jets.size());
-    
-    for (const auto& jet : jets) {
-        bool keepJet = true;
-        
-        for (const auto& lepton : leptons) {
-            TLorentzVector tlv_jet, tlv_lepton;
-            tlv_jet.SetXYZM(jet.momentum.x, jet.momentum.y, jet.momentum.z, jet.mass);
-            tlv_lepton.SetXYZM(lepton.momentum.x, lepton.momentum.y, lepton.momentum.z, lepton.mass);
-            
-            if (tlv_jet.DeltaR(tlv_lepton) < dR_threshold) {
-                keepJet = false;
-                break;
-            }
-        }
-        
-        if (keepJet) {
-            result.emplace_back(jet);
-        }
-    }
-    
-    return result;
 }
 
 

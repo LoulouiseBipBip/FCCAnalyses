@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <set>
 #include "podio/ObjectID.h"
-
+#include "TString.h"
 
 
 namespace FCCAnalyses{
@@ -73,6 +73,26 @@ ROOT::VecOps::RVec<edm4hep::MCParticleData>  sel_pt::operator() (ROOT::VecOps::R
   }
   return result;
 }
+
+//Sort MCParticles by transverse momentum
+ROOT::VecOps::RVec<edm4hep::MCParticleData> SortParticleCollection(
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> particles_in) {
+  if (particles_in.size() < 2) {
+    return particles_in;
+  } else {
+    auto sort_by_pT = [&](edm4hep::MCParticleData part_i,
+                          edm4hep::MCParticleData part_j) {
+      TLorentzVector tlv_i;
+      tlv_i.SetXYZM(part_i.momentum.x, part_i.momentum.y, part_i.momentum.z, part_i.mass);
+      TLorentzVector tlv_j;
+      tlv_j.SetXYZM(part_j.momentum.x, part_j.momentum.y, part_j.momentum.z, part_j.mass);
+      return (tlv_i.Pt() > tlv_j.Pt());
+    };
+    std::sort(particles_in.begin(), particles_in.end(), sort_by_pT);
+    return particles_in;
+  }
+}
+
 
 sel_eta::sel_eta(float arg_min_eta) : m_min_eta(arg_min_eta) {};
 ROOT::VecOps::RVec<edm4hep::MCParticleData>  sel_eta::operator() (ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
@@ -711,11 +731,58 @@ MCParticle::get_indices_ExclusiveDecay::get_indices_ExclusiveDecay( int pdg_moth
 
 
 // --------------------------------------------------------------------------------------------------
+
+
+// get dR between two objects:
+ROOT::VecOps::RVec<float> get_angularDist_MC(
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> particle_1,
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> particle_2,
+  TString type) {
+
+  ROOT::VecOps::RVec<float> out_vector;
+
+  // if one of the input particles is empty, fill default value
+  if (particle_1.size() < 1 || particle_2.size() < 1) {
+    out_vector.push_back(-999.);
+    return out_vector;
+  }
+
+  // else, for now, just take the first of each, should be the "best" one (by
+  // user input) - flexibility to use all combinations is there, to be
+  // implemented if needed
+  TLorentzVector tlv_1;
+  tlv_1.SetXYZM(particle_1.at(0).momentum.x, particle_1.at(0).momentum.y, 
+                particle_1.at(0).momentum.z, particle_1.at(0).mass);
+  TLorentzVector tlv_2;
+  tlv_2.SetXYZM(particle_2.at(0).momentum.x, particle_2.at(0).momentum.y, 
+                particle_2.at(0).momentum.z, particle_2.at(0).mass);
+
+  if (type.Contains("dR")) {
+    out_vector.push_back(tlv_1.DeltaR(tlv_2));
+  }
+
+  else if (type.Contains("dEta")) {
+    out_vector.push_back(abs(tlv_1.Eta() - tlv_2.Eta()));
+  }
+
+  else if (type.Contains("dPhi")) {
+    out_vector.push_back(tlv_1.DeltaPhi(tlv_2));
+  }
+
+  else {
+    std::cout
+        << " Error in AnalysisFCChh::get_angularDist_MC - requested unknown type "
+        << type << "Returning default of -999." << std::endl;
+    out_vector.push_back(-999.);
+  }
+
+  return out_vector;
+}
 ROOT::VecOps::RVec<float> AngleBetweenTwoMCParticles( ROOT::VecOps::RVec<edm4hep::MCParticleData> p1, ROOT::VecOps::RVec<edm4hep::MCParticleData> p2 ) {
 
   ROOT::VecOps::RVec<float> result;
   if ( p1.size() != p2.size() ) {
-        std::cout << "  !!! in AngleBetweenTwoMCParticles: the arguments p1 and p2 should have the same size " << std::endl;
+        //std::cout << "  !!! in AngleBetweenTwoMCParticles: the arguments p1 and p2 should have the same size " << std::endl;
         return result;
   }
 
@@ -792,15 +859,192 @@ int get_lepton_origin(const edm4hep::MCParticleData &p,
     }
  return result;
 }
-
-
-int get_lepton_origin(int index,
-                      const ROOT::VecOps::RVec<edm4hep::MCParticleData> &in,
-                      const ROOT::VecOps::RVec<int> &ind){
-  if ( index < 0 || index >= in.size() ) return -1;
-  edm4hep::MCParticleData p = in[index];
-  return get_lepton_origin( p, in, ind );
+//return the PDG of the parent of a given list of MC particles
+ROOT::VecOps::RVec<int> get_parent_pdg(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+    const ROOT::VecOps::RVec<int>& ind) 
+{
+    ROOT::VecOps::RVec<int> result;
+    result.reserve(particles.size());
+    for (size_t i = 0; i < particles.size(); ++i) {
+        const auto& particle = particles[i];
+        int parent_pdg = -999; // Default value if no parent is found
+        int current_index = -1;
+        
+       // std::cout << "Particle " << i << " PDG: " << particle.PDG << " - Parent chain:" << std::endl;
+        
+        // Start with the first parent
+        for (unsigned j = particle.parents_begin; j != particle.parents_end; ++j) {
+            current_index = ind.at(j);
+            if (current_index >= 0 && current_index < in.size()) {
+                parent_pdg = in.at(current_index).PDG;
+               // std::cout << "  Parent at index " << current_index << " PDG: " << parent_pdg << std::endl;
+                
+                // Check if parent PDG is 21 (gluon) and print decay products if applicable
+                if (abs(parent_pdg) == 21) {
+                   // std::cout << "  Gluon (PDG=21) detected as parent. Decay products of this gluon:" << std::endl;
+                    const auto& gluon = in.at(current_index);
+                    for (unsigned k = gluon.daughters_begin; k != gluon.daughters_end; ++k) {
+                        int daughter_index = ind.at(k);
+                        if (daughter_index >= 0 && daughter_index < in.size()) {
+                            int daughter_pdg = in.at(daughter_index).PDG;
+                           // std::cout << "    Daughter at index " << daughter_index << " PDG: " << daughter_pdg << std::endl;
+                        } else {
+                          //  std::cout << "    Invalid daughter index: " << daughter_index << std::endl;
+                        }
+                    }
+                }
+                
+                break; // Take the first parent by default
+            } else {
+               // std::cout << "  Invalid parent index: " << current_index << std::endl;
+            }
+        }
+        // Check if there is more than one parent and print all parents if so
+        if (particle.parents_end - particle.parents_begin > 1) {
+            //std::cout << "  Multiple parents found for particle PDG " << particle.PDG << ":" << std::endl;
+            for (unsigned j = particle.parents_begin; j != particle.parents_end; ++j) {
+                int parent_index = ind.at(j);
+                if (parent_index >= 0 && parent_index < in.size()) {
+                    //std::cout << "    Parent at index " << parent_index << " PDG: " << in.at(parent_index).PDG << std::endl;
+                } else {
+                   // std::cout << "    Invalid parent index: " << parent_index << std::endl;
+                }
+            }
+        }
+        // If parent PDG is the same as particle PDG, go back one generation
+        while (current_index >= 0 && current_index < in.size() && 
+               parent_pdg != -999 && abs(parent_pdg) == abs(particle.PDG)) {
+            const auto& current_parent = in.at(current_index);
+            parent_pdg = -999; // Reset in case no further parent is found
+            for (unsigned j = current_parent.parents_begin; j != current_parent.parents_end; ++j) {
+                current_index = ind.at(j);
+                if (current_index >= 0 && current_index < in.size()) {
+                    parent_pdg = in.at(current_index).PDG;
+                    // std::cout << "  Parent at index " << current_index << " PDG: " << parent_pdg << std::endl;
+                    break; // Take the first parent of this generation
+                } else {
+                  // std::cout << "  Invalid parent index in chain: " << current_index << std::endl;
+                }
+            }
+        }
+        
+        result.push_back(parent_pdg);
+        //std::cout << "Final parent PDG for particle " << i << ": " << parent_pdg << std::endl;
+    }
+    return result;
 }
+// Function implemented to debug photon origin, traces back until a non photon,
+// non-gluon parent is found
+ROOT::VecOps::RVec<int> get_parent_pdg_photon(
+  const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+  const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+  const ROOT::VecOps::RVec<int>& ind) 
+{
+  ROOT::VecOps::RVec<int> result;
+  result.reserve(particles.size());
+  for (size_t i = 0; i < particles.size(); ++i) {
+      if (particles[i].PDG != 22) { // Ensure we process only photons
+          result.push_back(-999);
+          continue;
+      }
+      const auto& particle = particles[i];
+      int parent_pdg = -999;
+      int current_index = -1;
+      
+      // Start with the first parent
+      for (unsigned j = particle.parents_begin; j != particle.parents_end; ++j) {
+          current_index = ind.at(j);
+          if (current_index >= 0 && current_index < in.size()) {
+              parent_pdg = in.at(current_index).PDG;
+              break;
+          }
+      }
+      
+      // Trace back until a non-photon, non-gluon parent is found
+      while (current_index >= 0 && current_index < in.size() && parent_pdg != -999) {
+          if (abs(parent_pdg) != 22 && abs(parent_pdg) != 21) { // Stop at non-photon, non-gluon
+              break;
+          }
+          const auto& current_parent = in.at(current_index);
+          parent_pdg = -999;
+          for (unsigned j = current_parent.parents_begin; j != current_parent.parents_end; ++j) {
+              current_index = ind.at(j);
+              if (current_index >= 0 && current_index < in.size()) {
+                  parent_pdg = in.at(current_index).PDG;
+                  break;
+              }
+          }
+      }
+      
+      result.push_back(parent_pdg);
+  }
+  return result;
+}
+// Function to return the PDG IDs of all direct daughters of a particle collection
+ROOT::VecOps::RVec<int> get_direct_daughters(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+    const ROOT::VecOps::RVec<int>& ind) 
+{
+    ROOT::VecOps::RVec<int> result;
+    for (size_t i = 0; i < particles.size(); ++i) {
+        const auto& particle = particles[i];
+        // Iterate through the daughter indices of the current particle
+        for (unsigned j = particle.daughters_begin; j != particle.daughters_end; ++j) {
+            int daughter_index = ind.at(j);
+            if (daughter_index >= 0 && daughter_index < in.size()) {
+                result.push_back(in.at(daughter_index).PDG);
+            }
+        }
+    }
+    return result;
+}
+
+// Select particles from a collection based on the PDG ID of their parent
+ROOT::VecOps::RVec<edm4hep::MCParticleData> sel_parent_pdg(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+    const ROOT::VecOps::RVec<int>& ind, 
+    int parent_pdg) 
+{
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> result;
+    for (size_t i = 0; i < particles.size(); ++i) {
+        const auto& particle = particles[i];
+        // Check if the particle has parents
+        for (unsigned j = particle.parents_begin; j != particle.parents_end; ++j) {
+            int parent_index = ind.at(j);
+            if (parent_index >= 0 && parent_index < in.size()) {
+                int pdg_parent = in.at(parent_index).PDG;
+                if (abs(pdg_parent) == abs(parent_pdg)) {
+                    result.push_back(particle);
+                    break; // If we found a matching parent, no need to check further parents
+                }
+            }
+        }
+    }
+    return result;
+}
+
+//Select leptons from a given parent pdg, returns the new collection of leptons
+ROOT::VecOps::RVec<edm4hep::MCParticleData> sel_origin_lep(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& particles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& in, 
+    const ROOT::VecOps::RVec<int>& ind, 
+    int parent_pdg) 
+{
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> result;
+    for (size_t i = 0; i < particles.size(); ++i) {
+        const auto& particle = particles[i];
+        int origin = get_lepton_origin(particle, in, ind);
+        if (abs(origin) == abs(parent_pdg)) {
+            result.push_back(particle);
+        }
+    }
+    return result;
+}
+
 
 
 ROOT::VecOps::RVec<int> get_leptons_origin(const ROOT::VecOps::RVec<edm4hep::MCParticleData> &particles,
@@ -1053,7 +1297,53 @@ std::pair<std::vector<edm4hep::MCParticleData>, std::vector<edm4hep::MCParticleD
     }
     return std::make_pair(fromZ, fromW);
 }
-
+// Function to return leptons originating from W
+ROOT::VecOps::RVec<edm4hep::MCParticleData> getWLeptons(
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, 
+    const ROOT::VecOps::RVec<edm4hep::MCParticleData>& leptons,
+    const ROOT::VecOps::RVec<int>& ind) 
+{
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> result;
+    for (size_t i = 0; i < leptons.size(); ++i) {
+        const auto& lepton = leptons[i];
+        int originPDG = get_lepton_origin(lepton, mcparticles, ind);
+        if (abs(originPDG) == 24) { // W boson PDG ID is 24 or -24
+            result.push_back(lepton);
+        }
+    }
+    return result;
+}
+//substract y from x
+ROOT::VecOps::RVec<edm4hep::MCParticleData> remove(
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> x,
+  ROOT::VecOps::RVec<edm4hep::MCParticleData> y) {
+//to be kept as ROOT::VecOps::RVec
+std::vector<edm4hep::MCParticleData> result;
+result.reserve( x.size() );
+result.insert( result.end(), x.begin(), x.end() );
+float epsilon = 1e-8;
+for (size_t i = 0; i < y.size(); ++i) {
+float mass1 = y.at(i).mass;
+float px1 = y.at(i).momentum.x;
+float py1 = y.at(i).momentum.y;
+float pz1 = y.at(i).momentum.z;
+for(std::vector<edm4hep::MCParticleData>::iterator
+      it = std::begin(result); it != std::end(result); ++it) {
+  float mass2 = it->mass;
+  float px2 = it->momentum.x;
+  float py2 = it->momentum.y;
+  float pz2 = it->momentum.z;
+  if ( abs(mass1-mass2) < epsilon &&
+ abs(px1-px2) < epsilon &&
+ abs(py1-py2) < epsilon &&
+ abs(pz1-pz2) < epsilon ) {
+    result.erase(it);
+    break;
+  }
+}
+}
+return ROOT::VecOps::RVec(result);
+}
 // Function to return leptons NOT originating from Z or W
 std::vector<edm4hep::MCParticleData> getNonPromptLeptons(
     const ROOT::VecOps::RVec<edm4hep::MCParticleData>& mcparticles, 
@@ -1097,6 +1387,8 @@ edm4hep::MCParticleData getClosestParticle(
         return edm4hep::MCParticleData();
     }
 }
+
+
 
 // Function to calculate the dR distance to the closest particle
 float getClosestParticleDR(
