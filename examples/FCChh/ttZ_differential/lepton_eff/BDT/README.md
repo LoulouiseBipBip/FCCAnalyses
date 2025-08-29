@@ -47,14 +47,14 @@ This will:
   - `bdt_muon.json`
   - `bdt_electron.json`
 - Produce score histograms and ROC curve
-You can use the argument `--process-individual` to choose to run the BDT on each Q-binned sample separatly : you will end up with a ROC curve for each Q-bin range on the same plot. 
+You can use the argument `--process-individual` to choose to run the BDT on each Q-binned sample separately: you will end up with a ROC curve for each Q-bin range on the same plot. 
 If no argument, the Q-bins samples will be merged according to the weight.
 ⚠️ Event weights are broadcast per object before training → every object inherits its event’s statistical weight (necessary for no mismatch between array lengths in BDT).
 ---
 
 ### 3. Apply the BDT
 You need to modify `BDTScorer.cxx` to match your BDT definition (add more features...).
-You then need to compile it to create an external libray using :
+You then need to compile it to create an external library using :
 ```bash
 cd /path/to/BDT
 g++ -shared -fPIC -std=c++20 -o libBDTScorer.so BDTScorer.cxx \
@@ -64,7 +64,7 @@ g++ -shared -fPIC -std=c++20 -o libBDTScorer.so BDTScorer.cxx \
     -Wl,-rpath,/cvmfs/sw.hsf.org/key4hep/releases/2024-10-03/x86_64-almalinux9-gcc14.2.0-opt/xgboost/2.1.1-xijqyj/lib \
     $(root-config --libs)
 ```
-⚠️ For now, I have not find a better solution than to manually add the XGBoost path, meaning if a new version of key4hep releases you will probably need to adapt this.
+⚠️ For now, I have not found a better solution than to manually add the XGBoost path, meaning if a new version of key4hep is released, you will probably need to adapt this.
 
 This will:
 - Create the shared library `libBDTScorer.so` that your hismaker will use to apply the BDT model.
@@ -75,5 +75,5 @@ This will:
 You can now:
 - Apply the BDT score optimal cut in `histmaker.py` using `computeBDTScores`.
 - Run `histmaker.py` with your newly defined objects.
-⚠️ You also need to manually add the XGBoost path in key4hep in the `histmaker.py`, same as before check your the release you use.
+⚠️ You also need to manually add the XGBoost path in key4hep in the `histmaker.py`, same as before, check the release you use.
 ---
